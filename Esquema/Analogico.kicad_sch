@@ -4319,16 +4319,16 @@
 		(uuid "495365e3-09f7-4251-a91a-46923c785151")
 	)
 	(junction
+		(at 69.85 31.75)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "49db8f43-f6f0-4231-885c-7cbe6bdc265e")
+	)
+	(junction
 		(at 125.73 60.96)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "4a6b8e0c-1727-49d2-b55a-0e7fbcb9e07a")
-	)
-	(junction
-		(at 69.85 31.75)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "4bb489b2-b0f9-466d-9397-319ca6c60b80")
 	)
 	(junction
 		(at 110.49 31.75)
@@ -5068,16 +5068,6 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 44.45) (xy 69.85 31.75)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "850cefa2-7716-431e-86e6-458f23794295")
-	)
-	(wire
-		(pts
 			(xy 166.37 71.12) (xy 185.42 71.12)
 		)
 		(stroke
@@ -5105,6 +5095,16 @@
 			(type default)
 		)
 		(uuid "8892549f-6fc2-45a8-ab2d-0c2de4e4da56")
+	)
+	(wire
+		(pts
+			(xy 69.85 31.75) (xy 69.85 36.83)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "89aa1a3e-723a-4fb3-b8f2-02b7178273cd")
 	)
 	(wire
 		(pts
@@ -5288,6 +5288,16 @@
 	)
 	(wire
 		(pts
+			(xy 69.85 31.75) (xy 81.28 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "aeadf1a8-4f92-4f31-bfb2-e14f6aa31a30")
+	)
+	(wire
+		(pts
 			(xy 87.63 144.78) (xy 87.63 137.16)
 		)
 		(stroke
@@ -5395,16 +5405,6 @@
 			(type default)
 		)
 		(uuid "ba40a931-eb16-4f54-9053-36e9ca2cb7ef")
-	)
-	(wire
-		(pts
-			(xy 77.47 31.75) (xy 81.28 31.75)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "bb4cb521-1697-4061-b963-da79915f35c6")
 	)
 	(wire
 		(pts
@@ -6495,7 +6495,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C5349704.pdf"
 			(at 54.61 25.4 0)
 			(effects
 				(font
@@ -9476,7 +9476,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 73.66 31.75 90)
+		(at 69.85 40.64 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -9484,7 +9484,7 @@
 		(dnp no)
 		(uuid "d3135f1b-b3d3-40e7-a005-db86fde4588f")
 		(property "Reference" "C3"
-			(at 77.724 27.432 90)
+			(at 73.914 40.64 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9492,7 +9492,7 @@
 			)
 		)
 		(property "Value" "220u"
-			(at 73.66 26.67 90)
+			(at 64.77 40.64 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9500,7 +9500,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 77.47 30.7848 0)
+			(at 68.8848 36.83 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9509,7 +9509,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 73.66 31.75 0)
+			(at 69.85 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9518,7 +9518,7 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
-			(at 73.66 31.75 0)
+			(at 69.85 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10281,7 +10281,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C5349704.pdf"
 			(at 81.28 38.1 0)
 			(effects
 				(font
