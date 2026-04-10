@@ -448,7 +448,9 @@
   },
   "libraries": {
     "pinned_footprint_libs": [],
-    "pinned_symbol_libs": []
+    "pinned_symbol_libs": [
+      "ESP32"
+    ]
   },
   "meta": {
     "filename": "Analogico.kicad_pro",

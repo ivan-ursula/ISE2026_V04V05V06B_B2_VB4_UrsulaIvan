@@ -1,4 +1,4 @@
-26722427202916989
+26727754660539855
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -106351,6 +106351,20 @@ Integrated Circuit
 61
 61
 mis_footprints
+MODULE_NUCLEO-F429ZI
+
+
+0
+244
+244
+mis_footprints
+MODULE_NUCLEO-F429ZI_FEMALE
+
+
+0
+100
+100
+mis_footprints
 SON50P160X160X65-7N
 LLP75-7L
 TVS Diode (Uni-directional)
@@ -106378,3 +106392,10 @@ Integrated Circuit
 0
 5
 5
+mis_footprints
+Untitled
+
+
+0
+0
+0
