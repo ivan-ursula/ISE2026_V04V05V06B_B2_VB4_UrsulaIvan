@@ -279,7 +279,7 @@
 
 // <e> USART3 (Universal synchronous asynchronous receiver transmitter) [Driver_USART3]
 // <i> Configuration settings for Driver_USART3 in component ::CMSIS Driver:USART
-#define RTE_USART3                      1
+#define RTE_USART3                      0
 
 //   <o> USART3_TX Pin <0=>Not Used <1=>PB10 <2=>PC10 <3=>PD8
 #define RTE_USART3_TX_ID                1
@@ -1015,7 +1015,7 @@
 
 // <e> I2C1 (Inter-integrated Circuit Interface 1) [Driver_I2C1]
 // <i> Configuration settings for Driver_I2C1 in component ::CMSIS Driver:I2C
-#define RTE_I2C1                        1
+#define RTE_I2C1                        0
 
 //   <o> I2C1_SCL Pin <0=>PB6 <1=>PB8
 #define RTE_I2C1_SCL_PORT_ID            1
@@ -1225,7 +1225,7 @@
 #define RTE_SPI1                        1
 
 //   <o> SPI1_MISO Pin <0=>Not Used <1=>PA6 <2=>PB4
-#define RTE_SPI1_MISO_PORT_ID           0
+#define RTE_SPI1_MISO_PORT_ID           1
 #if    (RTE_SPI1_MISO_PORT_ID == 0)
 #define RTE_SPI1_MISO                   0
 #elif  (RTE_SPI1_MISO_PORT_ID == 1)

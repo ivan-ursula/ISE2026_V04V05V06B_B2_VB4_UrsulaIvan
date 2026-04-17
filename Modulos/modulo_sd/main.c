@@ -35,7 +35,8 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority) {
 
 static void SystemClock_Config(void);
 static void Error_Handler(void);
-
+extern int Init_th_SD (void);
+extern int init_th_prueba_com (void);
 
 int main(void)
 {
@@ -52,7 +53,7 @@ int main(void)
 
   osKernelInitialize ();
 	
-	init_thcom();
+	Init_th_SD();
   init_th_prueba_com();
 
   
@@ -82,8 +83,8 @@ static void SystemClock_Config(void)
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 25;
-  RCC_OscInitStruct.PLL.PLLN = 336;
+  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLN = 168;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
   if(HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)

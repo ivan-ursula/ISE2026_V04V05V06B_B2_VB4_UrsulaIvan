@@ -1,170 +1,90 @@
 #include "cmsis_os2.h"                          // CMSIS RTOS header file
 #include "stm32f4xx_hal.h"
-#include "com.h"
-#include "Driver_USART.h"
+#include "sd.h"
+#include "stdio.h"
+#include "string.h"
+#include "Driver_SPI.h"
 
-osThreadId_t thcom_Tx;
-osThreadId_t thcom_Rx;
+/* Inicializacion del driver SPI */
+ARM_SPI_STATUS status;
+extern ARM_DRIVER_SPI Driver_SPI1;
+ARM_DRIVER_SPI* SPIdrv = &Driver_SPI1;
 
-osMessageQueueId_t qCom_Tx;
-osMessageQueueId_t qCom_Rx;
+osThreadId_t th_id_SD;
 
-extern ARM_DRIVER_USART Driver_USART3;
-ARM_DRIVER_USART * uart=&Driver_USART3;
+void th_SD(void *argument);                   
+static void Init_Pins_SD(void);
+static void mySPI_Callback(uint32_t event);
+static void Init_SPI_SD(void);
+static uint8_t Init_SD(void);
+static uint8_t SD_SPI_TxRx(uint8_t tx);
 
-void th_com_Tx(void *argument);                   
-void th_com_Rx(void *argument);
-// uart funciones
-void uart_send_trama(ComData_t * msg);
-void uart_callback(uint32_t event);
-void procesar_trama(uint8_t* b,uint32_t length);
-static void init_uart(void);
-
-
-int init_thcom (void) {
- 
-  thcom_Tx = osThreadNew(th_com_Tx, NULL, NULL);
-	thcom_Rx = osThreadNew(th_com_Rx, NULL, NULL);
-	
-	qCom_Tx = osMessageQueueNew(10,sizeof(ComData_t),NULL);
-	qCom_Rx = osMessageQueueNew(10,sizeof(ComData_t),NULL);
-	
-	init_uart();
-  if (thcom_Tx == NULL || thcom_Rx == NULL) {
-    return(-1);
-  }
+int Init_th_SD (void) 
+{
+	th_id_SD = osThreadNew(th_SD, NULL, NULL);
  
   return(0);
 }
- 
-void th_com_Tx (void *argument) {
- ComData_t msg;
- 
-  uint8_t buff[50];
-	//mirar si con el bufer creandolo asi funciona
-  while (1) {
-
-		
-		osMessageQueueGet(qCom_Tx,&msg,NULL,osWaitForever);
-		
-		//uint8_t* buff=(uint8_t*)malloc(msg.length+4);
-		buff[0]=SOH;
-		buff[1]=msg.cmd;
-		buff[2]=msg.length+4;
-		
-		for(int i=0 ; i < msg.length; i++){
-			buff[i+3] = msg.buff[i];
-			
-		}
-		
-		buff[msg.length+3]=EOT;
-		
-		uart->Send(buff,buff[2]);
-		osThreadFlagsWait(0x1,osFlagsWaitAll,osWaitForever);
-		
-		//free(buff);
-    osThreadYield();
+ uint8_t rx; 
+void th_SD (void *argument) 
+{
+	rx = Init_SD();
+  while (1)
+	{
+		osThreadYield();
   }
 }
 
-void th_com_Rx(void *argument){
-	uint8_t data;
-	uint8_t data_buff[50];
-	uint8_t flag_recibe=0;
-	uint32_t count_buff=0;
+static void Init_Pins_SD(void)
+{
+	GPIO_InitTypeDef GPIO_InitStruct;
+	__HAL_RCC_GPIOD_CLK_ENABLE();
+
 	
-	while(1){
-		uart->Receive(&data,1);
-		osThreadFlagsWait(0x1,osFlagsWaitAll,osWaitForever);
-		
-		
-		if(!flag_recibe){
-			if(data & SOH){
-				flag_recibe=1;
-				data_buff[count_buff]=SOH;
-				count_buff++;
-				
-			}	
-		}else{
-			if(data != EOT){
-				data_buff[count_buff]=data;
-				count_buff++;
-				
-			}else{
-				data_buff[count_buff]=data;
-				count_buff++;
-				flag_recibe=0;
-				
-				if(count_buff/data_buff[2]!=1){
-					for(int i=0 ; i<count_buff; i++){
-						data_buff[i]=0;					
-					}
-					count_buff=0;
-					
-				}else{
-					procesar_trama(data_buff,count_buff);
-					count_buff=0;
-				}			
-			}
-		}			
-		osThreadYield();
-		
-	}	
-}
-
-
-static void init_uart(void){
-		GPIO_InitTypeDef GPIO_InitStruct = {0};
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  GPIO_InitStruct.Pin = CS;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+	
+  HAL_GPIO_WritePin(GPIOD, CS, GPIO_PIN_SET);
+	
   
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-	
-//  GPIO_InitStruct.Pin = GPIO_PIN_10 |GPIO_PIN_11;
-//  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-//  GPIO_InitStruct.Pull = GPIO_NOPULL;
-//  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-//		
-//  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-	
-	uart->Initialize(uart_callback);
-	uart->PowerControl(ARM_POWER_FULL);
-	uart->Control(ARM_USART_MODE_ASYNCHRONOUS |
-                ARM_USART_DATA_BITS_8 			|
-                ARM_USART_PARITY_NONE 			|
-                ARM_USART_STOP_BITS_1 			|
-                ARM_USART_FLOW_CONTROL_NONE, baudrate);
-	
-	uart->Control(ARM_USART_CONTROL_TX,1);
-	uart->Control(ARM_USART_CONTROL_RX,1);
 }
-
-
-void uart_callback(uint32_t event){
-	uint32_t mask;
-  mask = 
-         ARM_USART_EVENT_TRANSFER_COMPLETE |
-         ARM_USART_EVENT_SEND_COMPLETE     |
-         ARM_USART_EVENT_TX_COMPLETE       ;
-	
-	if(event & mask){
-		osThreadFlagsSet(thcom_Tx,0x1);
-	}	
-	if(event & ARM_USART_EVENT_RECEIVE_COMPLETE ){
-		osThreadFlagsSet(thcom_Rx,0x1);
-	}		
+static void mySPI_Callback(uint32_t event)
+{
+	if (event & ARM_SPI_EVENT_TRANSFER_COMPLETE)
+		osThreadFlagsSet(th_id_SD, FLAG_SEND_SD);
 }
-
-void procesar_trama(uint8_t* b,uint32_t length){
-	ComData_t aux;
-	
-	aux.cmd=b[1];
-	aux.length= length-4;
-	
-	for(int i=0;i<aux.length;i++){
-		aux.buff[i]=b[i+3];
-		
-	}
-	
-	osMessageQueuePut(qCom_Rx,&aux,0,0);
-		
+static void Init_SPI_SD(void)
+{
+	SPIdrv->Initialize(mySPI_Callback);
+  SPIdrv->PowerControl(ARM_POWER_FULL);
+  SPIdrv->Control(ARM_SPI_MODE_MASTER | ARM_SPI_CPOL0_CPHA0 | 
+  ARM_SPI_MSB_LSB | ARM_SPI_DATA_BITS(8), 400000); //200 MHz
 }
-
+static uint8_t Init_SD(void)
+{
+	uint8_t rx = 0xFF;
+	Init_Pins_SD();
+	Init_SPI_SD();
+	
+	SD_CS_HIGH();
+	osDelay(10);
+	SD_CS_LOW();
+	
+	SD_SPI_TxRx(0xFF);
+	SD_SPI_TxRx(0x40);  // CMD0
+  SD_SPI_TxRx(0x00);
+  SD_SPI_TxRx(0x00);
+  SD_SPI_TxRx(0x00);
+	SD_SPI_TxRx(0x00);
+  SD_SPI_TxRx(0x95);
+	SD_SPI_TxRx(0xFF);
+	osDelay(10);
+	rx = SD_SPI_TxRx(0xFF);
+	SD_CS_HIGH();
+	SD_SPI_TxRx(0xFF);
+	return rx;
+	
+}

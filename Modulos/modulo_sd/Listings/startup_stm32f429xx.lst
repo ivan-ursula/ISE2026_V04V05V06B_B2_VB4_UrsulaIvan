@@ -887,17 +887,18 @@ ARM Macro Assembler    Page 14
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp.sp --apcs=
 interwork --depend=.\objects\startup_stm32f429xx.d -o.\objects\startup_stm32f42
-9xx.o -I.\RTE\CMSIS -I.\RTE\Device\STM32F429ZITx -I.\RTE\_Target_1 -IC:\Users\r
-icar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include -IC:\Users\rica
-r\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Driver\Include -IC:\Users\ricar
-\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\Include -IC:\Users\ricar\A
-ppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Include -IC:\Users\ricar
-\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM3
-2F4xx\Include -IC:\Users\ricar\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.15.
-0\Drivers\STM32F4xx_HAL_Driver\Inc --predefine="__RTX SETA 1" --predefine="__UV
-ISION_VERSION SETA 534" --predefine="_RTE_ SETA 1" --predefine="STM32F429xx SET
-A 1" --predefine="_RTE_ SETA 1" --list=.\listings\startup_stm32f429xx.lst RTE\D
-evice\STM32F429ZITx\startup_stm32f429xx.s
+9xx.o -I.\RTE\CMSIS -I.\RTE\Compiler -I.\RTE\Device\STM32F429ZITx -I.\RTE\_Targ
+et_1 -IC:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Includ
+e -IC:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Driver\Include
+ -IC:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\Include -
+IC:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Include
+ -IC:\Users\ricar\AppData\Local\Arm\Packs\Keil\ARM_Compiler\1.6.3\Include -IC:\
+Users\ricar\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Dev
+ice\ST\STM32F4xx\Include -IC:\Users\ricar\AppData\Local\Arm\Packs\Keil\STM32F4x
+x_DFP\2.15.0\Drivers\STM32F4xx_HAL_Driver\Inc --predefine="__RTX SETA 1" --pred
+efine="__UVISION_VERSION SETA 534" --predefine="_RTE_ SETA 1" --predefine="STM3
+2F429xx SETA 1" --predefine="_RTE_ SETA 1" --list=.\listings\startup_stm32f429x
+x.lst RTE\Device\STM32F429ZITx\startup_stm32f429xx.s
 
 
 

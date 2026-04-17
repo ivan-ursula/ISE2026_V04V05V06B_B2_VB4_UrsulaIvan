@@ -1,9 +1,10 @@
-./objects/rtx_config.o: RTE\CMSIS\RTX_Config.c \
-  C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cmsis_compiler.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h \
-  C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cmsis_armclang.h \
-  C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Include\rtx_os.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stddef.h \
-  C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\Include\cmsis_os2.h \
-  C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Include\rtx_def.h \
-  RTE\_Target_1\RTE_Components.h RTE\CMSIS\RTX_Config.h
+.\objects\rtx_config.o: RTE\CMSIS\RTX_Config.c
+.\objects\rtx_config.o: C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cmsis_compiler.h
+.\objects\rtx_config.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\rtx_config.o: C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include\cmsis_armcc.h
+.\objects\rtx_config.o: C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Include\rtx_os.h
+.\objects\rtx_config.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\rtx_config.o: C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\Include\cmsis_os2.h
+.\objects\rtx_config.o: C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Include\rtx_def.h
+.\objects\rtx_config.o: .\RTE\_Target_1\RTE_Components.h
+.\objects\rtx_config.o: .\RTE\CMSIS\RTX_Config.h
