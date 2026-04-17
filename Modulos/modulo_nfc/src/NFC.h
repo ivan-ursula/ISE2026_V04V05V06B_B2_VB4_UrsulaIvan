@@ -11,7 +11,8 @@
 #define COMIENREG 0x02
 #define DIVIENREG 0x03
 #define COMIRQREG 0x04
-
+#define ERRORREG 0x06
+#define SATUS2REG 0x08
 #define FIFODATAREG 0x0A
 #define FIFOLEVELREG 0x0A
 #define CONTROLREG 0x0C
@@ -35,11 +36,13 @@
 
 //COMANDOS MFRC5222
 
+#define IDLE 0x00
 #define TRASMIT 0x04  //trasmite FIFO a micro
 
 #define RECIVE 0x08
 #define TRANSCEIVE 0x0C //Trasmitir FIFO a tarjeta por la antena
 #define SOFTRESERT 0x0F
+
 
 //COMANDO TARJETA
 #define REQA 0x26
@@ -60,5 +63,10 @@ uint8_t NFC_read_register(uint8_t reg);
 void NFC_resert_IRQ(void);
 void NFC_antena_on(void);
 void NFC_antena_off(void);
+
+void NFC_set_mask(uint8_t reg,uint8_t mask);
+void NFC_clear_mask(uint8_t reg,uint8_t mask);
+
+int NFC_requestA(uint8_t *buff);
 
 #endif
