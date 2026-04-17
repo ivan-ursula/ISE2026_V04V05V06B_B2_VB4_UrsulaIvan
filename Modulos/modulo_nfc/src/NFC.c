@@ -12,9 +12,9 @@ osThreadId_t th_NFC;
 uint32_t flag;
 uint32_t num_byte;
 uint8_t buff[30];
-
+uint8_t uid[5];
 uint8_t datareg;
-uint8_t status_mcr;
+int8_t status_mcr;
 void thread_NFC (void *argument);
 	int init_thNFC(void){
   th_NFC = osThreadNew(thread_NFC, NULL, NULL);
@@ -24,42 +24,23 @@ void thread_NFC (void *argument);
  
   return(0);
 }
+  uint8_t version;
+
 void thread_NFC(void *argument){
   NFC_init_SPI();
 	NFC_init();
   while(1){
-    flag=osThreadFlagsWait(0Xf,osFlagsWaitAny,500);
     
-		//if(flag==2){
-			//lectura de tarjeta
-			status_mcr= NFC_read_register(COMIRQREG);
-			if(status_mcr&1){
-				NFC_wr_register(FIFOLEVELREG,0x80);
-				NFC_wr_register(FIFODATAREG,REQA);
-				NFC_wr_register(COMMANDREG,TRANSCEIVE);
-				NFC_wr_register(BITFRAMINGREG,0x80);
-				NFC_wr_register(CONTROLREG,0X40);
-				//NFC_resert_IRQ();
-			}
-			if(NFC_read_register(COMIRQREG)==0x20){
-				num_byte=(NFC_read_register(FIFOLEVELREG)&0x7F);
-				for(int i=0;i<num_byte;i++){
-					buff[i]=NFC_read_register(FIFODATAREG);
-				
-				}
-			//	NFC_resert_IRQ();
-		}			
-	//}
+    version=NFC_read_register(0x37);
+
 		//NFC_resert_IRQ();
-		status_mcr= NFC_read_register(COMIRQREG);
-		osDelay(10);
-		status_mcr= NFC_read_register(FIFODATAREG);
-		osDelay(10);
-		status_mcr= NFC_read_register(FIFODATAREG);
-		osDelay(10);
-		status_mcr= NFC_read_register(FIFODATAREG);
-		osDelay(10);
-		osThreadYield();
+    status_mcr=NFC_requestA(buff);
+		
+		if(status_mcr ==2){
+      NFC_read_UID(uid);
+      
+    }
+		osDelay(1);
 		
 		
   }
@@ -105,45 +86,20 @@ void NFC_init_SPI(void){
 }
 
 void NFC_init(void){
-  NFC_init_SPI();
   
+  osDelay(50);
+
 	NFC_wr_register(COMMANDREG,SOFTRESERT);
-	osDelay(10);
-	NFC_wr_register(COMIRQREG,0x7F);
 	
-	NFC_wr_register(FIFOLEVELREG,0x80);
-	
-//  NFC_wr_register(COMIENREG,0x21);
-//  NFC_wr_register(DIVIENREG,0x80);
-//	datareg=NFC_read_register(COMIENREG);
-	
-//	NFC_wr_register(TXMODEREG,0x00);
-//	NFC_wr_register(RXMODEREG,0x00);
-	
-//	NFC_wr_register(MODWIDTHREG,0x26);
-	
-	NFC_wr_register(TMODEREG,0x80); //90//80
-	NFC_wr_register(TPRESCALERREG,0x49); //timer 500 us	
-	NFC_wr_register(TRELOADREGH,0x00); //3e8
-	NFC_wr_register(TRELOADREGL,0xFA); //contador empieza en 250
-	
-	NFC_wr_register(TXASKREG,0x40);
-	NFC_wr_register(RFCFGREG,0x7f);
-	NFC_wr_register(DEMODREG,0x4D);
-	//NFC_wr_register(MODEREG,0x3D);
-	
-	
-	
+	NFC_wr_register(TMODEREG,0x8D); //90//80
+	NFC_wr_register(TPRESCALERREG,0x3E); //timer 500 us	
+	NFC_wr_register(TRELOADREGL,30); //3e8
+	NFC_wr_register(TRELOADREGH,0); //contador empieza en 250	
+	NFC_wr_register(TXAUTOREG,0x40);
+
+	NFC_wr_register(MODEREG,0x3D);
 	NFC_antena_on();
-	
-//	NFC_wr_register(FIFOLEVELREG,0x80);
-//	NFC_wr_register(FIFODATAREG,REQA);
-//	NFC_wr_register(COMMANDREG,TRANSCEIVE);
-//	NFC_wr_register(BITFRAMINGREG,0x80);
-//	//NFC_wr_register(CONTROLREG,0X40);
-//	NFC_wr_register(COMMANDREG,RECIVE);
-//	//NFC_resert_IRQ();
-	
+
 }
 
 
@@ -151,10 +107,7 @@ uint8_t NFC_read_register(uint8_t reg){
 	uint8_t rxmsg[2],txmsg[2];
 	txmsg[0]=0x80|(reg<<1);
 	txmsg[1]=0;
-//  SPI_NFC->Send(&reg,1);
-//  osThreadFlagsWait(0x1,osFlagsWaitAny,osWaitForever);
-//  // esperar a que termine incluir
-//  SPI_NFC->Receive(&msg,1);
+
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_RESET);
 	SPI_NFC->Transfer(txmsg,rxmsg,2);
 	
@@ -184,16 +137,17 @@ void NFC_resert_IRQ(void){
 void NFC_antena_on(void){
 	uint8_t rg;
 	rg=NFC_read_register(TXCONTROLREG);
-	NFC_wr_register(TXCONTROLREG,(rg&(~0x03)));
+	NFC_wr_register(TXCONTROLREG,(rg|0x03));
+  NFC_set_mask(TXCONTROLREG,0x03);
 }
 
 void NFC_antena_off(void){
 	uint8_t rg;
 	rg=NFC_read_register(TXCONTROLREG);
-	NFC_wr_register(TXCONTROLREG,(rg&0x03));
+	NFC_wr_register(TXCONTROLREG,(rg&(~0x03)));
 	
 }
-uint8_t err;
+
 void NFC_SPI_callback(uint32_t evn){
   
   switch (evn){
@@ -202,16 +156,128 @@ void NFC_SPI_callback(uint32_t evn){
       osThreadFlagsSet(th_NFC,1);
       break;
         case ARM_SPI_EVENT_DATA_LOST:
-					err=1;
+					
         break;
     case ARM_SPI_EVENT_MODE_FAULT:
-			err=2;
+			
         break;
     
     
     
   }
   
+}
+uint8_t err;
+uint8_t fifodata_lh;
+uint8_t status;
+uint8_t irq_status;
+int NFC_requestA(uint8_t *buff){
+	uint8_t irq_en=0x77;
+	uint8_t irq=0x30;
+	uint8_t aux;
+	 uint8_t n,i;
+  uint8_t trasmit_fin;
+
+	NFC_wr_register(BITFRAMINGREG,0x07);
+	
+	NFC_wr_register(COMIENREG,irq_en);
+	
+	NFC_clear_mask(COMIRQREG,0x80);
+	NFC_set_mask(FIFOLEVELREG,0x80);
+	NFC_wr_register(COMMANDREG,IDLE);
+	
+	NFC_wr_register(FIFODATAREG,REQA);
+	NFC_wr_register(COMMANDREG,TRANSCEIVE);
+	NFC_set_mask(BITFRAMINGREG,0x80);	
+	
+	  i = 0xFFFF;
+  do
+  {
+    //CommIrqReg[7..0]
+    //Set1 TxIRq RxIRq IdleIRq HiAlerIRq LoAlertIRq ErrIRq TimerIRq
+    n = NFC_read_register( COMIRQREG );
+    i--;
+  }
+  while ( i && !(n & 0x01) && !( n & irq ) );
+	
+	NFC_clear_mask(BITFRAMINGREG,0x80);
+  if (i != 0)
+  {
+    if( !( NFC_read_register( ERRORREG ) & 0x1B ) ) //BufferOvfl Collerr CRCErr ProtecolErr
+    {
+         n = NFC_read_register( FIFOLEVELREG );
+        trasmit_fin=(NFC_read_register(CONTROLREG)&0x07);
+        for(int b=0;b<n;b++){
+					buff[b]=NFC_read_register(FIFODATAREG);
+				
+				}
+				return n;
+    }
+
+  }	
+	
+	return 0;
+}
+
+void NFC_read_UID(uint8_t *buff){
+  //DATA 0X93 0X20
+  uint8_t irq_en=0x77;
+	uint8_t irq=0x30;
+	uint8_t aux;
+	uint8_t n,i;
+  uint8_t trasmit_fin;
+  NFC_wr_register(BITFRAMINGREG,0x00);
+  NFC_clear_mask(STATUS2REG,0x08);
+	NFC_wr_register(COMIENREG,irq_en);
+	NFC_clear_mask(COMIRQREG,0x80);
+	NFC_set_mask(FIFOLEVELREG,0x80);
+	NFC_wr_register(COMMANDREG,IDLE);
+	NFC_wr_register(FIFODATAREG,UID_1);
+  NFC_wr_register(FIFODATAREG,UID_2);
+	NFC_wr_register(COMMANDREG,TRANSCEIVE);
+	NFC_set_mask(BITFRAMINGREG,0x80);	
+	
+	  i = 0xFFFF;
+  do
+  {
+    //CommIrqReg[7..0]
+    //Set1 TxIRq RxIRq IdleIRq HiAlerIRq LoAlertIRq ErrIRq TimerIRq
+    n = NFC_read_register( COMIRQREG );
+    i--;
+  }
+  while ( i && !(n & 0x01) && !( n & irq ) );
+	
+	NFC_clear_mask(BITFRAMINGREG,0x80);
+  if (i != 0)
+  {
+    if( !( NFC_read_register( ERRORREG ) & 0x1B ) ) //BufferOvfl Collerr CRCErr ProtecolErr
+    {
+         n = NFC_read_register( FIFOLEVELREG );
+        trasmit_fin=(NFC_read_register(CONTROLREG)&0x07);
+        for(int b=0;b<n;b++){
+					buff[b]=NFC_read_register(FIFODATAREG);
+				
+				}
+				
+    }
+
+  }	
+	
+
+  
+  
+  
+  
+}
+void NFC_set_mask(uint8_t reg,uint8_t mask){
+	uint8_t aux;
+	aux=NFC_read_register(reg);
+	NFC_wr_register(reg,aux|mask);
+}
+void NFC_clear_mask(uint8_t reg,uint8_t mask){
+	uint8_t aux;
+	aux=NFC_read_register(reg);
+	NFC_wr_register(reg,aux&(~mask));
 }
 void EXTI15_10_IRQHandler(void){
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_10);
@@ -225,6 +291,5 @@ void  HAL_GPIO_EXTI_Callback(uint16_t pin){
 		
 		osThreadFlagsSet(th_NFC,2);
 	}
-
-
 }
+
