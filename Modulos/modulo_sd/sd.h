@@ -10,5 +10,7 @@
 #define SD_CS_LOW()   HAL_GPIO_WritePin(GPIOD, CS, GPIO_PIN_RESET)
 #define SD_CS_HIGH()  HAL_GPIO_WritePin(GPIOD, CS, GPIO_PIN_SET)
 
+static uint8_t Init_SD(void);
+
 #endif
 

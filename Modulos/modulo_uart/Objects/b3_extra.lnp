@@ -3,7 +3,7 @@
 ".\objects\main.o"
 ".\objects\prueba_thcom.o"
 ".\objects\stm32f4xx_it.o"
-"..\..\..\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Library\ARM\RTX_CM4F.lib"
+"..\..\..\..\..\..\..\..\..\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Library\ARM\RTX_CM4F.lib"
 ".\objects\rtx_lib.o"
 ".\objects\rtx_config.o"
 ".\objects\i2c_stm32f4xx.o"

@@ -86,5 +86,13 @@ static uint8_t Init_SD(void)
 	SD_CS_HIGH();
 	SD_SPI_TxRx(0xFF);
 	return rx;
-	
+}
+static uint8_t SD_SPI_TxRx(uint8_t tx)
+{
+    uint8_t rx = 0xFF;
+
+    SPIdrv->Transfer(&tx, &rx, 1);
+    osThreadFlagsWait(FLAG_SEND_SD, osFlagsWaitAny, osWaitForever);
+
+    return rx;
 }
