@@ -17,23 +17,40 @@ int init_thVCNL(void){
   return(0);
   
 }
-uint16_t id_vcncl;
+uint16_t id_vcnl,in_flag;
 uint32_t flag;
 void thread_VCNL(void *argument){
   VCNL_init_I2C();
+	VCNL_init();
+	in_flag=VCNL_read_reg(INT_FLAG);
   while(1){
-		VCNL_write_reg(ALS_THDH_H,0xf1f2);
-		id_vcncl= VCNL_read_reg(ALS_THDH_H);
-		flag=osThreadFlagsWait(0x01,osFlagsWaitAny,osWaitForever);
-    
-		osDelay(1000);
-		
+		id_vcnl=VCNL_read_reg(PS_DATA);
+			
+		flag=osThreadFlagsWait(0x02,osFlagsWaitAny,100);
+    if(flag==2){
+			in_flag=VCNL_read_reg(INT_FLAG);//hay que leer el flag de int o no se enviara a la siguiente vez
+			VCNL_init();
+		}
+	//	osDelay(1);
+		in_flag=VCNL_read_reg(INT_FLAG);
+		osThreadYield();
   }
   
 }
 
 void VCNL_init_I2C(void){
   __HAL_RCC_GPIOB_CLK_ENABLE();
+	GPIO_InitTypeDef gpio;
+		
+	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+	gpio.Mode=GPIO_MODE_IT_FALLING;
+	gpio.Pull=GPIO_NOPULL;
+	gpio.Speed=GPIO_SPEED_FREQ_VERY_HIGH;
+	
+	gpio.Pin=GPIO_PIN_10;
+	HAL_GPIO_Init(GPIOB,&gpio);
+	
+	
   vcnl_i2c->Initialize(I2C_callback);
   vcnl_i2c->PowerControl(ARM_POWER_FULL);
   vcnl_i2c->Control(ARM_I2C_BUS_SPEED,ARM_I2C_BUS_SPEED_STANDARD);
@@ -43,7 +60,10 @@ void VCNL_init_I2C(void){
 
 void VCNL_init(void){
   VCNL_write_reg(ALS_CONF,0x0001);
-	VCNL_write_reg(PS_CONF,0x0001);
+	VCNL_write_reg(PS_THDL_L,0x0000);
+	VCNL_write_reg(PS_THDL_H,0x000A);
+	VCNL_write_reg(PS_CONF,0x0100);//0x30
+
 	
   
 }

@@ -152,22 +152,6 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>27</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134235326</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\src\vcnl.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\nfc\../src/vcnl.c\27</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
           <LineNumber>0</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>220</Address>
@@ -182,7 +166,7 @@
           <Expression>0x000000DC</Expression>
         </Bp>
         <Bp>
-          <Number>2</Number>
+          <Number>1</Number>
           <Type>0</Type>
           <LineNumber>0</LineNumber>
           <EnabledFlag>1</EnabledFlag>
@@ -202,17 +186,17 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>id_vcncl</ItemText>
+          <ItemText>id_vcnl,0x10</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>data</ItemText>
+          <ItemText>flag</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>reg</ItemText>
+          <ItemText>in_flag</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
