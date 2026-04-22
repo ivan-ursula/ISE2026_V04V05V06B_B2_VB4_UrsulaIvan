@@ -22,23 +22,12 @@ Dialog DLL:      TCM.DLL V1.48.0.0
  
 <h2>Project:</h2>
 C:\Users\ricar\OneDrive\Universidad\Cuarto ano\ise\B2\repo\ISE2026_V04V05V06B_B2_VB4_UrsulaIvan\Modulos\modulo_sd\b3_extra.uvprojx
-Project File Date:  04/17/2026
+Project File Date:  04/21/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Target 1'
-compiling diskio.c...
-compiling ff.c...
-linking...
-.\Objects\b3_extra.axf: Error: L6218E: Undefined symbol disk_initialize (referred from ff.o).
-.\Objects\b3_extra.axf: Error: L6218E: Undefined symbol disk_ioctl (referred from ff.o).
-.\Objects\b3_extra.axf: Error: L6218E: Undefined symbol disk_read (referred from ff.o).
-.\Objects\b3_extra.axf: Error: L6218E: Undefined symbol disk_status (referred from ff.o).
-.\Objects\b3_extra.axf: Error: L6218E: Undefined symbol disk_write (referred from ff.o).
-Not enough information to list image symbols.
-Not enough information to list load addresses in the image map.
-Finished: 2 information, 0 warning and 5 error messages.
-".\Objects\b3_extra.axf" - 5 Error(s), 0 Warning(s).
+".\Objects\b3_extra.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -56,7 +45,15 @@ Package Vendor: Keil
                 Keil.ARM_Compiler.1.6.3
                 Keil ARM Compiler extensions for ARM Compiler 5 and ARM Compiler 6
    * Component: Event Recorder Variant: DAP Version: 1.4.0
+   * Component: File Variant: File System Version: 1.2.0
    * Component: STDOUT Variant: ITM Version: 1.2.0
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.MDK-Middleware.7.13.0.pack
+                Keil.MDK-Middleware.7.13.0
+                Middleware for Keil MDK-Professional and MDK-Plus
+   * Component: CORE Variant: LFN Debug Version: 6.14.1
+   * Component: Memory Card Version: 6.14.1
 
 Package Vendor: Keil
                 http://www.keil.com/pack/Keil.STM32F4xx_DFP.2.15.0.pack
@@ -81,12 +78,14 @@ Package Vendor: Keil
   .\RTE\CMSIS
   .\RTE\Compiler
   .\RTE\Device\STM32F429ZITx
+  .\RTE\File_System
   .\RTE\_Target_1
   C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include
   C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Driver\Include
   C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\Include
   C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Include
   C:\Users\ricar\AppData\Local\Arm\Packs\Keil\ARM_Compiler\1.6.3\Include
+  C:\Users\ricar\AppData\Local\Arm\Packs\Keil\MDK-Middleware\7.13.0\FileSystem\Include
   C:\Users\ricar\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
   C:\Users\ricar\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.15.0\Drivers\STM32F4xx_HAL_Driver\Inc
 
@@ -103,42 +102,54 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE:5.5.0
 
    * Component: ARM::CMSIS:RTOS2:Keil RTX5:Library:5.5.3
-      Include file:  CMSIS\RTOS2\RTX\Include\rtx_os.h
+      Source file:   CMSIS\RTOS2\RTX\Template\svc_user.c
       Include file:  CMSIS\RTOS2\RTX\Config\RTX_Config.h
       Source file:   CMSIS\RTOS2\RTX\Config\RTX_Config.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Mutex.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Thread.c
       Source file:   CMSIS\RTOS2\RTX\Template\MemPool.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Timer.c
       Source file:   CMSIS\RTOS2\RTX\Source\rtx_lib.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Semaphore.c
+      Include file:  CMSIS\RTOS2\RTX\Include\rtx_os.h
       Library file:  CMSIS\RTOS2\RTX\Library\ARM\RTX_CM4F.lib
       Source file:   CMSIS\RTOS2\RTX\Template\main.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Timer.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Thread.c
-      Source file:   CMSIS\RTOS2\RTX\Template\svc_user.c
-      Source file:   CMSIS\RTOS2\RTX\Template\MsgQueue.c
       Source file:   CMSIS\RTOS2\RTX\Template\Events.c
+      Source file:   CMSIS\RTOS2\RTX\Template\MsgQueue.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Mutex.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Semaphore.c
 
    * Component: Keil.ARM Compiler::Compiler:Event Recorder:DAP:1.4.0
+      Source file:   Source\EventRecorder.c
       Include file:  Config\EventRecorderConf.h
       Include file:  Include\EventRecorder.h
-      Source file:   Source\EventRecorder.c
+
+   * Component: Keil.ARM Compiler::Compiler:I/O:File:File System:1.2.0
+      Source file:   Source\retarget_io.c
 
    * Component: Keil.ARM Compiler::Compiler:I/O:STDOUT:ITM:1.2.0
       Source file:   Source\retarget_io.c
+
+   * Component: Keil.MDK-Plus::File System:CORE:LFN Debug:6.14.1
+      Include file:  FileSystem\Include\rl_fs.h
+      Library file:  FileSystem\Lib\ARM\FS_Dbg_LFN_CM3_L.lib
+      Source file:   FileSystem\Config\FS_Debug.c
+      Source file:   FileSystem\Config\FS_Config.c
+
+   * Component: Keil.MDK-Plus::File System:Drive:Memory Card:6.14.1
+      Include file:  FileSystem\Config\FS_Config_MC.h
 
    * Component: Keil::CMSIS Driver:SPI:2.15
       Source file:   CMSIS\Driver\SPI_STM32F4xx.c
 
    * Component: Keil::Device:STM32Cube Framework:Classic:1.7.9
+      Include file:  CMSIS\Driver\Config\RTE_Device.h
       Include file:  MDK\Templates\Inc\stm32f4xx_hal_conf.h
-      Include file:  MDK\Templates\Inc\main.h
-      Source file:   MDK\Templates\Src\main.c
       Include file:  MDK\Templates\Inc\stm32f4xx_it.h
-      Source file:   MDK\Templates\Src\stm32f4xx_it.c
-      Source file:   MDK\Templates_LL\Src\main.c
       Include file:  MDK\Templates_LL\Inc\main.h
       Source file:   MDK\Templates\Src\stm32f4xx_hal_msp.c
-      Include file:  CMSIS\Driver\Config\RTE_Device.h
+      Source file:   MDK\Templates\Src\stm32f4xx_it.c
+      Include file:  MDK\Templates\Inc\main.h
+      Source file:   MDK\Templates\Src\main.c
+      Source file:   MDK\Templates_LL\Src\main.c
 
    * Component: Keil::Device:STM32Cube HAL:ADC:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc.c
@@ -159,8 +170,8 @@ Package Vendor: Keil
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c
 
    * Component: Keil::Device:STM32Cube HAL:PWR:1.7.9
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c
 
    * Component: Keil::Device:STM32Cube HAL:RCC:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.c
@@ -170,20 +181,19 @@ Package Vendor: Keil
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c
 
    * Component: Keil::Device:STM32Cube HAL:SRAM:1.7.9
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fmc.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sram.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fmc.c
 
    * Component: Keil::Device:STM32Cube HAL:TIM:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c
 
    * Component: Keil::Device:Startup:2.6.3
-      Source file:   MDK\Device\Source\ARM\STM32F42xxx_43xxx_OPT.s
-      Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f429xx.s
-      Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
       Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
+      Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
+      Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f429xx.s
+      Source file:   MDK\Device\Source\ARM\STM32F42xxx_43xxx_OPT.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c
-Target not created.
 Build Time Elapsed:  00:00:01
 </pre>
 </body>

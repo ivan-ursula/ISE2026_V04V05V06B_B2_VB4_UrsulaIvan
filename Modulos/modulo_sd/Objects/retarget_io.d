@@ -6,3 +6,11 @@
 .\objects\retarget_io.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\assert.h
 .\objects\retarget_io.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\rt_sys.h
 .\objects\retarget_io.o: .\RTE\_Target_1\RTE_Components.h
+.\objects\retarget_io.o: C:\Users\ricar\AppData\Local\Arm\Packs\Keil\MDK-Middleware\7.13.0\FileSystem\Include\rl_fs_lib.h
+.\objects\retarget_io.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\objects\retarget_io.o: C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Driver\Include\Driver_MCI.h
+.\objects\retarget_io.o: C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Driver\Include\Driver_Common.h
+.\objects\retarget_io.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\retarget_io.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\retarget_io.o: C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Driver\Include\Driver_SPI.h
+.\objects\retarget_io.o: C:\Users\ricar\AppData\Local\Arm\Packs\Keil\MDK-Middleware\7.13.0\FileSystem\Include\rl_fs.h

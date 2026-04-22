@@ -22,9 +22,19 @@
 /* Keil.ARM Compiler::Compiler:Event Recorder:DAP:1.4.0 */
 #define RTE_Compiler_EventRecorder
           #define RTE_Compiler_EventRecorder_DAP
+/* Keil.ARM Compiler::Compiler:I/O:File:File System:1.2.0 */
+#define RTE_Compiler_IO_File            /* Compiler I/O: File */
+          #define RTE_Compiler_IO_File_FS         /* Compiler I/O: File (File System) */
 /* Keil.ARM Compiler::Compiler:I/O:STDOUT:ITM:1.2.0 */
 #define RTE_Compiler_IO_STDOUT          /* Compiler I/O: STDOUT */
           #define RTE_Compiler_IO_STDOUT_ITM      /* Compiler I/O: STDOUT ITM */
+/* Keil.MDK-Plus::File System:CORE:LFN Debug:6.14.1 */
+#define RTE_FileSystem_Core             /* File System Core */
+          #define RTE_FileSystem_LFN              /* File System with Long Filename support */
+          #define RTE_FileSystem_Debug            /* File System Debug Version */
+/* Keil.MDK-Plus::File System:Drive:Memory Card:6.14.1 */
+#define RTE_FileSystem_Drive_MC_0       /* File System Memory Card Drive 0 */
+
 /* Keil::CMSIS Driver:SPI:2.15 */
 #define RTE_Drivers_SPI1                /* Driver SPI1 */
         #define RTE_Drivers_SPI2                /* Driver SPI2 */
