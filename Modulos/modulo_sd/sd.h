@@ -2,13 +2,23 @@
 #define __SD_H
 
 #include "stm32f4xx_hal.h"
+#include "cmsis_os2.h"
 
-#define FLAG_SEND_SD 0x01
+#define BUFSD_MAX 128
+#define MSGQUEUE_OBJECTS_SD 1
 
-#define CS GPIO_PIN_14
+#define ALARM 0x01
+#define NFC 0x02
 
-#define SD_CS_LOW()   HAL_GPIO_WritePin(GPIOD, CS, GPIO_PIN_RESET)
-#define SD_CS_HIGH()  HAL_GPIO_WritePin(GPIOD, CS, GPIO_PIN_SET)
+
+
+typedef struct 
+{
+	char BufSD[BUFSD_MAX];
+	
+} MSGQUEUE_OBJ_SD;
+
+extern osMessageQueueId_t mid_Msg_SD;
 
 #endif
 
