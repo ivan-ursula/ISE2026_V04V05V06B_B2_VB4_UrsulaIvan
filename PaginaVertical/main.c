@@ -39,7 +39,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "LCD.h"
 
 #ifdef RTE_CMSIS_RTOS2_RTX5
 /**

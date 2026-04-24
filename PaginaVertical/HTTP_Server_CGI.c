@@ -11,15 +11,6 @@
 #include <string.h>
 #include "cmsis_os2.h"                  // ::CMSIS:RTOS2
 #include "rl_net.h"                     // Keil.MDK-Pro::Network:CORE
-#include "Board_LED.h"                  // ::Board Support:LED
-
-#include "LCD.h"
-#include "adc.h"
-#include "rtc.h"
-
-extern osMessageQueueId_t mid_Msg_LCD;
-extern osMessageQueueId_t mid_Msg_ADC;
-extern osMessageQueueId_t mid_Msg_Date;
 
 #if      defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
 #pragma  clang diagnostic push
@@ -27,17 +18,10 @@ extern osMessageQueueId_t mid_Msg_Date;
 #endif
 
 
-//extern thLed;
-extern osThreadId_t thLed;
-extern osThreadId_t tid_ThLCD;
-
 // Local variables.
 static uint8_t P2;
 static uint8_t ip_addr[NET_ADDR_IP6_LEN];
 static char    ip_string[40];
-static MSGQUEUE_OBJ_LCD enviado; 
-uint32_t recibido_adc; 
-static MSGQUEUE_OBJ_DATE fecha_rec;
 
 // My structure of CGI status variable.
 typedef struct {
@@ -130,15 +114,12 @@ void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
       // First character is non-null, string exists
       if (strcmp (var, "led0=on") == 0) {
         P2 |= 0x01;
-        osThreadFlagsSet(thLed, P2);
       }
       else if (strcmp (var, "led1=on") == 0) {
         P2 |= 0x02;
-        osThreadFlagsSet(thLed, P2);
       }
       else if (strcmp (var, "led2=on") == 0) {
         P2 |= 0x04;
-        osThreadFlagsSet(thLed, P2);
       }
       else if (strcmp (var, "ctrl=Browser") == 0) {
 //        LEDrun = false;
@@ -158,17 +139,9 @@ void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
       }
       else if (strncmp (var, "lcd1=", 5) == 0) {
         // LCD Module line 1 text
-        strcpy (enviado.BufLCD, var+5);
-        enviado.linea = 1;
-        enviado.length = strlen(enviado.BufLCD);
-        osMessageQueuePut(mid_Msg_LCD, &enviado, 0, 0);
       }
       else if (strncmp (var, "lcd2=", 5) == 0) {
         // LCD Module line 2 text
-        strcpy (enviado.BufLCD, var+5);
-        enviado.linea = 2;
-        enviado.length = strlen(enviado.BufLCD);
-        osMessageQueuePut(mid_Msg_LCD, &enviado, 0, 0);
       }
     }
   } while (data);
@@ -255,9 +228,6 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
       }
       id = (uint8_t)(1U << id);
       len = (uint32_t)sprintf (buf, &env[4], (P2 & id) ? "checked" : "");
-      if (P2 == 0){
-        osThreadFlagsSet(thLed, 0x08);
-      }
       break;
 
     case 'c':
@@ -351,55 +321,25 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
       // AD Input from 'ad.cgi'
       switch (env[2]) {
         case '1':
-          osMessageQueueGet(mid_Msg_ADC, &recibido_adc, NULL, 0);
-          len = (uint32_t)sprintf (buf, &env[4], recibido_adc);
           break;
         
         case '2':
-          osMessageQueueGet(mid_Msg_ADC, &recibido_adc, NULL, 0);
-          len = (uint32_t)sprintf (buf, &env[4], recibido_adc*3.3/4096);
           break;
         
         case '3':
-          osMessageQueueGet(mid_Msg_ADC, &recibido_adc, NULL, 0);
-          len = (uint32_t)sprintf (buf, &env[4], recibido_adc*100/4096);
           break;
       }
       break;
 
     case 'x':
       // AD Input from 'ad.cgx'
-      osMessageQueueGet(mid_Msg_ADC, &recibido_adc, NULL, 0);
-      len = (uint32_t)sprintf (buf, &env[1], recibido_adc);
       break;
 
     case 'y':
       // Button state from 'button.cgx'
-//      len = (uint32_t)sprintf (buf, "<checkbox><id>button%c</id><on>%s</on></checkbox>",
-//                               env[1], (get_button () & (1 << (env[1]-'0'))) ? "true" : "false");
       break;
     
     case 'z':
-      osMessageQueueGet(mid_Msg_Date, &fecha_rec, NULL, 0);
-      switch (env[2]) {
-        case '1':
-          
-          strcpy (enviado.BufLCD, fecha_rec.BufHour);
-          enviado.linea = 1;
-          enviado.length = strlen(enviado.BufLCD);
-          osMessageQueuePut(mid_Msg_LCD, &enviado, 0, 0);
-          len = (uint32_t)sprintf(buf, &env[4], fecha_rec.BufHour);
-          break;
-        
-        case '2':
-    
-          strcpy (enviado.BufLCD, fecha_rec.BufDate);
-          enviado.linea = 2;
-          enviado.length = strlen(enviado.BufLCD);
-          osMessageQueuePut(mid_Msg_LCD, &enviado, 0, 0);
-          len = (uint32_t)sprintf(buf, &env[4], fecha_rec.BufDate);
-          break;
-      }
       
       break;
   }
