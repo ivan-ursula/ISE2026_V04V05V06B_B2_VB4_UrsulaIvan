@@ -1,0 +1,66 @@
+<html style="height:100%;">
+<head>
+<title>Web Server Demo</title>
+
+<style>
+table a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 40px;
+  margin-top: 50px;
+  display: block;
+  text-shadow: 2px 2px 4px rgba(0,0,0,1);
+}
+h2 {
+  text-shadow: 2px 2px 4px rgba(0,0,0,1);
+}
+</style>
+
+</head>
+
+<body style="margin:0; height:100%;">
+
+<table width="100%" height="100%" cellpadding="0" cellspacing="0" style="height:100%;">
+<tr style="background:linear-gradient(to right, #000000 2%, #1C8DFF 98%);">
+
+  <!-- COLUMNA IZQUIERDA -->
+  <td style="width:30%; height:100%; padding-top:60px;">
+
+    <table width="100%" height="100%" cellpadding="0" cellspacing="0" style="height:100%;">
+
+      <!-- 20% SUPERIOR -->
+      <tr height="20%">
+        <td style="text-align:center; color:#ffffff;">
+          <h2 style="margin:10px; font-size:40px; font-family:Georgia;">
+            TAQUILLA INTELIGENTE
+          </h2>
+          <a href="https://github.com/ivan-ursula/ISE2026_V04V05V06B_B2_VB4_UrsulaIvan" target="_blank">
+            <img src="palapico.png" style="max-width:30%; height:auto;">
+          </a>
+        </td>
+      </tr>
+
+      <!-- 80% MENÚ -->
+      <tr height="80%">
+        <td style="vertical-align:top; text-align:center; font-family:Georgia;">
+          <a href="/inicio.cgi" target="contenido">INICIO</a>
+          <a href="/language.cgi" target="contenido">LANGUAGE</a>
+          <a href="/gest_tarj.cgi" target="contenido">GESTIÓN DE TARJETAS</a>
+          <a href="/alertas.cgi" target="contenido">REGISTRO DE ALERTAS</a>
+        </td>
+      </tr>
+
+    </table>
+
+  </td>
+
+  <!-- COLUMNA DERECHA -->
+  <td style="width:70%; padding-right:100px;">
+    <iframe name="contenido" src="/inicio.cgi" style="width:95%; height:100%; border:none;"></iframe>
+  </td>
+
+</tr>
+</table>
+
+</body>
+</html>
