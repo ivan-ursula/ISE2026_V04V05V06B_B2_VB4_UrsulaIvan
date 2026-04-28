@@ -22,6 +22,7 @@
 int init_thVCNL(void);
 void VCNL_init(void);
 void VCNL_init_I2C(void);
+
 void I2C_callback(uint32_t event);
 
 void VCNL_write_reg(uint8_t reg, uint16_t data);

@@ -1,11 +1,11 @@
 #include "vcnl.h"
-
+#include <stdio.h>
 extern ARM_DRIVER_I2C Driver_I2C1;
 
 ARM_DRIVER_I2C *vcnl_i2c=&Driver_I2C1;
 
 osThreadId_t th_VCNL;
-
+GPIO_InitTypeDef gpio;
 void thread_VCNL(void *argument);
 
 int init_thVCNL(void){
@@ -22,17 +22,20 @@ uint32_t flag;
 void thread_VCNL(void *argument){
   VCNL_init_I2C();
 	VCNL_init();
-	in_flag=VCNL_read_reg(INT_FLAG);
+  HAL_GPIO_Init(GPIOB,&gpio);
+	
   while(1){
 		id_vcnl=VCNL_read_reg(PS_DATA);
-			
-		flag=osThreadFlagsWait(0x02,osFlagsWaitAny,100);
+  //in_flag=VCNL_read_reg(INT_FLAG);
+		flag=osThreadFlagsWait(0x02,osFlagsWaitAny,osWaitForever);
     if(flag==2){
-			in_flag=VCNL_read_reg(INT_FLAG);//hay que leer el flag de int o no se enviara a la siguiente vez
-			VCNL_init();
+			
+			in_flag=VCNL_read_reg(INT_FLAG);
+
+     
 		}
-	//	osDelay(1);
-		in_flag=VCNL_read_reg(INT_FLAG);
+
+		
 		osThreadYield();
   }
   
@@ -40,16 +43,20 @@ void thread_VCNL(void *argument){
 
 void VCNL_init_I2C(void){
   __HAL_RCC_GPIOB_CLK_ENABLE();
-	GPIO_InitTypeDef gpio;
+	GPIO_InitTypeDef gpio1;
 		
-	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+	
 	gpio.Mode=GPIO_MODE_IT_FALLING;
 	gpio.Pull=GPIO_NOPULL;
-	gpio.Speed=GPIO_SPEED_FREQ_VERY_HIGH;
-	
+	gpio.Speed=GPIO_SPEED_FREQ_LOW;
 	gpio.Pin=GPIO_PIN_10;
-	HAL_GPIO_Init(GPIOB,&gpio);
 	
+	
+	
+	gpio1.Mode=GPIO_MODE_OUTPUT_PP;
+	gpio1.Pull=GPIO_NOPULL;
+	gpio1.Pin=GPIO_PIN_11;
+	HAL_GPIO_Init(GPIOB,&gpio1);
 	
   vcnl_i2c->Initialize(I2C_callback);
   vcnl_i2c->PowerControl(ARM_POWER_FULL);
@@ -59,12 +66,14 @@ void VCNL_init_I2C(void){
 }
 
 void VCNL_init(void){
-  VCNL_write_reg(ALS_CONF,0x0001);
-	VCNL_write_reg(PS_THDL_L,0x0000);
-	VCNL_write_reg(PS_THDL_H,0x000A);
-	VCNL_write_reg(PS_CONF,0x0100);//0x30
 
 	
+  VCNL_write_reg(ALS_CONF,0x0001);
+	VCNL_write_reg(PS_THDL_L,0x0004);
+	VCNL_write_reg(PS_THDL_H,0x000A);
+	VCNL_write_reg(PS_CONF,0x01FE);//1=cerca 2=lejos        0x30 
+	osDelay(200);
+	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn); // para evitar falsos positivos durante la configuracion
   
 }
 
@@ -97,9 +106,10 @@ void EXTI15_10_IRQHandler(void){
 void  HAL_GPIO_EXTI_Callback(uint16_t pin){
 	
 	if(pin==GPIO_PIN_10){
+
+      osThreadFlagsSet(th_VCNL,2);
+
 		
-		
-		osThreadFlagsSet(th_VCNL,2);
 	}
 }
 uint32_t mask;
