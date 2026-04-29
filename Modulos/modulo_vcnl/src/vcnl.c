@@ -27,7 +27,7 @@ void thread_VCNL(void *argument){
   while(1){
 		id_vcnl=VCNL_read_reg(PS_DATA);
   //in_flag=VCNL_read_reg(INT_FLAG);
-		flag=osThreadFlagsWait(0x02,osFlagsWaitAny,osWaitForever);
+		flag=osThreadFlagsWait(0x02,osFlagsWaitAny, 100);
     if(flag==2){
 			
 			in_flag=VCNL_read_reg(INT_FLAG);
@@ -47,8 +47,8 @@ void VCNL_init_I2C(void){
 		
 	
 	gpio.Mode=GPIO_MODE_IT_FALLING;
-	gpio.Pull=GPIO_NOPULL;
-	gpio.Speed=GPIO_SPEED_FREQ_LOW;
+	gpio.Pull=GPIO_PULLUP;
+	gpio.Speed=GPIO_SPEED_FREQ_VERY_HIGH;
 	gpio.Pin=GPIO_PIN_10;
 	
 	

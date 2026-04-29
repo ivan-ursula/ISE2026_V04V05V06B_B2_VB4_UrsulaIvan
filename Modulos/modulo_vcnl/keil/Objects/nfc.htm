@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\nfc.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\nfc.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6160001: Last Updated: Tue Apr 28 17:21:26 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6160001: Last Updated: Wed Apr 29 13:19:55 2026
 <BR><P>
 <H3>Maximum Stack Usage =        168 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1279,7 +1279,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;thread_VCNL
 </UL>
 
-<P><STRONG><a name="[e7]"></a>VCNL_init_I2C</STRONG> (Thumb, 140 bytes, Stack size 32 bytes, vcnl.o(.text.VCNL_init_I2C))
+<P><STRONG><a name="[e7]"></a>VCNL_init_I2C</STRONG> (Thumb, 144 bytes, Stack size 32 bytes, vcnl.o(.text.VCNL_init_I2C))
 <BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = VCNL_init_I2C &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_Init
@@ -1903,7 +1903,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;thread_VCNL
 </UL>
 
-<P><STRONG><a name="[67]"></a>thread_VCNL</STRONG> (Thumb, 96 bytes, Stack size 0 bytes, vcnl.o(.text.thread_VCNL))
+<P><STRONG><a name="[67]"></a>thread_VCNL</STRONG> (Thumb, 94 bytes, Stack size 0 bytes, vcnl.o(.text.thread_VCNL))
 <BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = thread_VCNL &rArr; VCNL_init_I2C &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[17f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadYield
