@@ -413,6 +413,11 @@
               <FileType>5</FileType>
               <FilePath>..\src\stm32f4xx_it.h</FilePath>
             </File>
+            <File>
+              <FileName>prueba.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\prueba.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

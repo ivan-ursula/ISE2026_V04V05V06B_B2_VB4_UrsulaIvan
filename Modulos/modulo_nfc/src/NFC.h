@@ -88,7 +88,13 @@
 #define UID_1 0x93
 #define UID_2 0x20
 
-extern osThreadId_t th_NFC;
+typedef struct{
+	uint8_t buff[5];
+	uint8_t length;
+	
+} msg_nfc;
+
+//extern osThreadId_t th_NFC;
 
 int init_thNFC(void);
 
@@ -105,6 +111,6 @@ void NFC_set_mask(uint8_t reg,uint8_t mask);
 void NFC_clear_mask(uint8_t reg,uint8_t mask);
 
 int NFC_requestA(uint8_t *buff);
-void NFC_read_UID(uint8_t *buff);
+int NFC_read_UID(uint8_t *buff);
 
 #endif

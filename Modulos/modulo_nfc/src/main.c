@@ -113,6 +113,7 @@ int main(void)
   /* Create thread functions that start executing, 
   Example: osThreadNew(app_main, NULL, NULL); */
 		init_thNFC();
+		Init_Thread(); 
   /* Start thread execution */
   osKernelStart();
 #endif

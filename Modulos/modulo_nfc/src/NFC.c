@@ -8,16 +8,18 @@ FUNCIONES DE HILO
 
 ***********************/
 osThreadId_t th_NFC;
+osMessageQueueId_t q_nfc;
 
 uint32_t flag;
 uint32_t num_byte;
 uint8_t buff[30];
-uint8_t uid[5];
+//uint8_t uid[5];
 uint8_t datareg;
 int8_t status_mcr;
 void thread_NFC (void *argument);
 	int init_thNFC(void){
   th_NFC = osThreadNew(thread_NFC, NULL, NULL);
+	q_nfc = osMessageQueueNew(5,sizeof(msg_nfc),NULL);
   if (th_NFC == NULL) {
     return(-1);
   }
@@ -25,22 +27,28 @@ void thread_NFC (void *argument);
   return(0);
 }
   uint8_t version;
-
+	msg_nfc msg;
 void thread_NFC(void *argument){
   NFC_init_SPI();
-	NFC_init();
+	//NFC_init();
   while(1){
-    
+		//poner en alto el resert
+		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_8,1);
+		osDelay(50);
+		NFC_init();
+		
     version=NFC_read_register(0x37);
 
 		//NFC_resert_IRQ();
     status_mcr=NFC_requestA(buff);
 		
 		if(status_mcr ==2){
-      NFC_read_UID(uid);
-      
+     msg.length= NFC_read_UID(msg.buff);
+     osMessageQueuePut(q_nfc,&msg,0,0);
     }
-		osDelay(1);
+		//resert fuerte
+		HAL_GPIO_WritePin(GPIOE,GPIO_PIN_8,0);
+		osDelay(300);
 		
 		
   }
@@ -57,18 +65,19 @@ void NFC_init_SPI(void){
 	__HAL_RCC_GPIOC_CLK_ENABLE();
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 	__HAL_RCC_GPIOB_CLK_ENABLE();
+	__HAL_RCC_GPIOE_CLK_ENABLE();
 	
   GPIO_InitTypeDef gpio;
 	GPIO_InitTypeDef GPIO_InitStruct;
 	//iniciar interrupcion
 	
-	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
-	gpio.Mode=GPIO_MODE_IT_RISING;
-	gpio.Pull=GPIO_PULLDOWN;
-	gpio.Speed=GPIO_SPEED_FREQ_VERY_HIGH;
 	
-	gpio.Pin=GPIO_PIN_10;
-	HAL_GPIO_Init(GPIOB,&gpio);
+	gpio.Mode=GPIO_MODE_OUTPUT_PP;
+	gpio.Pull=GPIO_PULLUP;
+	gpio.Speed=GPIO_SPEED_FREQ_HIGH;
+	
+	gpio.Pin=GPIO_PIN_8;
+	HAL_GPIO_Init(GPIOE,&gpio);
 	
 	
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -126,12 +135,6 @@ void NFC_wr_register(uint8_t reg,uint8_t data){
   osThreadFlagsWait(0x1,osFlagsWaitAny,osWaitForever);
   HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_SET);
   
-}
-
-void NFC_resert_IRQ(void){
-	uint8_t a;
-	a=NFC_read_register(COMIRQREG);
-	NFC_wr_register(COMIRQREG,(0x7F&a));
 }
 
 void NFC_antena_on(void){
@@ -219,7 +222,7 @@ int NFC_requestA(uint8_t *buff){
 	return 0;
 }
 
-void NFC_read_UID(uint8_t *buff){
+int NFC_read_UID(uint8_t *buff){
   //DATA 0X93 0X20
   uint8_t irq_en=0x77;
 	uint8_t irq=0x30;
@@ -258,17 +261,16 @@ void NFC_read_UID(uint8_t *buff){
 					buff[b]=NFC_read_register(FIFODATAREG);
 				
 				}
-				
+		 
+				return n;
     }
 
   }	
-	
 
-  
-  
-  
+  return 0;
   
 }
+
 void NFC_set_mask(uint8_t reg,uint8_t mask){
 	uint8_t aux;
 	aux=NFC_read_register(reg);
@@ -279,17 +281,3 @@ void NFC_clear_mask(uint8_t reg,uint8_t mask){
 	aux=NFC_read_register(reg);
 	NFC_wr_register(reg,aux&(~mask));
 }
-void EXTI15_10_IRQHandler(void){
-	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_10);
-
-}
-
-void  HAL_GPIO_EXTI_Callback(uint16_t pin){
-	
-	if(pin==GPIO_PIN_10){
-		
-		
-		osThreadFlagsSet(th_NFC,2);
-	}
-}
-
