@@ -8,24 +8,20 @@
 //principio y fin de trrama
 #define SOH 0X01
 #define EOT 0XFE
+
+
+//CMD
 #define HORA 0X20
-
-//CMD para acelelometro
-#define AX_R 0X25
-#define AY_R 0X26
-#define AZ_R 0X27
-
-#define A_ALL 0X55
-#define CLEAR_ALL 0X60
-
-// Respuestas 
-
 #define RESP_HORA 0XDF
-#define RESP_AX_R 0XDA
-#define RESP_AY_R 0XD9
-#define RESP_AZ_R 0XD9
-#define RESP_A_ALL 0XAF
-#define RESP_CLEAR_ALL 0X60
+
+#define DORMIR 0x21
+#define LECTURA_NFC 0x70
+#define LECTURA_PESO 0x80
+#define LECTURA_TENSION 0x81
+#define LECTURA_CORRIENTE 
+#define ESTADO_TAQUILLA 0X83
+
+
 
 typedef struct{
 	uint8_t cmd;
