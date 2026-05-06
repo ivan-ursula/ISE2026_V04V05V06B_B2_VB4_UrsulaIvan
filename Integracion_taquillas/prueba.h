@@ -5,6 +5,7 @@
 #include "NFC.h"
 #include "com.h"
 #include "RTC.h"
+#include "adc.h"
 typedef enum{
 	ACTIVO,
 	BAJO_CONSUMO,

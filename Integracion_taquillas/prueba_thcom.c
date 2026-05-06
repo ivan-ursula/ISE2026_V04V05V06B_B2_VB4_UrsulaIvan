@@ -9,11 +9,14 @@ osThreadId_t thmain;
 extern osMessageQueueId_t q_nfc;
 extern osMessageQueueId_t qCom_Tx;
 extern osMessageQueueId_t qCom_Rx;
+extern osMessageQueueId_t q_adc_peticion;
+extern osMessageQueueId_t q_adc_data;
 
 //VARIABLES DE COLAS DE MENSAJES
 msg_nfc uid;
 ComData_t msg_tx;
 ComData_t msg_rx;
+msg_adc_data data_adc;
 uint8_t status_q;
 
 //TIMER HILO PRINCIPAL
@@ -68,6 +71,7 @@ void th_main (void *argument) {
                        
   }
 }
+uint8_t elementos;
 
 void estado_Activo(void){
 	status_q=osMessageQueueGet(qCom_Rx,&msg_rx,0,20);
@@ -151,7 +155,23 @@ void comp_cmd(ComData_t com_data){
 			
 			
 		}
-	
+		if(msg_rx.cmd==LECTURA_CORRIENTE||msg_rx.cmd==LECTURA_PESO||msg_rx.cmd==LECTURA_TENSION){
+			osMessageQueuePut(q_adc_peticion,&msg_rx.cmd,0,5);
+			
+			status_q=osMessageQueueGet(q_adc_data,&data_adc  ,0,100);
+			elementos=osMessageQueueGetCount(q_adc_data);
+			if(status_q==osOK){
+				if(data_adc.cmd==RESP_LECTURA_PESO){
+					msg_tx.length=sprintf(msg_tx.buff,"%.2f-%2.f",data_adc.valor1,data_adc.valor2);
+					osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+					
+				}else{
+					msg_tx.length=sprintf(msg_tx.buff,"%.2f",data_adc.valor1);
+					osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+				}
+			}		
+			
+		}
 }
 
 void TimerRTC_Callback(void const *arg){

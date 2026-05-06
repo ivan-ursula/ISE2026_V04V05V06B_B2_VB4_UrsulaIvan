@@ -26,8 +26,8 @@ int init_thcom (void) {
   thcom_Tx = osThreadNew(th_com_Tx, NULL, NULL);
 	thcom_Rx = osThreadNew(th_com_Rx, NULL, NULL);
 	
-	qCom_Tx = osMessageQueueNew(10,sizeof(ComData_t),NULL);
-	qCom_Rx = osMessageQueueNew(10,sizeof(ComData_t),NULL);
+	qCom_Tx = osMessageQueueNew(15,sizeof(ComData_t),NULL);
+	qCom_Rx = osMessageQueueNew(15,sizeof(ComData_t),NULL);
 	
 	init_uart();
   if (thcom_Tx == NULL || thcom_Rx == NULL) {

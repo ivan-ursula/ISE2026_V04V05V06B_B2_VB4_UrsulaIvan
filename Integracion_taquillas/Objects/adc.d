@@ -1,5 +1,4 @@
-./objects/stm32f4xx_it.o: stm32f4xx_it.c \
-  RTE\_Target_1\Pre_Include_Global.h main.h \
+./objects/adc.o: adc.c RTE\_Target_1\Pre_Include_Global.h \
   C:\Users\Equipo\ bateria\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h \
   RTE\Device\STM32F429ZITx\stm32f4xx_hal_conf.h \
   RTE\_Target_1\RTE_Components.h \
@@ -38,4 +37,4 @@
   C:\Users\Equipo\ bateria\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim.h \
   C:\Users\Equipo\ bateria\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h \
   C:\Users\Equipo\ bateria\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_usart.h \
-  stm32f4xx_it.h
+  adc.h
