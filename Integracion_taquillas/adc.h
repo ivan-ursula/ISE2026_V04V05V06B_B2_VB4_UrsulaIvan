@@ -4,7 +4,7 @@
 #define VREF 3.3f
 #define delta_taquilla 3.3f/4096
 #define CANAL_T1 10
-#define CANAL_T2 11
+#define CANAL_T2 13
 
 typedef struct{
 	
@@ -14,6 +14,6 @@ typedef struct{
 } msg_adc_data;
 
 void ADC1_pins_F429ZI_config(void);
-int ADC_Init_Single_Conversion(ADC_HandleTypeDef *, ADC_TypeDef  *);
+int ADC_Init(ADC_HandleTypeDef *, ADC_TypeDef  *);
 uint32_t ADC_getData(ADC_HandleTypeDef * , uint32_t );
 #endif

@@ -11,20 +11,20 @@ void thread_ADC (void *argument);
 int Init_thADC(void) {
  
   th_ADC = osThreadNew(thread_ADC, NULL, NULL);
-	q_adc_peticion=osMessageQueueNew(5,sizeof(uint32_t),NULL);
+	q_adc_peticion=osMessageQueueNew(5,sizeof(uint8_t),NULL);
 	
-	q_adc_data=osMessageQueueNew(5,sizeof(uint32_t),NULL);
+	q_adc_data=osMessageQueueNew(5,sizeof(msg_adc_data),NULL);
   if (th_ADC == NULL) {
     return(-1);
   }
  
   return(0);
 }
-uint32_t peticion;
+uint8_t peticion;
 msg_adc_data dato;
 void thread_ADC (void *argument) {
 	ADC1_pins_F429ZI_config();
-	ADC_Init_Single_Conversion(&adc, ADC1);
+	ADC_Init(&adc, ADC1);
   while (1) {
 		osMessageQueueGet(q_adc_peticion,&peticion,0,osWaitForever);
 		
@@ -33,7 +33,7 @@ void thread_ADC (void *argument) {
 			dato.valor2=ADC_getData(&adc,CANAL_T2)*delta_taquilla;
 			
 			dato.cmd=RESP_LECTURA_PESO;
-			osMessageQueuePut(q_adc_data,&dato,0,0);
+			
 			
 		}
 	  if(peticion==LECTURA_TENSION){
@@ -41,7 +41,7 @@ void thread_ADC (void *argument) {
 			dato.valor2=ADC_getData(&adc,CANAL_T2)*delta_taquilla;
 			
 			dato.cmd=RESP_LECTURA_TENSION;
-			osMessageQueuePut(q_adc_data,&dato,0,0);
+			
 			
 		}
 		if(peticion==LECTURA_CORRIENTE){
@@ -49,8 +49,10 @@ void thread_ADC (void *argument) {
 			dato.valor2=ADC_getData(&adc,CANAL_T2)*delta_taquilla;
 			
 			dato.cmd=RESP_LECTURA_CORRIENTE;
-			osMessageQueuePut(q_adc_data,&dato,0,0);
+			
 			
 		}
+		
+		osMessageQueuePut(q_adc_data,&dato,0,0);
   }
 }
