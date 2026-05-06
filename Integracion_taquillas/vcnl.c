@@ -6,7 +6,7 @@ ARM_DRIVER_I2C *vcnl_i2c=&Driver_I2C1;
 
 osThreadId_t th_id_VCNL;
 void thread_VCNL(void *argument);
-void INT_init (void);
+
 uint16_t id_vcnl,in_flag;
 uint32_t flag;
 

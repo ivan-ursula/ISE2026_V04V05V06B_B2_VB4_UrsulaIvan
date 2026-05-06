@@ -1,4 +1,5 @@
 #include "sleep.h"
+#include "vcnl.h"
 #include "main.h"
 
 void SleepMode_Measure(void)
@@ -63,8 +64,10 @@ void SleepMode_Measure(void)
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
   HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 	
-	/* Habilitar PInterrupción sensor de presencia*/
-  
+	/* Habilitar PIN de interrupción sensor de presencia*/
+  INT_init();
+	VCNL_init_I2C();
+	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
   /* Suspend Tick increment to prevent wakeup by Systick interrupt. 
      Otherwise the Systick interrupt will wake up the device within 1ms (HAL time base) */
