@@ -458,6 +458,26 @@
               <FileType>1</FileType>
               <FilePath>.\th_adc.c</FilePath>
             </File>
+            <File>
+              <FileName>sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sleep.c</FilePath>
+            </File>
+            <File>
+              <FileName>sleep.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\sleep.h</FilePath>
+            </File>
+            <File>
+              <FileName>vcnl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\vcnl.c</FilePath>
+            </File>
+            <File>
+              <FileName>vcnl.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\vcnl.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

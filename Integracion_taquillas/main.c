@@ -55,6 +55,7 @@ int main(void)
 	init_thcom();
 	init_thNFC();
 	Init_main();
+	
 
   
 	

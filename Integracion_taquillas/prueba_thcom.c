@@ -1,6 +1,7 @@
 #include "cmsis_os2.h"     
 #include "stm32f4xx_hal.h"
 #include "prueba.h"
+#include "RTC.h"
 #include <time.h>
 
 //ID DE HILOS
@@ -93,9 +94,13 @@ void estado_Activo(void){
 		msg_tx.cmd=0x20;
 		msg_tx.length=0;
 		osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
-		flag_tim_rtc=1;
+		flag_tim_rtc=0;
 		
 	}
+}
+void estado_Bajo_Consumo(void)
+{
+	
 }
 
 void comp_cmd(ComData_t com_data){
@@ -113,39 +118,23 @@ void comp_cmd(ComData_t com_data){
 		case DORMIR: // AQUI HACE LA TRANSICION A MODO BAJO_CONSUMO
 			
 			//RTC_AlarmTypeDef alarma;
-			sscanf(msg_rx.buff,"%d:%d:%d %d/%d/%d-%d:%d:%d %d/%d/%d", ts.tm_hour,
-																																ts.tm_min,
-																																ts.tm_sec,
-																																ts.tm_mday,
-																																ts.tm_mon,
-																																ts.tm_year,
-																															  alarma.AlarmTime.Hours,
-		                                                            alarma.AlarmTime.Minutes, 
-																																alarma.AlarmTime.Seconds);
+		sscanf((char*)msg_rx.buff,
+           "%d:%d:%d %d/%d/%d-%d:%d:%d %d/%d/%d",
+           &ts.tm_hour,  &ts.tm_min,  &ts.tm_sec,
+           &ts.tm_mday,  &ts.tm_mon,  &ts.tm_year,
+		       &alarma.AlarmTime.Hours,
+           &alarma.AlarmTime.Minutes,
+           &alarma.AlarmTime.Seconds);
 		
+		ts.tm_mon  -= 1;
+		ts.tm_year -= 1900;
 		
-//		alarma.AlarmTime.Hours=0;
-//  alarma.AlarmTime.Minutes=0;
-//  alarma.AlarmTime.Seconds=5;
-//  alarma.AlarmTime.SubSeconds=0;
-			RTC_CalendarConfig(ts);
-		
-		
-			alarma.AlarmTime.TimeFormat=RTC_HOURFORMAT_24;
-  
-			alarma.AlarmTime.DayLightSaving=RTC_DAYLIGHTSAVING_NONE;
-			alarma.AlarmTime.StoreOperation=RTC_STOREOPERATION_RESET;
-  
-			alarma.AlarmMask=RTC_ALARMMASK_DATEWEEKDAY|RTC_ALARMMASK_HOURS|RTC_ALARMMASK_MINUTES;
-  
-			alarma.AlarmSubSecondMask=RTC_ALARMSUBSECONDMASK_ALL;
-			alarma.AlarmDateWeekDaySel=RTC_ALARMDATEWEEKDAYSEL_DATE;
-  
-			alarma.AlarmDateWeekDay=0x01;
-			alarma.Alarm=RTC_ALARM_A;
-			HAL_RTC_SetAlarm_IT(&RtcHandle,&alarma,RTC_FORMAT_BCD);
-			HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
+		RTC_CalendarConfig(ts);
 
+    // Configurar alarma con la hora de despertar
+		RTC_Set_AlarmWakeup(alarma.AlarmTime);
+
+    estado = BAJO_CONSUMO;
 		
 			break;
 			

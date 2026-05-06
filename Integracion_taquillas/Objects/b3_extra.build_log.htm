@@ -5,7 +5,7 @@
 <h2>Tool Versions:</h2>
 IDE-Version: µVision V5.34.0.0
 Copyright (C) 2021 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: ivan ursula upm Flex license: MDK Professional 5.34 (Flex) (mdk_pro) Operation stops: 24 Jan 2027
+License Information: Ricardo Daniel Socorro UPM Flex license: MDK Professional 5.34 (Flex) (mdk_pro) Operation stops: 24 Jan 2027
  
 Tool Versions:
 Toolchain:       MDK Professional 5.34 (Flex)  Version: 5.34.0.0
@@ -21,21 +21,12 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.8.0
 Dialog DLL:      TCM.DLL V1.48.0.0
  
 <h2>Project:</h2>
-J:\4_carrera\ISE\repositorio\BLOQUE2\Integracion_taquillas\b3_extra.uvprojx
-Project File Date:  05/04/2026
+C:\Users\ricar\OneDrive\Universidad\Cuarto ano\ise\B2\repo\ISE2026_V04V05V06B_B2_VB4_UrsulaIvan\Integracion_taquillas\b3_extra.uvprojx
+Project File Date:  05/05/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V6.16', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'Target 1'
-compiling com.c...
-prueba_thcom.c(86): warning: passing 'uint8_t [50]' to parameter of type 'const char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
-                        sscanf(msg_rx.buff,"");
-                               ^~~~~~~~~~~
-C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h(529): note: passing argument to parameter here
-extern _ARMABI int sscanf(const char * __restrict /*s*/,
-                                                       ^
-1 warning generated.
-compiling prueba_thcom.c...
 main.c(55): warning: implicit declaration of function 'init_thcom' is invalid in C99 [-Wimplicit-function-declaration]
         init_thcom();
         ^
@@ -47,13 +38,72 @@ main.c(57): warning: implicit declaration of function 'Init_main' is invalid in 
         ^
 3 warnings generated.
 compiling main.c...
-RTC.c(1): warning: In file included from...
-./RTC.h(7): error: 'rl_net.h' file not found
-#include "rl_net.h"
-         ^~~~~~~~~~
-1 error generated.
-compiling RTC.c...
+compiling adc.c...
+compiling com.c...
 compiling stm32f4xx_it.c...
+prueba_thcom.c(109): warning: passing 'uint8_t [50]' to parameter of type 'const char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
+                        sscanf(msg_rx.buff,"%d:%d:%d %d/%d/%d", ts.tm_hour,
+                               ^~~~~~~~~~~
+C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h(529): note: passing argument to parameter here
+extern _ARMABI int sscanf(const char * __restrict /*s*/,
+                                                       ^
+prueba_thcom.c(109): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                        sscanf(msg_rx.buff,"%d:%d:%d %d/%d/%d", ts.tm_hour,
+                                            ~~                  ^~~~~~~~~~
+prueba_thcom.c(110): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                        ts.tm_min,
+                                                                                                                                                                                        ^~~~~~~~~
+prueba_thcom.c(111): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                        ts.tm_sec,
+                                                                                                                                                                                        ^~~~~~~~~
+prueba_thcom.c(112): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                        ts.tm_mday,
+                                                                                                                                                                                        ^~~~~~~~~~
+prueba_thcom.c(113): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                        ts.tm_mon,
+                                                                                                                                                                                        ^~~~~~~~~
+prueba_thcom.c(114): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                        ts.tm_year);
+                                                                                                                                                                                        ^~~~~~~~~~
+prueba_thcom.c(120): warning: passing 'uint8_t [50]' to parameter of type 'const char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
+                        sscanf(msg_rx.buff,"%d:%d:%d %d/%d/%d-%d:%d:%d %d/%d/%d", ts.tm_hour,
+                               ^~~~~~~~~~~
+C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h(529): note: passing argument to parameter here
+extern _ARMABI int sscanf(const char * __restrict /*s*/,
+                                                       ^
+prueba_thcom.c(120): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                        sscanf(msg_rx.buff,"%d:%d:%d %d/%d/%d-%d:%d:%d %d/%d/%d", ts.tm_hour,
+                                            ~~                                    ^~~~~~~~~~
+prueba_thcom.c(121): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                                                                                                ts.tm_min,
+                                                                                                                                                                                                                                                                ^~~~~~~~~
+prueba_thcom.c(122): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                                                                                                ts.tm_sec,
+                                                                                                                                                                                                                                                                ^~~~~~~~~
+prueba_thcom.c(123): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                                                                                                ts.tm_mday,
+                                                                                                                                                                                                                                                                ^~~~~~~~~~
+prueba_thcom.c(124): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                                                                                                ts.tm_mon,
+                                                                                                                                                                                                                                                                ^~~~~~~~~
+prueba_thcom.c(125): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                                                                                                ts.tm_year,
+                                                                                                                                                                                                                                                                ^~~~~~~~~~
+prueba_thcom.c(126): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                                                                                          alarma.AlarmTime.Hours,
+                                                                                                                                                                                                                                                          ^~~~~~~~~~~~~~~~~~~~~~
+prueba_thcom.c(127): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                            alarma.AlarmTime.Minutes, 
+                                                                            ^~~~~~~~~~~~~~~~~~~~~~~~
+prueba_thcom.c(128): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                                                                                                alarma.AlarmTime.Seconds);
+                                                                                                                                                                                                                                                                ^~~~~~~~~~~~~~~~~~~~~~~~
+prueba_thcom.c(120): warning: more '%' conversions than data arguments [-Wformat-insufficient-args]
+                        sscanf(msg_rx.buff,"%d:%d:%d %d/%d/%d-%d:%d:%d %d/%d/%d", ts.tm_hour,
+                                                                       ~^
+18 warnings generated.
+compiling prueba_thcom.c...
+compiling RTC.c...
 NFC.c(196): warning: implicit conversion from 'int' to 'uint8_t' (aka 'unsigned char') changes value from 65535 to 255 [-Wconstant-conversion]
           i = 0xFFFF;
             ~ ^~~~~~
@@ -62,30 +112,51 @@ NFC.c(243): warning: implicit conversion from 'int' to 'uint8_t' (aka 'unsigned 
             ~ ^~~~~~
 2 warnings generated.
 compiling NFC.c...
+compiling th_adc.c...
+sleep.c(69): error: use of undeclared identifier 'LD3_Pin'
+  GPIO_InitStruct.Pin = LD3_Pin;
+                        ^
+sleep.c(74): error: use of undeclared identifier 'LD3_Pin'
+  HAL_GPIO_WritePin(GPIOB, LD3_Pin, GPIO_PIN_SET);
+                           ^
+sleep.c(86): error: use of undeclared identifier 'tid_Thread_LD1'
+  osThreadFlagsSet(tid_Thread_LD1, 0x08);
+                   ^
+sleep.c(87): warning: implicit declaration of function 'netUninitialize' is invalid in C99 [-Wimplicit-function-declaration]
+  netUninitialize();
+  ^
+sleep.c(88): warning: implicit declaration of function 'netInitialize' is invalid in C99 [-Wimplicit-function-declaration]
+  netInitialize();
+  ^
+2 warnings and 3 errors generated.
+compiling sleep.c...
 compiling rtx_lib.c...
+compiling vcnl.c...
 compiling RTX_Config.c...
 compiling I2C_STM32F4xx.c...
 compiling SPI_STM32F4xx.c...
-compiling USART_STM32F4xx.c...
 compiling stm32f4xx_hal.c...
-compiling stm32f4xx_hal_adc.c...
 compiling stm32f4xx_hal_adc_ex.c...
 compiling stm32f4xx_hal_cortex.c...
 compiling stm32f4xx_hal_dma.c...
+compiling stm32f4xx_hal_adc.c...
+compiling USART_STM32F4xx.c...
 compiling stm32f4xx_hal_dma_ex.c...
 compiling stm32f4xx_hal_gpio.c...
 compiling stm32f4xx_hal_i2c_ex.c...
 compiling stm32f4xx_hal_pwr.c...
 compiling stm32f4xx_hal_pwr_ex.c...
 compiling stm32f4xx_hal_rcc.c...
-compiling stm32f4xx_hal_i2c.c...
 compiling stm32f4xx_hal_rcc_ex.c...
-compiling stm32f4xx_hal_spi.c...
+compiling stm32f4xx_hal_i2c.c...
+compiling stm32f4xx_hal_rtc.c...
+compiling stm32f4xx_hal_rtc_ex.c...
 compiling stm32f4xx_hal_tim_ex.c...
+compiling stm32f4xx_hal_spi.c...
 compiling stm32f4xx_hal_usart.c...
-compiling stm32f4xx_hal_tim.c...
 compiling system_stm32f4xx.c...
-".\Objects\b3_extra.axf" - 1 Error(s), 6 Warning(s).
+compiling stm32f4xx_hal_tim.c...
+".\Objects\b3_extra.axf" - 3 Error(s), 25 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -101,37 +172,38 @@ Package Vendor: ARM
    * Component: Keil RTX5 Variant: Library Version: 5.5.3
 
 Package Vendor: Keil
-                https://www.keil.com/pack/Keil.STM32F4xx_DFP.2.17.1.pack
-                Keil.STM32F4xx_DFP.2.17.1
+                http://www.keil.com/pack/Keil.STM32F4xx_DFP.2.15.0.pack
+                Keil.STM32F4xx_DFP.2.15.0
                 STMicroelectronics STM32F4 Series Device Support, Drivers and Examples
    * Component: STM32Cube Framework Version: 1.0.0
-   * Component: I2C Version: 2.12
-   * Component: SPI Version: 2.18
-   * Component: USART Version: 2.16
-   * Component: Classic Version: 1.8.1
-   * Component: ADC Version: 1.8.1
-   * Component: Common Version: 1.8.1
-   * Component: Cortex Version: 1.8.1
-   * Component: DMA Version: 1.8.1
-   * Component: GPIO Version: 1.8.1
-   * Component: I2C Version: 1.8.1
-   * Component: PWR Version: 1.8.1
-   * Component: RCC Version: 1.8.1
-   * Component: SPI Version: 1.8.1
-   * Component: TIM Version: 1.8.1
-   * Component: USART Version: 1.8.1
+   * Component: I2C Version: 2.10
+   * Component: SPI Version: 2.15
+   * Component: USART Version: 2.13
+   * Component: Classic Version: 1.7.9
+   * Component: ADC Version: 1.7.9
+   * Component: Common Version: 1.7.9
+   * Component: Cortex Version: 1.7.9
+   * Component: DMA Version: 1.7.9
+   * Component: GPIO Version: 1.7.9
+   * Component: I2C Version: 1.7.9
+   * Component: PWR Version: 1.7.9
+   * Component: RCC Version: 1.7.9
+   * Component: RTC Version: 1.7.9
+   * Component: SPI Version: 1.7.9
+   * Component: TIM Version: 1.7.9
+   * Component: USART Version: 1.7.9
    * Component: Startup Version: 2.6.3
 
 <h2>Collection of Component include folders:</h2>
   .\RTE\CMSIS
   .\RTE\Device\STM32F429ZITx
   .\RTE\_Target_1
-  C:\Users\Equipo bateria\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include
-  C:\Users\Equipo bateria\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Driver\Include
-  C:\Users\Equipo bateria\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\Include
-  C:\Users\Equipo bateria\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Include
-  C:\Users\Equipo bateria\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include
-  C:\Users\Equipo bateria\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\STM32F4xx_HAL_Driver\Inc
+  C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include
+  C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Driver\Include
+  C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\Include
+  C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Include
+  C:\Users\ricar\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
+  C:\Users\ricar\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.15.0\Drivers\STM32F4xx_HAL_Driver\Inc
 
 <h2>Collection of Component Files used:</h2>
 
@@ -152,89 +224,93 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE:5.5.0
 
    * Component: ARM::CMSIS:RTOS2:Keil RTX5:Library:5.5.3
-      Source file:   CMSIS\RTOS2\RTX\Template\Timer.c
-      Source file:   CMSIS\RTOS2\RTX\Template\svc_user.c
-      Include file:  CMSIS\RTOS2\RTX\Config\RTX_Config.h
-      Source file:   CMSIS\RTOS2\RTX\Template\main.c
-      Source file:   CMSIS\RTOS2\RTX\Config\RTX_Config.c
-      Source file:   CMSIS\RTOS2\RTX\Template\MsgQueue.c
-      Include file:  CMSIS\RTOS2\RTX\Include\rtx_os.h
-      Source file:   CMSIS\RTOS2\RTX\Template\Thread.c
-      Library file:  CMSIS\RTOS2\RTX\Library\ARM\RTX_CM4F.lib
-      Source file:   CMSIS\RTOS2\RTX\Template\Mutex.c
-      Source file:   CMSIS\RTOS2\RTX\Template\MemPool.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Semaphore.c
       Source file:   CMSIS\RTOS2\RTX\Source\rtx_lib.c
       Source file:   CMSIS\RTOS2\RTX\Template\Events.c
+      Source file:   CMSIS\RTOS2\RTX\Template\main.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Mutex.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Semaphore.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Thread.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Timer.c
+      Source file:   CMSIS\RTOS2\RTX\Template\MemPool.c
+      Source file:   CMSIS\RTOS2\RTX\Template\MsgQueue.c
+      Source file:   CMSIS\RTOS2\RTX\Template\svc_user.c
+      Library file:  CMSIS\RTOS2\RTX\Library\ARM\RTX_CM3.lib
+      Source file:   CMSIS\RTOS2\RTX\Config\RTX_Config.c
+      Include file:  CMSIS\RTOS2\RTX\Config\RTX_Config.h
+      Include file:  CMSIS\RTOS2\RTX\Include\rtx_os.h
 
-   * Component: Keil::CMSIS Driver:I2C:2.12
+   * Component: Keil::CMSIS Driver:I2C:2.10
       Source file:   CMSIS\Driver\I2C_STM32F4xx.c
 
-   * Component: Keil::CMSIS Driver:SPI:2.18
+   * Component: Keil::CMSIS Driver:SPI:2.15
       Source file:   CMSIS\Driver\SPI_STM32F4xx.c
 
-   * Component: Keil::CMSIS Driver:USART:2.16
+   * Component: Keil::CMSIS Driver:USART:2.13
       Source file:   CMSIS\Driver\USART_STM32F4xx.c
 
-   * Component: Keil::Device:STM32Cube Framework:Classic:1.8.1
-      Source file:   MDK\Templates_LL\Src\main.c
+   * Component: Keil::Device:STM32Cube Framework:Classic:1.7.9
+      Include file:  CMSIS\Driver\Config\RTE_Device.h
       Include file:  MDK\Templates\Inc\main.h
-      Source file:   MDK\Templates\Src\stm32f4xx_hal_msp.c
-      Include file:  MDK\Templates\Inc\stm32f4xx_it.h
       Include file:  MDK\Templates_LL\Inc\main.h
       Source file:   MDK\Templates\Src\stm32f4xx_it.c
+      Include file:  MDK\Templates\Inc\stm32f4xx_it.h
+      Source file:   MDK\Templates\Src\stm32f4xx_hal_msp.c
+      Source file:   MDK\Templates_LL\Src\main.c
       Include file:  MDK\Templates\Inc\stm32f4xx_hal_conf.h
       Source file:   MDK\Templates\Src\main.c
-      Include file:  CMSIS\Driver\Config\RTE_Device.h
 
-   * Component: Keil::Device:STM32Cube HAL:ADC:1.8.1
+   * Component: Keil::Device:STM32Cube HAL:ADC:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc_ex.c
 
-   * Component: Keil::Device:STM32Cube HAL:Common:1.8.1
+   * Component: Keil::Device:STM32Cube HAL:Common:1.7.9
       Include file:  Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c
 
-   * Component: Keil::Device:STM32Cube HAL:Cortex:1.8.1
+   * Component: Keil::Device:STM32Cube HAL:Cortex:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c
 
-   * Component: Keil::Device:STM32Cube HAL:DMA:1.8.1
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma_ex.c
+   * Component: Keil::Device:STM32Cube HAL:DMA:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma_ex.c
 
-   * Component: Keil::Device:STM32Cube HAL:GPIO:1.8.1
+   * Component: Keil::Device:STM32Cube HAL:GPIO:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c
 
-   * Component: Keil::Device:STM32Cube HAL:I2C:1.8.1
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c_ex.c
+   * Component: Keil::Device:STM32Cube HAL:I2C:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c_ex.c
 
-   * Component: Keil::Device:STM32Cube HAL:PWR:1.8.1
+   * Component: Keil::Device:STM32Cube HAL:PWR:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c
 
-   * Component: Keil::Device:STM32Cube HAL:RCC:1.8.1
+   * Component: Keil::Device:STM32Cube HAL:RCC:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c
 
-   * Component: Keil::Device:STM32Cube HAL:SPI:1.8.1
+   * Component: Keil::Device:STM32Cube HAL:RTC:1.7.9
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rtc.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rtc_ex.c
+
+   * Component: Keil::Device:STM32Cube HAL:SPI:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c
 
-   * Component: Keil::Device:STM32Cube HAL:TIM:1.8.1
+   * Component: Keil::Device:STM32Cube HAL:TIM:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c
 
-   * Component: Keil::Device:STM32Cube HAL:USART:1.8.1
+   * Component: Keil::Device:STM32Cube HAL:USART:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_usart.c
 
    * Component: Keil::Device:Startup:2.6.3
       Source file:   MDK\Device\Source\ARM\STM32F42xxx_43xxx_OPT.s
-      Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
       Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
+      Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f429xx.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c
 Target not created.
-Build Time Elapsed:  00:00:43
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>

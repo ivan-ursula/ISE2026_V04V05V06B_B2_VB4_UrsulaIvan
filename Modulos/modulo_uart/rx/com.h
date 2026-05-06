@@ -8,24 +8,27 @@
 //principio y fin de trrama
 #define SOH 0X01
 #define EOT 0XFE
-#define HORA 0X20
 
-//CMD para acelelometro
-#define AX_R 0X25
-#define AY_R 0X26
-#define AZ_R 0X27
+//CMD pagina web (PW)
+#define B_C    0X21
+#define L_P    0x80
+#define L_T    0X81
+#define L_I    0x83
 
-#define A_ALL 0X55
-#define CLEAR_ALL 0X60
+//CMD taquilla
+#define H_F    0X20
+#define ALR    0x25
+#define NFC_R  0X70
 
 // Respuestas 
 
-#define RESP_HORA 0XDF
-#define RESP_AX_R 0XDA
-#define RESP_AY_R 0XD9
-#define RESP_AZ_R 0XD9
-#define RESP_A_ALL 0XAF
-#define RESP_CLEAR_ALL 0X60
+#define RESP_B_C   0XDE
+#define RESP_L_P   0X7F
+#define RESP_L_T   0X7E
+#define RESP_L_I   0X7D
+#define RESP_H_F   0X
+#define RESP_ALR   0XAF
+#define RESP_NFC_R 0X60
 
 typedef struct{
 	uint8_t cmd;
