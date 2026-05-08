@@ -6,6 +6,7 @@
 #include "com.h"
 #include "RTC.h"
 #include "adc.h"
+#include "sleep.h"
 typedef enum{
 	ACTIVO,
 	BAJO_CONSUMO,

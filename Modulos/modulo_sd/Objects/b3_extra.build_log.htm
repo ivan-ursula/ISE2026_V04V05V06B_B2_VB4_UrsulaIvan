@@ -27,13 +27,7 @@ Project File Date:  04/21/2026
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Target 1'
-compiling sd.c...
-sd.c(196): warning:  #1-D: last line of file ends without a newline
-  }
-sd.c: 1 warning, 0 errors
-linking...
-Program Size: Code=42732 RO-data=2620 RW-data=34872 ZI-data=8624  
-".\Objects\b3_extra.axf" - 0 Error(s), 1 Warning(s).
+".\Objects\b3_extra.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -108,25 +102,25 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE:5.5.0
 
    * Component: ARM::CMSIS:RTOS2:Keil RTX5:Library:5.5.3
-      Library file:  CMSIS\RTOS2\RTX\Library\ARM\RTX_CM4F.lib
       Source file:   CMSIS\RTOS2\RTX\Template\Timer.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Events.c
       Source file:   CMSIS\RTOS2\RTX\Source\rtx_lib.c
       Source file:   CMSIS\RTOS2\RTX\Template\svc_user.c
+      Library file:  CMSIS\RTOS2\RTX\Library\ARM\RTX_CM4F.lib
+      Include file:  CMSIS\RTOS2\RTX\Config\RTX_Config.h
+      Source file:   CMSIS\RTOS2\RTX\Template\MemPool.c
       Source file:   CMSIS\RTOS2\RTX\Template\Mutex.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Thread.c
+      Include file:  CMSIS\RTOS2\RTX\Include\rtx_os.h
       Source file:   CMSIS\RTOS2\RTX\Template\MsgQueue.c
       Source file:   CMSIS\RTOS2\RTX\Template\Semaphore.c
-      Include file:  CMSIS\RTOS2\RTX\Config\RTX_Config.h
-      Source file:   CMSIS\RTOS2\RTX\Config\RTX_Config.c
       Source file:   CMSIS\RTOS2\RTX\Template\main.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Events.c
-      Source file:   CMSIS\RTOS2\RTX\Template\MemPool.c
-      Include file:  CMSIS\RTOS2\RTX\Include\rtx_os.h
+      Source file:   CMSIS\RTOS2\RTX\Template\Thread.c
+      Source file:   CMSIS\RTOS2\RTX\Config\RTX_Config.c
 
    * Component: Keil.ARM Compiler::Compiler:Event Recorder:DAP:1.4.0
       Source file:   Source\EventRecorder.c
-      Include file:  Include\EventRecorder.h
       Include file:  Config\EventRecorderConf.h
+      Include file:  Include\EventRecorder.h
 
    * Component: Keil.ARM Compiler::Compiler:I/O:File:File System:1.2.0
       Source file:   Source\retarget_io.c
@@ -136,9 +130,9 @@ Package Vendor: Keil
 
    * Component: Keil.MDK-Plus::File System:CORE:LFN Debug:6.14.1
       Source file:   FileSystem\Config\FS_Debug.c
-      Include file:  FileSystem\Include\rl_fs.h
       Source file:   FileSystem\Config\FS_Config.c
       Library file:  FileSystem\Lib\ARM\FS_Dbg_LFN_CM3_L.lib
+      Include file:  FileSystem\Include\rl_fs.h
 
    * Component: Keil.MDK-Plus::File System:Drive:Memory Card:6.14.1
       Include file:  FileSystem\Config\FS_Config_MC.h
@@ -147,23 +141,23 @@ Package Vendor: Keil
       Source file:   CMSIS\Driver\SPI_STM32F4xx.c
 
    * Component: Keil::Device:STM32Cube Framework:Classic:1.7.9
-      Include file:  MDK\Templates\Inc\stm32f4xx_it.h
-      Include file:  CMSIS\Driver\Config\RTE_Device.h
-      Include file:  MDK\Templates\Inc\main.h
       Source file:   MDK\Templates\Src\stm32f4xx_hal_msp.c
-      Source file:   MDK\Templates\Src\main.c
-      Include file:  MDK\Templates\Inc\stm32f4xx_hal_conf.h
-      Source file:   MDK\Templates_LL\Src\main.c
+      Include file:  MDK\Templates\Inc\stm32f4xx_it.h
       Source file:   MDK\Templates\Src\stm32f4xx_it.c
+      Include file:  MDK\Templates\Inc\main.h
+      Include file:  CMSIS\Driver\Config\RTE_Device.h
+      Include file:  MDK\Templates\Inc\stm32f4xx_hal_conf.h
+      Source file:   MDK\Templates\Src\main.c
       Include file:  MDK\Templates_LL\Inc\main.h
+      Source file:   MDK\Templates_LL\Src\main.c
 
    * Component: Keil::Device:STM32Cube HAL:ADC:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc_ex.c
 
    * Component: Keil::Device:STM32Cube HAL:Common:1.7.9
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c
       Include file:  Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c
 
    * Component: Keil::Device:STM32Cube HAL:Cortex:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c
@@ -176,8 +170,8 @@ Package Vendor: Keil
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c
 
    * Component: Keil::Device:STM32Cube HAL:PWR:1.7.9
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c
 
    * Component: Keil::Device:STM32Cube HAL:RCC:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c
@@ -187,20 +181,20 @@ Package Vendor: Keil
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c
 
    * Component: Keil::Device:STM32Cube HAL:SRAM:1.7.9
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sram.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fmc.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sram.c
 
    * Component: Keil::Device:STM32Cube HAL:TIM:1.7.9
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c
 
    * Component: Keil::Device:Startup:2.6.3
       Source file:   MDK\Device\Source\ARM\STM32F42xxx_43xxx_OPT.s
-      Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
       Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
+      Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f429xx.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:00
 </pre>
 </body>
 </html>

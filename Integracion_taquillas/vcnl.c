@@ -102,14 +102,6 @@ void EXTI15_10_IRQHandler(void)
 {
 	HAL_GPIO_EXTI_IRQHandler(INT_PIN);
 }
-
-void HAL_GPIO_EXTI_Callback(uint16_t pin)
-{
-    if (pin == INT_PIN)
-    {
-        osThreadFlagsSet(th_id_VCNL, 0x02);
-    }
-}
 uint32_t mask;
 void I2C_callback(uint32_t event)
 {

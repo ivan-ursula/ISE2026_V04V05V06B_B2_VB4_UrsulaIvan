@@ -1,6 +1,7 @@
 #include "cmsis_os2.h"     
 #include "stm32f4xx_hal.h"
 #include "prueba.h"
+#include "vcnl.h"
 #include "RTC.h"
 #include <time.h>
 
@@ -22,6 +23,11 @@ uint8_t status_q;
 
 //TIMER HILO PRINCIPAL
 osTimerId_t tim_RTC;
+
+//FUNCIONES DE LOS ESTADOS
+void estado_Activo(void);
+void estado_Bajo_Consumo(void);
+void estado_Alarma(void);
 
 //VARIABLES GILO PRINCIPAL
 estados_t estado;
@@ -52,16 +58,18 @@ void th_main (void *argument) {
 		switch(estado){
 			case ACTIVO:
 				
-				estado_Activo();
-
+			estado_Activo();
 
 				
 				break ;
 			case BAJO_CONSUMO:
 				
+			estado_Bajo_Consumo();
+				
 				break;
 			case ALARMA:
 				
+			estado_Alarma();
 			
 				break;			
 			
@@ -74,7 +82,8 @@ void th_main (void *argument) {
 }
 uint8_t elementos;
 
-void estado_Activo(void){
+void estado_Activo(void)
+{
 	status_q=osMessageQueueGet(qCom_Rx,&msg_rx,0,20);
 	if(status_q==osOK){
 		comp_cmd(msg_rx);
@@ -82,31 +91,67 @@ void estado_Activo(void){
 
 	//SI QUIERES PROBAR SIN NFC PUEDE QUE TE DE EROR RECUERDA DESACTIVAR EL HILO DEL NFC
 	status_q=osMessageQueueGet(q_nfc,&uid,0,20);
-			
 	if(status_q==osOK){
-		msg_tx.cmd= 0x70; //cmd de uid 
+		msg_tx.cmd= LECTURA_NFC; //cmd de uid 
 		msg_tx.length=uid.length-1;
 		for(int i=0;i<uid.length-1;i++){
 			msg_tx.buff[i]=uid.buff[i];
 						
 		}		
 		osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
-				
-					
-		}		
+	}
+	
 	if(flag_tim_rtc==1){
-		msg_tx.cmd=0x20;
+		msg_tx.cmd= HORA;
 		msg_tx.length=0;
 		osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
 		flag_tim_rtc=0;
-		
 	}
-}
-void estado_Bajo_Consumo(void)
-{
-	
+	status_q = osMessageQueueGet(qCom_Rx, &msg_rx, 0, 0);
+		if(status_q==osOK){
+			if(msg_rx.cmd == DORMIR){
+				estado = BAJO_CONSUMO;
+				
+				msg_tx.cmd = RESP_DORMIR; 
+				msg_tx.length = 0;
+				osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+			}
+			if(msg_rx.cmd == LECTURA_PESO) {
+			//osMessageQueueGet(q_adc_data,
+			
+				msg_tx.cmd = RESP_DORMIR; 
+				//msg_tx.length = 0x04;
+				//msg_tx.buff = ; 
+				osMessageQueuePut(qCom_Tx,&msg_tx,0,0);	
+			}
+			if(msg_rx.cmd == LECTURA_TENSION) {
+			
+			}
+			if(msg_rx.cmd == LECTURA_CORRIENTE) {
+			
+			}
+		}
 }
 
+void estado_Bajo_Consumo(void)
+{ 
+	/* Tengo que meterme en el modo bajo consumo. Tengo que poner algo en el handler de la
+	interrupcion? Tengo que reactivar el resto de pines*/
+	SleepMode_Measure();
+	estado = ACTIVO;
+	
+}
+void estado_Alarma(void) 
+{
+	msg_tx.cmd = ALARM; 
+	msg_tx.length = 0x04;
+	//msg_tx.buff = ; 
+	osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
+	osMessageQueueGet(qCom_Rx, &msg_rx, 0, osWaitForever);
+	if(msg_rx.cmd == RESP_ALARMA){
+		estado = ACTIVO;
+	}
+}
 void comp_cmd(ComData_t com_data){
 	switch(msg_rx.cmd){
 		case RESP_HORA:
@@ -166,4 +211,18 @@ void comp_cmd(ComData_t com_data){
 void TimerRTC_Callback(void const *arg){
 	flag_tim_rtc=1;
 	
+}
+void HAL_GPIO_EXTI_Callback(uint16_t pin)
+{
+    if (pin == INT_PIN)
+    {
+			//osThreadFlagsSet(th_id_VCNL, 0x02);
+			estado = ALARMA;
+    }
+}
+
+void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
+{
+  //osThreadFlagsSet(tid_Thread_LD1, 0x10);
+	estado = ACTIVO;
 }

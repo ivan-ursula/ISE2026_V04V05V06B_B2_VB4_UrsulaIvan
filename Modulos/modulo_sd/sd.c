@@ -156,11 +156,6 @@ int user_delete(const char *nfc_id_target)
 
     return 0;
 }
-void events_sd(void)
-{
-	//Atencion a interrupciones mediante flags
-	
-}
 
 void sd_test(void)
 {
