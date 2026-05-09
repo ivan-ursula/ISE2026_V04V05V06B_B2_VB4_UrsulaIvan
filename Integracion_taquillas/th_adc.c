@@ -37,16 +37,16 @@ void thread_ADC (void *argument) {
 			
 		}
 	  if(peticion==LECTURA_TENSION){
-			dato.valor1=ADC_getData(&adc,CANAL_T1)*delta_taquilla;
-			dato.valor2=ADC_getData(&adc,CANAL_T2)*delta_taquilla;
+			dato.valor1=ADC_getData(&adc,CANAL_TENSION)*delta_taquilla*2;
+			//dato.valor2=ADC_getData(&adc,CANAL_T2)*delta_taquilla;
 			
 			dato.cmd=RESP_LECTURA_TENSION;
 			
 			
 		}
 		if(peticion==LECTURA_CORRIENTE){
-			dato.valor1=ADC_getData(&adc,CANAL_T1)*delta_taquilla;
-			dato.valor2=ADC_getData(&adc,CANAL_T2)*delta_taquilla;
+			dato.valor1=ADC_getData(&adc,CANAL_CORRIENTE)*delta_taquilla;
+			//dato.valor2=ADC_getData(&adc,CANAL_T2)*delta_taquilla;
 			
 			dato.cmd=RESP_LECTURA_CORRIENTE;
 			

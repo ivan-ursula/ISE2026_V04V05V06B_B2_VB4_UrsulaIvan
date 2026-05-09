@@ -2,7 +2,7 @@
 #include "stm32f4xx_hal.h"
 #include "prueba.h"
 #include "vcnl.h"
-#include "RTC.h"
+
 #include <time.h>
 
 //ID DE HILOS
@@ -38,7 +38,7 @@ volatile uint8_t flag_tim_rtc=0;
 void th_main (void *argument);                   
  
 int Init_main (void) {
- 
+  
   thmain = osThreadNew(th_main, NULL, NULL);
 	tim_RTC=osTimerNew((osTimerFunc_t)&TimerRTC_Callback, osTimerPeriodic, &exec2, NULL);
   if (thmain == NULL) {
@@ -107,30 +107,7 @@ void estado_Activo(void)
 		osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
 		flag_tim_rtc=0;
 	}
-	status_q = osMessageQueueGet(qCom_Rx, &msg_rx, 0, 0);
-		if(status_q==osOK){
-			if(msg_rx.cmd == DORMIR){
-				estado = BAJO_CONSUMO;
-				
-				msg_tx.cmd = RESP_DORMIR; 
-				msg_tx.length = 0;
-				osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
-			}
-			if(msg_rx.cmd == LECTURA_PESO) {
-			//osMessageQueueGet(q_adc_data,
-			
-				msg_tx.cmd = RESP_DORMIR; 
-				//msg_tx.length = 0x04;
-				//msg_tx.buff = ; 
-				osMessageQueuePut(qCom_Tx,&msg_tx,0,0);	
-			}
-			if(msg_rx.cmd == LECTURA_TENSION) {
-			
-			}
-			if(msg_rx.cmd == LECTURA_CORRIENTE) {
-			
-			}
-		}
+	
 }
 
 void estado_Bajo_Consumo(void)
@@ -181,9 +158,9 @@ void comp_cmd(ComData_t com_data){
 		RTC_CalendarConfig(ts);
 
     // Configurar alarma con la hora de despertar
-		RTC_Set_AlarmWakeup(alarma.AlarmTime);
+		//RTC_Set_AlarmWakeup(alarma.AlarmTime);
 
-    estado = BAJO_CONSUMO;
+   // estado = BAJO_CONSUMO;
 		
 			break;
 			
@@ -196,7 +173,7 @@ void comp_cmd(ComData_t com_data){
 			elementos=osMessageQueueGetCount(q_adc_data);
 			if(status_q==osOK){
 				if(data_adc.cmd==RESP_LECTURA_PESO){
-					msg_tx.length=sprintf(msg_tx.buff,"%.2f-%2.f",data_adc.valor1,data_adc.valor2);
+					msg_tx.length=sprintf(msg_tx.buff,"%.2f-%.2f",data_adc.valor1,data_adc.valor2);
 					osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
 					
 				}else{

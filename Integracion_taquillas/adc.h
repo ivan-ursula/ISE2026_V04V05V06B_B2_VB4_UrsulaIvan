@@ -3,8 +3,13 @@
 #define RESOLUTION_12B 4096U
 #define VREF 3.3f
 #define delta_taquilla 3.3f/4096
-#define CANAL_T1 10
-#define CANAL_T2 13
+#define delta_corriente 3.3f/(4096*0.1*42)
+
+#define CANAL_T1 12
+#define CANAL_T2 4
+#define CANAL_CORRIENTE 13
+#define CANAL_TENSION 9
+
 
 typedef struct{
 	

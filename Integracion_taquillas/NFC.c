@@ -10,7 +10,7 @@ FUNCIONES DE HILO
 osThreadId_t th_NFC;
 osMessageQueueId_t q_nfc;
 
-uint32_t flag;
+//uint32_t flag_nfc;
 uint32_t num_byte;
 uint8_t buff[30];
 //uint8_t uid[5];

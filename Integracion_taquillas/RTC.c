@@ -196,10 +196,10 @@ void RTC_WKUP_IRQHandler(void)
   HAL_RTCEx_WakeUpTimerIRQHandler(&RtcHandle);
 }
 
-void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
-{
-  //osThreadFlagsSet(tid_Thread_LD1, 0x10);
-}
+//void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
+//{
+//  //osThreadFlagsSet(tid_Thread_LD1, 0x10);
+//}
 
 void time_callback(uint32_t seconds, uint32_t seconds_fraction){
  
