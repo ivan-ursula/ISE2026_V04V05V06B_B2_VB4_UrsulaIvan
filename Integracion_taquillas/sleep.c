@@ -68,6 +68,14 @@ void SleepMode_Measure(void)
   INT_init();
 	VCNL_init_I2C();
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+	
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	GPIO_InitStruct.Pin = GPIO_PIN_13;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+	
 
   /* Suspend Tick increment to prevent wakeup by Systick interrupt. 
      Otherwise the Systick interrupt will wake up the device within 1ms (HAL time base) */
@@ -78,4 +86,101 @@ void SleepMode_Measure(void)
 
   /* Resume Tick interrupt if disabled prior to sleep mode entry */
   HAL_ResumeTick();
+}
+void StopMode_Measure(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct;  
+
+  /* Disable USB Clock */
+  __HAL_RCC_USB_OTG_FS_CLK_DISABLE();
+
+  /* Disable Ethernet Clock */
+  __HAL_RCC_ETH_CLK_DISABLE();
+
+  /* Configure all GPIO as analog to reduce current consumption on non used IOs */
+  /* Enable GPIOs clock */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_GPIOE_CLK_ENABLE();
+  __HAL_RCC_GPIOF_CLK_ENABLE();
+  __HAL_RCC_GPIOG_CLK_ENABLE();
+  __HAL_RCC_GPIOH_CLK_ENABLE();
+  __HAL_RCC_GPIOI_CLK_ENABLE();
+  __HAL_RCC_GPIOJ_CLK_ENABLE();
+  __HAL_RCC_GPIOK_CLK_ENABLE();
+
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pin = GPIO_PIN_All;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct); 
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOH, &GPIO_InitStruct); 
+  HAL_GPIO_Init(GPIOI, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOJ, &GPIO_InitStruct); 
+  HAL_GPIO_Init(GPIOK, &GPIO_InitStruct);
+
+  /* Disable GPIOs clock */
+  __HAL_RCC_GPIOA_CLK_DISABLE();
+  __HAL_RCC_GPIOB_CLK_DISABLE();
+  __HAL_RCC_GPIOC_CLK_DISABLE();
+  __HAL_RCC_GPIOD_CLK_DISABLE();
+  __HAL_RCC_GPIOE_CLK_DISABLE();
+  __HAL_RCC_GPIOF_CLK_DISABLE();
+  __HAL_RCC_GPIOG_CLK_DISABLE();
+  __HAL_RCC_GPIOH_CLK_DISABLE();
+  __HAL_RCC_GPIOI_CLK_DISABLE();
+  __HAL_RCC_GPIOJ_CLK_DISABLE();
+  __HAL_RCC_GPIOK_CLK_DISABLE();
+
+  /* Configure RTC prescaler and RTC data registers as follows:
+  - Hour Format = Format 24
+  - Asynch Prediv = Value according to source clock
+  - Synch Prediv = Value according to source clock
+  - OutPut = Output Disable
+  - OutPutPolarity = High Polarity
+  - OutPutType = Open Drain */
+	
+	
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	GPIO_InitStruct.Pin = GPIO_PIN_13;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+	
+  /*## Configure the Wake up timer ###########################################*/
+  /*  RTC Wakeup Interrupt Generation:
+      Wakeup Time Base = (RTC_WAKEUPCLOCK_RTCCLK_DIV /(LSI))
+      Wakeup Time = Wakeup Time Base * WakeUpCounter 
+                  = (RTC_WAKEUPCLOCK_RTCCLK_DIV /(LSI)) * WakeUpCounter
+      ==> WakeUpCounter = Wakeup Time / Wakeup Time Base
+
+      To configure the wake up timer to 20s the WakeUpCounter is set to 0xA017:
+        RTC_WAKEUPCLOCK_RTCCLK_DIV = RTCCLK_Div16 = 16 
+        Wakeup Time Base = 16 /(~32.768KHz) = ~0,488 ms
+        Wakeup Time = ~20s = 0,488ms  * WakeUpCounter
+        ==> WakeUpCounter = ~20s/0,488ms = 40983 = 0xA017 */
+
+  /* FLASH Deep Power Down Mode enabled */
+  HAL_PWREx_EnableFlashPowerDown();
+
+  /*## Enter Stop Mode #######################################################*/
+  HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
+
+  /* Configures system clock after wake-up from STOP: enable HSI, PLL and select 
+     PLL as system clock source (HSI and PLL are disabled in STOP mode) */
+  //SYSCLKConfig_STOP();
+
+  /* Exit Ethernet Phy from low power mode */
+  //ETH_PhyExitFromPowerDownMode();
+
+  /* Disable Wake-up timer */
 }

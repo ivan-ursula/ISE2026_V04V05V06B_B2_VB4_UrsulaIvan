@@ -49,8 +49,8 @@ int Init_main (void) {
 }
 
 void th_main (void *argument) {
-  estado=ACTIVO;
-  while (1) {
+  estado= ACTIVO;
+	while (1) {
 		
 		
 
@@ -114,7 +114,7 @@ void estado_Bajo_Consumo(void)
 { 
 	/* Tengo que meterme en el modo bajo consumo. Tengo que poner algo en el handler de la
 	interrupcion? Tengo que reactivar el resto de pines*/
-	SleepMode_Measure();
+	StopMode_Measure();
 	estado = ACTIVO;
 	
 }
@@ -144,23 +144,23 @@ void comp_cmd(ComData_t com_data){
 		case DORMIR: // AQUI HACE LA TRANSICION A MODO BAJO_CONSUMO
 			
 			//RTC_AlarmTypeDef alarma;
-		sscanf((char*)msg_rx.buff,
-           "%d:%d:%d %d/%d/%d-%d:%d:%d %d/%d/%d",
-           &ts.tm_hour,  &ts.tm_min,  &ts.tm_sec,
-           &ts.tm_mday,  &ts.tm_mon,  &ts.tm_year,
-		       &alarma.AlarmTime.Hours,
-           &alarma.AlarmTime.Minutes,
-           &alarma.AlarmTime.Seconds);
-		
-		ts.tm_mon  -= 1;
-		ts.tm_year -= 1900;
-		
-		RTC_CalendarConfig(ts);
+//		sscanf((char*)msg_rx.buff,
+//           "%d:%d:%d %d/%d/%d-%d:%d:%d %d/%d/%d",
+//           &ts.tm_hour,  &ts.tm_min,  &ts.tm_sec,
+//           &ts.tm_mday,  &ts.tm_mon,  &ts.tm_year,
+//		       &alarma.AlarmTime.Hours,
+//           &alarma.AlarmTime.Minutes,
+//           &alarma.AlarmTime.Seconds);
+//		
+//		ts.tm_mon  -= 1;
+//		ts.tm_year -= 1900;
+//		
+//		RTC_CalendarConfig(ts);
 
     // Configurar alarma con la hora de despertar
 		//RTC_Set_AlarmWakeup(alarma.AlarmTime);
-
-   // estado = BAJO_CONSUMO;
+		osDelay(5000);
+    estado = BAJO_CONSUMO;
 		
 			break;
 			
