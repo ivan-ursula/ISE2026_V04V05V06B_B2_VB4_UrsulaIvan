@@ -191,6 +191,11 @@ void TimerRTC_Callback(void const *arg){
 	flag_tim_rtc=1;
 	
 }
+void EXTI15_10_IRQHandler(void)
+{
+	HAL_GPIO_EXTI_IRQHandler(INT_PIN);
+	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
+}
 void HAL_GPIO_EXTI_Callback(uint16_t pin)
 {
     if (pin == INT_PIN)

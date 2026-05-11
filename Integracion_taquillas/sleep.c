@@ -189,19 +189,16 @@ static void SYSCLKConfig_STOP(void)
   RCC_OscInitTypeDef RCC_OscInitStruct;
   uint32_t pFLatency = 0;
   
-  /* Get the Oscillators configuration according to the internal RCC registers */
   HAL_RCC_GetOscConfig(&RCC_OscInitStruct);
   
-  /* After wake-up from STOP reconfigure the system clock: Enable HSE and PLL */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;      // ? ON, no BYPASS (tu SystemClock_Config usa HSE_ON)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  HAL_RCC_OscConfig(&RCC_OscInitStruct);        // ? FALTA ESTO
 
-  /* Get the Clocks configuration according to the internal RCC registers */
   HAL_RCC_GetClockConfig(&RCC_ClkInitStruct, &pFLatency);
   
-  /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 
-     clocks dividers */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_SYSCLK;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, pFLatency); // ? FALTA ESTO
 }
