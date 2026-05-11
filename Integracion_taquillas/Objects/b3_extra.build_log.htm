@@ -28,13 +28,47 @@ Project File Date:  05/06/2026
 *** Using Compiler 'V6.16', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'Target 1'
 compiling sleep.c...
+prueba_thcom.c(138): warning: passing 'uint8_t [50]' to parameter of type 'const char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
+                        sscanf(msg_rx.buff,"%d:%d:%d %d/%d/%d", ts.tm_hour,
+                               ^~~~~~~~~~~
+C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h(529): note: passing argument to parameter here
+extern _ARMABI int sscanf(const char * __restrict /*s*/,
+                                                       ^
+prueba_thcom.c(138): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                        sscanf(msg_rx.buff,"%d:%d:%d %d/%d/%d", ts.tm_hour,
+                                            ~~                  ^~~~~~~~~~
+prueba_thcom.c(139): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                        ts.tm_min,
+                                                                                                                                                                                        ^~~~~~~~~
+prueba_thcom.c(140): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                        ts.tm_sec,
+                                                                                                                                                                                        ^~~~~~~~~
+prueba_thcom.c(141): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                        ts.tm_mday,
+                                                                                                                                                                                        ^~~~~~~~~~
+prueba_thcom.c(142): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                        ts.tm_mon,
+                                                                                                                                                                                        ^~~~~~~~~
+prueba_thcom.c(143): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+                                                                                                                                                                                        ts.tm_year);
+                                                                                                                                                                                        ^~~~~~~~~~
+prueba_thcom.c(178): warning: passing 'uint8_t [50]' to parameter of type 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
+                                        msg_tx.length=sprintf(msg_tx.buff,"%.2f-%.2f",data_adc.valor1,data_adc.valor2);
+                                                              ^~~~~~~~~~~
+C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h(417): note: passing argument to parameter here
+extern _ARMABI int sprintf(char * __restrict /*s*/, const char * __restrict /*format*/, ...) __attribute__((__nonnull__(1,2)));
+                                                  ^
+prueba_thcom.c(182): warning: passing 'uint8_t [50]' to parameter of type 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
+                                        msg_tx.length=sprintf(msg_tx.buff,"%.2f",data_adc.valor1);
+                                                              ^~~~~~~~~~~
+C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h(417): note: passing argument to parameter here
+extern _ARMABI int sprintf(char * __restrict /*s*/, const char * __restrict /*format*/, ...) __attribute__((__nonnull__(1,2)));
+                                                  ^
+9 warnings generated.
+compiling prueba_thcom.c...
 linking...
-.\Objects\b3_extra.axf: Error: L6218E: Undefined symbol HAL_ETH_ReadPHYRegister (referred from sleep.o).
-.\Objects\b3_extra.axf: Error: L6218E: Undefined symbol HAL_ETH_WritePHYRegister (referred from sleep.o).
-Not enough information to list image symbols.
-Not enough information to list load addresses in the image map.
-Finished: 2 information, 0 warning and 2 error messages.
-".\Objects\b3_extra.axf" - 2 Error(s), 0 Warning(s).
+Program Size: Code=35284 RO-data=1400 RW-data=196 ZI-data=37044  
+".\Objects\b3_extra.axf" - 0 Error(s), 9 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -187,7 +221,6 @@ Package Vendor: Keil
       Source file:   MDK\Device\Source\ARM\STM32F42xxx_43xxx_OPT.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f429xx.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c
-Target not created.
 Build Time Elapsed:  00:00:00
 </pre>
 </body>

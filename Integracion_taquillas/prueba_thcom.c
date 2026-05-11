@@ -114,8 +114,10 @@ void estado_Bajo_Consumo(void)
 { 
 	/* Tengo que meterme en el modo bajo consumo. Tengo que poner algo en el handler de la
 	interrupcion? Tengo que reactivar el resto de pines*/
-	StopMode_Measure();
-	estado = ACTIVO;
+	osKernelSuspend();          // ? suspende el scheduler RTX
+  StopMode_Measure();         // entra en STOP y sale al pulsar el botón
+  osKernelResume(0);          // ? reactiva el scheduler
+  estado = ACTIVO;
 	
 }
 void estado_Alarma(void) 
