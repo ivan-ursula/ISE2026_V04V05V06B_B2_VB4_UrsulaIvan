@@ -196,6 +196,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t pin)
 			//osThreadFlagsSet(th_id_VCNL, 0x02);
 			estado = ALARMA;
     }
+		if (pin == GPIO_PIN_13)
+    {
+        // El botón despertó al micro del modo STOP
+        // Aquí puedes poner una bandera, etc.
+    }
 }
 
 void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
