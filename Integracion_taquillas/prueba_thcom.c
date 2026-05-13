@@ -175,7 +175,7 @@ void comp_cmd(ComData_t com_data){
 			elementos=osMessageQueueGetCount(q_adc_data);
 			if(status_q==osOK){
 				if(data_adc.cmd==RESP_LECTURA_PESO){
-					msg_tx.length=sprintf(msg_tx.buff,"%.2f-%.2f",data_adc.valor1,data_adc.valor2);
+					msg_tx.length=sprintf(msg_tx.buff ,"%.2f-%.2f",data_adc.valor1,data_adc.valor2);
 					osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
 					
 				}else{
