@@ -11,8 +11,10 @@
 #include "main.h"
 
 #include "rl_net.h"                     // Keil.MDK-Pro::Network:CORE
-
 #include "stm32f4xx_hal.h"              // Keil::Device:STM32Cube HAL:Common
+
+#include "rtc.h"
+#include "sd/sd.h"
 
 // Main stack size must be multiple of 8 Bytes
 #define APP_MAIN_STK_SZ (1024U)
@@ -37,14 +39,17 @@ void netDHCP_Notify (uint32_t if_num, uint8_t option, const uint8_t *val, uint32
   }
 }
 
-
 /*----------------------------------------------------------------------------
   Main Thread 'main': Run Network
  *---------------------------------------------------------------------------*/
 __NO_RETURN void app_main (void *arg) {
   (void)arg;
 
+  Init_th_SD ();
+  
   netInitialize ();
 
+  init_Thread_RTC();
+	
   osThreadExit();
 }

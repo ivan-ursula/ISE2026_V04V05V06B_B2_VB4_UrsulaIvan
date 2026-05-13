@@ -1,0 +1,3 @@
+t ALERTA_STATUS
+c j
+.

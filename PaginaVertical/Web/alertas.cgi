@@ -16,7 +16,7 @@ t }
 t th, td {
 t  border: 1px solid white;
 t  padding: 10px;
-t  font-size: 30px;
+t  font-size: 25px;
 t  width: 50%;
 t }
 t th {
@@ -33,39 +33,47 @@ t    margin-top: 30px;
 t  }
 t  p {
 t    font-size: 29px;
-t    margin-top: 100px;
+t    margin-top: 50px;
 t    text-align: center;
 t  }
 t </style><title>Alertas</title></head>
 t <body text="white">
 t <h2><br>ALERTAS</h2>
-t <p>Registro de las alarmas del sistema.</p>
+t <p>Registro de las alarmas del sistema</p>
 t <table>
 t  <tr>
-t    <th>ID</th>
-t    <th>Valor</th>
+t    <th>ALERTAS</th>
 t  </tr>
-t  <tr><td>Dato 1</td><td>Libre</td></tr>
-t  <tr><td>Dato 2</td><td>Libre</td></tr>
-t  <tr><td>Dato 3</td><td>Libre</td></tr>
-t  <tr><td>Dato 4</td><td>Libre</td></tr>
-t  <tr><td>Dato 5</td><td>Libre</td></tr>
-t  <tr><td>Dato 6</td><td>Libre</td></tr>
-t  <tr><td>Dato 7</td><td>Libre</td></tr>
-t  <tr><td>Dato 8</td><td>Libre</td></tr>
-t  <tr><td>Dato 9</td><td>Libre</td></tr>
-t  <tr><td>Dato 10</td><td>Libre</td></tr>
-t  <tr><td>Dato 11</td><td>Libre</td></tr>
-t  <tr><td>Dato 12</td><td>Libre</td></tr>
-t  <tr><td>Dato 13</td><td>Libre</td></tr>
-t  <tr><td>Dato 14</td><td>Libre</td></tr>
-t  <tr><td>Dato 15</td><td>Libre</td></tr>
+t <form action=alertas.cgi method=post name=alertas>
+c a 1 <tr><td>%s</td>
+c a 2 <tr><td>%s</td>
+c a 3 <tr><td>%s</td>
+c a 4 <tr><td>%s</td>
+c a 5 <tr><td>%s</td>
+c a 6 <tr><td>%s</td>
+c a 7 <tr><td>%s</td>
+c a 8 <tr><td>%s</td>
+c a 9 <tr><td>%s</td>
+c a 10 <tr><td>%s</td>
 t </table>
-t <div style="text-align:center; margin-top:20px; font-size:30px;">
-t  <button onclick=""><-</button>
-t  <span id="1" style="margin: 0 20px;"></span>
-t  <button onclick="">-></button>
+t </form>
+t <form action=alertas.cgi method=post name=alertas>
+t <div style="display:flex; justify-content:center; align-items:center; 
+t margin-top:20px; font-size:30px; gap:10px;">
+c c 1 <td><input type=text name=pagina size=3 maxlength=3 value="%d" 
+t style="text-align:center; font-size:30px; background: transparent; 
+t outline: none; color: inherit; font: inherit; 
+t text-shadow: inherit;"></td></div>
+t </form>
+t <form action=alertas.cgi method=post name=alertas>
+t <div style="display:flex; justify-content:center; align-items:center; 
+t margin-top:0px; font-size:30px; gap:10px;">
+t <button type="submit" name="accion" value="prev" 
+t style="background: transparent; border: none; outline: none; color: inherit;
+t font: inherit; text-shadow: inherit; cursor: pointer;"><-</button>
+t <button type="submit" name="accion" value="next" 
+t style="background: transparent; border: none; outline: none; color: inherit;
+t font: inherit; text-shadow: inherit; cursor: pointer;">-></button>
 t </div>
-t <form action=index.htm method=post name=cgi>
 t <input type=hidden value="gest_tarj" name=pg></form></body>
 .
