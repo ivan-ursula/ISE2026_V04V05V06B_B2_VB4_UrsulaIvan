@@ -98,7 +98,15 @@ uint16_t VCNL_read_reg(uint8_t reg){
   return (uint16_t) ((data[1]<<8)|data[0]);
   
 }
+<<<<<<< HEAD
 
+=======
+//void EXTI15_10_IRQHandler(void)
+//{
+//	HAL_GPIO_EXTI_IRQHandler(INT_PIN);
+//	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
+//}
+>>>>>>> 7404c5793d8f211999d2579547c7cda7c3ca858f
 uint32_t mask;
 void I2C_callback(uint32_t event)
 {

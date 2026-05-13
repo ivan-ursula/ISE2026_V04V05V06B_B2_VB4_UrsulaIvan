@@ -40,7 +40,10 @@ void th_main (void *argument);
 int Init_main (void) {
   
   thmain = osThreadNew(th_main, NULL, NULL);
+  exec2=0;
 	tim_RTC=osTimerNew((osTimerFunc_t)&TimerRTC_Callback, osTimerPeriodic, &exec2, NULL);
+	
+
   if (thmain == NULL) {
     return(-1);
   }
@@ -50,6 +53,7 @@ int Init_main (void) {
 
 void th_main (void *argument) {
   estado= ACTIVO;
+	osTimerStart(tim_RTC,1000);
 	while (1) {
 		
 		
@@ -161,6 +165,7 @@ void comp_cmd(ComData_t com_data){
 
     // Configurar alarma con la hora de despertar
 		//RTC_Set_AlarmWakeup(alarma.AlarmTime);
+		osTimerStop(tim_RTC);
 		osDelay(5000);
     estado = BAJO_CONSUMO;
 		
