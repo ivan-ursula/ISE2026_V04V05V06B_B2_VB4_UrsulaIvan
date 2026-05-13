@@ -1,9 +1,11 @@
 #include "stm32f4xx_hal.h"
 #ifndef __ADC_H
 #define RESOLUTION_12B 4096U
-#define VREF 3.3f
-#define delta_taquilla 3.3f/4096
-#define delta_corriente 3.3f/(4096*0.1*42)
+
+#define delta 3.3f/4096
+#define sensibilidad_taquilla 0.00066f// [v]/[g]
+
+#define sensibilidad_corriente 4.199f // v/a
 
 #define CANAL_T1 12
 #define CANAL_T2 4

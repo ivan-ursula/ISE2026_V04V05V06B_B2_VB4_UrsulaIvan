@@ -29,15 +29,18 @@ void thread_ADC (void *argument) {
 		osMessageQueueGet(q_adc_peticion,&peticion,0,osWaitForever);
 		
 		if(peticion==LECTURA_PESO){
-			dato.valor1=ADC_getData(&adc,CANAL_T1)*delta_taquilla;
-			dato.valor2=ADC_getData(&adc,CANAL_T2)*delta_taquilla;
-			
+			//dato.valor1=(ADC_getData(&adc,CANAL_T1)*delta-0.270)/sensibilidad_taquilla;
+      dato.valor1=ADC_getData(&adc,CANAL_T1)*delta-0.3730;
+      dato.valor1=dato.valor1/sensibilidad_taquilla;
+			//dato.valor2=(ADC_getData(&adc,CANAL_T2)*delta-0.270)/sensibilidad_taquilla;
+			dato.valor2=ADC_getData(&adc,CANAL_T2)*delta-0.51565;
+      dato.valor2=dato.valor2/sensibilidad_taquilla;
 			dato.cmd=RESP_LECTURA_PESO;
 			
 			
 		}
 	  if(peticion==LECTURA_TENSION){
-			dato.valor1=ADC_getData(&adc,CANAL_TENSION)*delta_taquilla*2;
+			dato.valor1=ADC_getData(&adc,CANAL_TENSION)*delta*2;
 			//dato.valor2=ADC_getData(&adc,CANAL_T2)*delta_taquilla;
 			
 			dato.cmd=RESP_LECTURA_TENSION;
@@ -45,9 +48,9 @@ void thread_ADC (void *argument) {
 			
 		}
 		if(peticion==LECTURA_CORRIENTE){
-			dato.valor1=ADC_getData(&adc,CANAL_CORRIENTE)*delta_taquilla;
+			//dato.valor1=((ADC_getData(&adc,CANAL_CORRIENTE)*delta)/sensibilidad_corriente);
 			//dato.valor2=ADC_getData(&adc,CANAL_T2)*delta_taquilla;
-			
+			dato.valor1=(ADC_getData(&adc,CANAL_CORRIENTE)*delta);
 			dato.cmd=RESP_LECTURA_CORRIENTE;
 			
 			

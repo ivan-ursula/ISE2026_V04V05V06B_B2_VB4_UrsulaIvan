@@ -37,7 +37,7 @@ void ADC1_pins_F429ZI_config(){
     //enable ldo arduino
     GPIO_InitStruct.Pin = GPIO_PIN_14;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
     HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
     HAL_GPIO_WritePin(GPIOF,GPIO_PIN_14,1);
   }
@@ -95,7 +95,7 @@ uint32_t ADC_getData(ADC_HandleTypeDef *hadc, uint32_t Channel)
 		
 		raw = HAL_ADC_GetValue(hadc);
 		
-		voltage = raw*VREF/RESOLUTION_12B; 
+		
 		
 		return raw;
 
