@@ -18,8 +18,6 @@ void th_com_Rx(void *argument);
 void uart_send_trama(ComData_t * msg);
 void uart_callback(uint32_t event);
 void procesar_trama(uint8_t* b,uint32_t length);
-static void init_uart(void);
-
 
 int init_thcom (void) {
  
@@ -112,8 +110,11 @@ void th_com_Rx(void *argument){
 	}	
 }
 
-
-static void init_uart(void){
+void desinit_uart(void) 
+{
+  uart->Uninitialize();
+}
+void init_uart(void){
 		GPIO_InitTypeDef GPIO_InitStruct = {0};
   
   __HAL_RCC_GPIOB_CLK_ENABLE();
@@ -126,6 +127,7 @@ static void init_uart(void){
 //  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 	
 	uart->Initialize(uart_callback);
+    
 	uart->PowerControl(ARM_POWER_FULL);
 	uart->Control(ARM_USART_MODE_ASYNCHRONOUS |
                 ARM_USART_DATA_BITS_8 			|

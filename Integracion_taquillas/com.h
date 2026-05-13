@@ -3,6 +3,8 @@
 
 #include "stm32f4xx_hal.h"
 
+void init_uart(void);
+void desinit_uart(void);
 
 #define baudrate 9600
 //principio y fin de trrama

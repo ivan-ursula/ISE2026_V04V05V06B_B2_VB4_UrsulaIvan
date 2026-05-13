@@ -22,5 +22,6 @@ typedef struct{
 
 void ADC1_pins_F429ZI_config(void);
 int ADC_Init(ADC_HandleTypeDef *, ADC_TypeDef  *);
+void Deinit_ADC(ADC_HandleTypeDef *);
 uint32_t ADC_getData(ADC_HandleTypeDef * , uint32_t );
 #endif

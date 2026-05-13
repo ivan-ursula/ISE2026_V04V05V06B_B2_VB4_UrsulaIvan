@@ -69,8 +69,8 @@ void INT_init (void)
 void VCNL_init(void){
 	
   VCNL_write_reg(ALS_CONF,0x0001);
-	VCNL_write_reg(PS_THDL_L,0x0004);
-	VCNL_write_reg(PS_THDL_H,0x000A);
+	VCNL_write_reg(PS_THDL_L,0x000A);
+	VCNL_write_reg(PS_THDL_H,0x0020);
 	VCNL_write_reg(PS_CONF,0x03FE);//1=cerca 2=lejos        0x30 
 	osDelay(200);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn); // para evitar falsos positivos durante la configuracion
@@ -98,15 +98,7 @@ uint16_t VCNL_read_reg(uint8_t reg){
   return (uint16_t) ((data[1]<<8)|data[0]);
   
 }
-<<<<<<< HEAD
 
-=======
-//void EXTI15_10_IRQHandler(void)
-//{
-//	HAL_GPIO_EXTI_IRQHandler(INT_PIN);
-//	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
-//}
->>>>>>> 7404c5793d8f211999d2579547c7cda7c3ca858f
 uint32_t mask;
 void I2C_callback(uint32_t event)
 {

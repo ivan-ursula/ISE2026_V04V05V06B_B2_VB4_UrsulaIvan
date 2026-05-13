@@ -97,7 +97,7 @@ typedef struct{
 //extern osThreadId_t th_NFC;
 
 int init_thNFC(void);
-
+void NFC_Deinit_SPI(void);
 void NFC_init_SPI(void);
 void NFC_init(void);
 void NFC_SPI_callback(uint32_t evn);

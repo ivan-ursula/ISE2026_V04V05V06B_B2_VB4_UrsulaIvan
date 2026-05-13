@@ -13,6 +13,7 @@ extern osMessageQueueId_t qCom_Tx;
 extern osMessageQueueId_t qCom_Rx;
 extern osMessageQueueId_t q_adc_peticion;
 extern osMessageQueueId_t q_adc_data;
+extern ADC_HandleTypeDef adc;
 
 //VARIABLES DE COLAS DE MENSAJES
 msg_nfc uid;
@@ -118,16 +119,32 @@ void estado_Bajo_Consumo(void)
 { 
 	/* Tengo que meterme en el modo bajo consumo. Tengo que poner algo en el handler de la
 	interrupcion? Tengo que reactivar el resto de pines*/
-	osKernelSuspend();          // ? suspende el scheduler RTX
-  StopMode_Measure();         // entra en STOP y sale al pulsar el botón
-  osKernelResume(0);          // ? reactiva el scheduler
+	osTimerStop(tim_RTC);
+
+  //osKernelSuspend();
+  desinit_uart();
+  Deinit_ADC(&adc);
+  
+  StopMode_Measure();
+  
+  osKernelResume(0);
+  desinit_uart();
+  init_uart();
+  NFC_Deinit_SPI();
+  NFC_init_SPI();
+  ADC1_pins_F429ZI_config();
+  Deinit_ADC(&adc);
+  ADC_Init(&adc, ADC1);
+  
+  
+  osTimerStart(tim_RTC, 1000);
   estado = ACTIVO;
 	
 }
 void estado_Alarma(void) 
 {
 	msg_tx.cmd = ALARM; 
-	msg_tx.length = 0x04;
+	msg_tx.length = 0x00;
 	//msg_tx.buff = ; 
 	osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
 	osMessageQueueGet(qCom_Rx, &msg_rx, 0, osWaitForever);
@@ -165,8 +182,8 @@ void comp_cmd(ComData_t com_data){
 
     // Configurar alarma con la hora de despertar
 		//RTC_Set_AlarmWakeup(alarma.AlarmTime);
-		osTimerStop(tim_RTC);
-		osDelay(5000);
+
+		osDelay(200);
     estado = BAJO_CONSUMO;
 		
 			break;
@@ -205,8 +222,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t pin)
 {
     if (pin == INT_PIN)
     {
-			//osThreadFlagsSet(th_id_VCNL, 0x02);
-			estado = ALARMA;
+		  osThreadFlagsSet(th_id_VCNL, 0x02);
+			//estado = ACTIVO;
     }
 		if (pin == GPIO_PIN_13)
     {

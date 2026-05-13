@@ -7,7 +7,8 @@ osMessageQueueId_t q_adc_peticion;
 osMessageQueueId_t q_adc_data;
 ADC_HandleTypeDef adc;
 void thread_ADC (void *argument);                  
- 
+
+
 int Init_thADC(void) {
  
   th_ADC = osThreadNew(thread_ADC, NULL, NULL);

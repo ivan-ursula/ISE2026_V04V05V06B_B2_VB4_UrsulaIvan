@@ -60,7 +60,9 @@ void thread_NFC(void *argument){
 FUNCIONES DE NFC
 
 ***********************/
-
+void NFC_Deinit_SPI (void){
+  SPI_NFC->Uninitialize();
+}
 void NFC_init_SPI(void){
 	__HAL_RCC_GPIOC_CLK_ENABLE();
 	__HAL_RCC_GPIOA_CLK_ENABLE();

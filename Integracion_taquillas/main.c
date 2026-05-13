@@ -55,8 +55,9 @@ int main(void)
 	init_thcom();
 	init_thNFC();
 	Init_thADC();
+	//init_thVCNL();
 	Init_main();
-	
+
 
   
 	

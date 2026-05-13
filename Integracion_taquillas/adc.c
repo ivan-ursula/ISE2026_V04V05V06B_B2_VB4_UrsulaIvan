@@ -42,7 +42,10 @@ void ADC1_pins_F429ZI_config(){
     HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
     HAL_GPIO_WritePin(GPIOF,GPIO_PIN_14,1);
   }
-
+void Deinit_ADC(ADC_HandleTypeDef *hadc)
+{
+  HAL_ADC_DeInit(hadc);
+}
 int ADC_Init(ADC_HandleTypeDef *hadc, ADC_TypeDef  *ADC_Instance)
 {
 	
@@ -60,6 +63,7 @@ int ADC_Init(ADC_HandleTypeDef *hadc, ADC_TypeDef  *ADC_Instance)
   hadc->Init.NbrOfConversion = 1;
   hadc->Init.DMAContinuousRequests = DISABLE;
 	hadc->Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+
   if (HAL_ADC_Init(hadc) != HAL_OK)
   {
     return -1;

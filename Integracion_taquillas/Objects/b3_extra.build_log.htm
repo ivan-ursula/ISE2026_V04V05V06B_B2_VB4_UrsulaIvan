@@ -27,70 +27,37 @@ Project File Date:  05/13/2026
 <h2>Output:</h2>
 *** Using Compiler 'V6.16', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'Target 1'
-<<<<<<< HEAD
-prueba_thcom.c(138): warning: passing 'uint8_t [50]' to parameter of type 'const char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
-=======
-compiling adc.c...
-compiling th_adc.c...
-prueba_thcom.c(142): warning: passing 'uint8_t [50]' to parameter of type 'const char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
->>>>>>> 7404c5793d8f211999d2579547c7cda7c3ca858f
+prueba_thcom.c(159): warning: passing 'uint8_t [50]' to parameter of type 'const char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
                         sscanf(msg_rx.buff,"%d:%d:%d %d/%d/%d", ts.tm_hour,
                                ^~~~~~~~~~~
 C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h(529): note: passing argument to parameter here
 extern _ARMABI int sscanf(const char * __restrict /*s*/,
                                                        ^
-<<<<<<< HEAD
-prueba_thcom.c(138): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+prueba_thcom.c(159): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
                         sscanf(msg_rx.buff,"%d:%d:%d %d/%d/%d", ts.tm_hour,
                                             ~~                  ^~~~~~~~~~
-prueba_thcom.c(139): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+prueba_thcom.c(160): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
                                                                                                                                                                                         ts.tm_min,
                                                                                                                                                                                         ^~~~~~~~~
-prueba_thcom.c(140): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+prueba_thcom.c(161): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
                                                                                                                                                                                         ts.tm_sec,
                                                                                                                                                                                         ^~~~~~~~~
-prueba_thcom.c(141): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+prueba_thcom.c(162): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
                                                                                                                                                                                         ts.tm_mday,
                                                                                                                                                                                         ^~~~~~~~~~
-prueba_thcom.c(142): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+prueba_thcom.c(163): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
                                                                                                                                                                                         ts.tm_mon,
                                                                                                                                                                                         ^~~~~~~~~
-prueba_thcom.c(143): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
+prueba_thcom.c(164): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
                                                                                                                                                                                         ts.tm_year);
                                                                                                                                                                                         ^~~~~~~~~~
-prueba_thcom.c(178): warning: passing 'uint8_t [50]' to parameter of type 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
+prueba_thcom.c(200): warning: passing 'uint8_t [50]' to parameter of type 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
                                         msg_tx.length=sprintf(msg_tx.buff ,"%.2f-%.2f",data_adc.valor1,data_adc.valor2);
-=======
-prueba_thcom.c(142): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
-                        sscanf(msg_rx.buff,"%d:%d:%d %d/%d/%d", ts.tm_hour,
-                                            ~~                  ^~~~~~~~~~
-prueba_thcom.c(143): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
-                                                                                                                                                                                        ts.tm_min,
-                                                                                                                                                                                        ^~~~~~~~~
-prueba_thcom.c(144): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
-                                                                                                                                                                                        ts.tm_sec,
-                                                                                                                                                                                        ^~~~~~~~~
-prueba_thcom.c(145): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
-                                                                                                                                                                                        ts.tm_mday,
-                                                                                                                                                                                        ^~~~~~~~~~
-prueba_thcom.c(146): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
-                                                                                                                                                                                        ts.tm_mon,
-                                                                                                                                                                                        ^~~~~~~~~
-prueba_thcom.c(147): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
-                                                                                                                                                                                        ts.tm_year);
-                                                                                                                                                                                        ^~~~~~~~~~
-prueba_thcom.c(183): warning: passing 'uint8_t [50]' to parameter of type 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
-                                        msg_tx.length=sprintf(msg_tx.buff,"%.2f-%.2f",data_adc.valor1,data_adc.valor2);
->>>>>>> 7404c5793d8f211999d2579547c7cda7c3ca858f
                                                               ^~~~~~~~~~~
 C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h(417): note: passing argument to parameter here
 extern _ARMABI int sprintf(char * __restrict /*s*/, const char * __restrict /*format*/, ...) __attribute__((__nonnull__(1,2)));
                                                   ^
-<<<<<<< HEAD
-prueba_thcom.c(182): warning: passing 'uint8_t [50]' to parameter of type 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
-=======
-prueba_thcom.c(187): warning: passing 'uint8_t [50]' to parameter of type 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
->>>>>>> 7404c5793d8f211999d2579547c7cda7c3ca858f
+prueba_thcom.c(204): warning: passing 'uint8_t [50]' to parameter of type 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
                                         msg_tx.length=sprintf(msg_tx.buff,"%.2f",data_adc.valor1);
                                                               ^~~~~~~~~~~
 C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h(417): note: passing argument to parameter here
@@ -99,11 +66,7 @@ extern _ARMABI int sprintf(char * __restrict /*s*/, const char * __restrict /*fo
 9 warnings generated.
 compiling prueba_thcom.c...
 linking...
-<<<<<<< HEAD
-Program Size: Code=35308 RO-data=1400 RW-data=196 ZI-data=37044  
-=======
-Program Size: Code=29394 RO-data=1006 RW-data=184 ZI-data=35688  
->>>>>>> 7404c5793d8f211999d2579547c7cda7c3ca858f
+Program Size: Code=31954 RO-data=1054 RW-data=192 ZI-data=35712  
 ".\Objects\b3_extra.axf" - 0 Error(s), 9 Warning(s).
 
 <h2>Software Packages used:</h2>

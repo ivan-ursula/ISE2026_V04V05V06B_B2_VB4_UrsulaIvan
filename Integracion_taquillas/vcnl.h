@@ -22,7 +22,7 @@
 #define INT_PIN GPIO_PIN_10
 
 #define ADDR            0x60
-
+extern osThreadId_t th_id_VCNL;
 int init_thVCNL(void);
 void VCNL_init(void);
 void VCNL_init_I2C(void);
