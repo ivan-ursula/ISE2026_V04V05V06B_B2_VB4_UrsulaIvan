@@ -7,7 +7,7 @@
 
 #define sensibilidad_corriente 4.199f // v/a
 
-#define CANAL_T1 12
+#define CANAL_T1 0
 #define CANAL_T2 4
 #define CANAL_CORRIENTE 13
 #define CANAL_TENSION 9

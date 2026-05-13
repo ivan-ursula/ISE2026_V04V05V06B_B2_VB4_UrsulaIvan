@@ -40,6 +40,7 @@ void th_main (void *argument);
 int Init_main (void) {
   
   thmain = osThreadNew(th_main, NULL, NULL);
+  exec2=0;
 	tim_RTC=osTimerNew((osTimerFunc_t)&TimerRTC_Callback, osTimerPeriodic, &exec2, NULL);
 	
 
@@ -52,7 +53,7 @@ int Init_main (void) {
 
 void th_main (void *argument) {
   estado= ACTIVO;
-	osTimerStart(tim_RTC,300000);
+	osTimerStart(tim_RTC,1000);
 	while (1) {
 		
 		
