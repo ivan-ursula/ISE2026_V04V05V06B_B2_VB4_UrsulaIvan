@@ -1,0 +1,10 @@
+index.htm,
+xml_http.js,
+palapico.png,
+inicio.cgi,
+gest_tarj.cgi,
+alertas.cgi,
+datos.cgi,
+hora.cgi,
+consumo.cgi 
+TO Web.c RTE NOPRINT ROOT(Web)
