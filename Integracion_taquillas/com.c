@@ -114,6 +114,7 @@ void desinit_uart(void)
 {
   uart->Uninitialize();
 }
+
 void init_uart(void){
 		GPIO_InitTypeDef GPIO_InitStruct = {0};
   

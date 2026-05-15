@@ -119,11 +119,6 @@ void estado_Bajo_Consumo(void)
 	/* Tengo que meterme en el modo bajo consumo. Tengo que poner algo en el handler de la
 	interrupcion? Tengo que reactivar el resto de pines*/
 	osTimerStop(tim_RTC);
-
-  //osKernelSuspend();
-  desinit_uart();
-  Deinit_ADC(&adc);
-  
   StopMode_Measure();
   
   osKernelResume(0);
