@@ -1,7 +1,6 @@
 #include "cmsis_os2.h"     
 #include "stm32f4xx_hal.h"
 #include "prueba.h"
-#include "vcnl.h"
 
 #include <time.h>
 
@@ -223,7 +222,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t pin)
     if (pin == INT_PIN)
     {
 		  osThreadFlagsSet(th_id_VCNL, 0x02);
-			//estado = ACTIVO;
+			estado = ACTIVO;
     }
 		if (pin == GPIO_PIN_13)
     {

@@ -1,4 +1,8 @@
 #include "main.h"
+#include "vcnl.h"
+#include "com.h"
+#include "NFC.h"
+#include "prueba.h"
 
 #ifdef _RTE_
 #include "RTE_Components.h"             

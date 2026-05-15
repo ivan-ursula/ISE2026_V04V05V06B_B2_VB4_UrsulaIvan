@@ -7,14 +7,18 @@
 #include "RTC.h"
 #include "adc.h"
 #include "sleep.h"
+#include "vcnl.h"
+
 typedef enum{
 	ACTIVO,
 	BAJO_CONSUMO,
 	ALARMA
 	
 } estados_t;
+
 void estado_Activo(void);
 void comp_cmd(ComData_t com_data);
 void TimerRTC_Callback(void const *arg);
+int Init_main (void);
 
 #endif

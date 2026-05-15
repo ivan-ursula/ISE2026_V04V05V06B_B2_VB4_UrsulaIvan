@@ -5,6 +5,7 @@
 
 void init_uart(void);
 void desinit_uart(void);
+int init_thcom (void);
 
 #define baudrate 9600
 //principio y fin de trrama
