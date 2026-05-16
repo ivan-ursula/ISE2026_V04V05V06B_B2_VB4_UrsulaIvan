@@ -4,8 +4,6 @@
 #include "cmsis_os2.h"
 #include "stm32f4xx_hal.h"
 #include <time.h>
-//#include "rl_net.h"
-//mirar esto con el profesor
 #define RTC_ASYNCH_PREDIV  0x7F   /* LSE as RTC clock */
 #define RTC_SYNCH_PREDIV   0x00FF /* LSE as RTC clock */
 

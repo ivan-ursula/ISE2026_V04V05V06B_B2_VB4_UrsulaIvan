@@ -1,7 +1,7 @@
 #include "cmsis_os2.h"     
 #include "stm32f4xx_hal.h"
 #include "prueba.h"
-
+#include "RTC.h"
 #include <time.h>
 
 //ID DE HILOS
@@ -131,7 +131,6 @@ void estado_Bajo_Consumo(void)
   Deinit_ADC(&adc);
   ADC_Init(&adc, ADC1);
   
-  
   osTimerStart(tim_RTC, 1000);
 	
 }
@@ -147,13 +146,16 @@ void estado_Alarma(void)
 	}
 }
 void comp_cmd(ComData_t com_data){
-		
-	struct tm ts_dormir;
-  RTC_TimeTypeDef hora_alarma;
-  RTC_DateTypeDef fecha_alarma;
 	
 	switch(msg_rx.cmd){
+		
 		case RESP_HORA:
+			sscanf((char*)msg_rx.buff, "%d:%d:%d %d/%d/%d",
+			&ts.tm_hour, &ts.tm_min,  &ts.tm_sec,
+			&ts.tm_mday, &ts.tm_mon,  &ts.tm_year);
+			ts.tm_mon  -= 1;
+			ts.tm_year -= 1900;
+			RTC_CalendarConfig(ts);
 
     break;
 			
@@ -166,11 +168,11 @@ void comp_cmd(ComData_t com_data){
 			elementos=osMessageQueueGetCount(q_adc_data);
 			if(status_q==osOK){
 				if(data_adc.cmd==RESP_LECTURA_PESO){
-					msg_tx.length=sprintf(msg_tx.buff ,"%.2f-%.2f",data_adc.valor1,data_adc.valor2);
+					msg_tx.length=sprintf((char*)msg_tx.buff ,"%.2f-%.2f",data_adc.valor1,data_adc.valor2);
 					osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
 					
 				}else{
-					msg_tx.length=sprintf(msg_tx.buff,"%.2f",data_adc.valor1);
+					msg_tx.length=sprintf((char*)msg_tx.buff,"%.2f",data_adc.valor1);
 					osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
 				}
 			}		
