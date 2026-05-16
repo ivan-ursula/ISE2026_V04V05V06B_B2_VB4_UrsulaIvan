@@ -50,10 +50,10 @@ t   cursor: pointer;
 t }
 t </style>
 t
-t <title>ESTADO Y CONSUMO</title></head>
+t <title>ESTADO Y MODO</title></head>
 t
 t <body text="white">
-t <div id="datos"><h2 align=center><br>ESTADO Y CONSUMO</h2>
+t <div id="datos"><h2 align=center><br>ESTADO Y MODO</h2>
 t <p>Estado actual del sistema y opciones de consumo<br></p>
 t
 t <form action=consumo.cgi method=post name=cgi>

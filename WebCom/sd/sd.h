@@ -18,7 +18,7 @@ typedef struct
 extern osMessageQueueId_t mid_Msg_SD;
 
 typedef struct {
-		char id_tarjeta[5];
+		char id_tarjeta[9];
     uint8_t taquilla;   // 0: Ninguna, 1: Taq 1, 2: Taq 2
     char nombre_trabajador[20];
 } TRABAJADOR_t;
@@ -34,10 +34,20 @@ int user_add(TRABAJADOR_t trabajador[]);
 int user_edit(const char *nfc_id_target, const char *new_user);
 int user_delete(const char *nfc_id_target);
 
+//variables server
 extern uint8_t estado_taq; //Indica que taquilla está abierta o cerrada
-extern uint8_t peso_taq1;
-extern uint8_t peso_taq2;
+extern float peso_taq1;
+extern float peso_taq2;
+
+extern uint8_t modo_func;
+
+extern uint8_t hora_desp;
+extern uint8_t min_desp;
+extern uint8_t hora_dorm;
+extern uint8_t min_dorm;
 extern float tens;
+extern float intens;
+extern uint8_t alerta;
 
 #endif
 

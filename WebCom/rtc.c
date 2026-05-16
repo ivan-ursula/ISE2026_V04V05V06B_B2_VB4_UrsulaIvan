@@ -1,6 +1,9 @@
 #include "rtc.h"
 #include "rl_net.h"
 
+/*Flag para pedir medidas*/
+extern osThreadId_t thweb_comTx;
+
 /* SNTP */
 const NET_ADDR4 ntp_server = { NET_ADDR_IP4, 123, 216, 239, 35, 4 };
 static void time_callback (uint32_t seconds, uint32_t seconds_fraction);
@@ -150,13 +153,14 @@ static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
  *---------------------------------------------------------------------------*/
 static void TimerRTC_Callback (void const *arg) {
   netSNTPc_GetTime ((NET_ADDR *)&ntp_server, time_callback);
+  osThreadFlagsSet(thweb_comTx, 0x01);
 }
 
 //Create and Start timers
 int init_TimerRTC (void) {
   exec1 = 1U;
   tim_idRTC = osTimerNew((osTimerFunc_t)&TimerRTC_Callback, osTimerPeriodic, &exec1, NULL);
-  osTimerStart(tim_idRTC, 180000U); 
+  osTimerStart(tim_idRTC, 5000U); 
   return NULL;
 }
 /*----------------------------------------------------------------------------
