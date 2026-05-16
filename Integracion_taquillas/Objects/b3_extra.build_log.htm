@@ -26,85 +26,23 @@ Project File Date:  05/13/2026
 <h2>Output:</h2>
 *** Using Compiler 'V6.16', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'Target 1'
-compiling sleep.c...
-compiling th_adc.c...
-prueba_thcom.c(154): warning: passing 'uint8_t [50]' to parameter of type 'const char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
-                        sscanf(msg_rx.buff,"%d:%d:%d %d/%d/%d", ts.tm_hour,
-                               ^~~~~~~~~~~
-C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h(529): note: passing argument to parameter here
-extern _ARMABI int sscanf(const char * __restrict /*s*/,
-                                                       ^
-prueba_thcom.c(154): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
-                        sscanf(msg_rx.buff,"%d:%d:%d %d/%d/%d", ts.tm_hour,
-                                            ~~                  ^~~~~~~~~~
-prueba_thcom.c(155): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
-                                                                                                                                                                                        ts.tm_min,
-                                                                                                                                                                                        ^~~~~~~~~
-prueba_thcom.c(156): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
-                                                                                                                                                                                        ts.tm_sec,
-                                                                                                                                                                                        ^~~~~~~~~
-prueba_thcom.c(157): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
-                                                                                                                                                                                        ts.tm_mday,
-                                                                                                                                                                                        ^~~~~~~~~~
-prueba_thcom.c(158): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
-                                                                                                                                                                                        ts.tm_mon,
-                                                                                                                                                                                        ^~~~~~~~~
-prueba_thcom.c(159): warning: format specifies type 'int *' but the argument has type 'int' [-Wformat]
-                                                                                                                                                                                        ts.tm_year);
-                                                                                                                                                                                        ^~~~~~~~~~
-prueba_thcom.c(164): error: expected expression
-                struct tm ts_dormir;
-                ^
-prueba_thcom.c(171): error: use of undeclared identifier 'ts_dormir'
-           &ts_dormir.tm_hour, &ts_dormir.tm_min, &ts_dormir.tm_sec,
-            ^
-prueba_thcom.c(171): error: use of undeclared identifier 'ts_dormir'
-           &ts_dormir.tm_hour, &ts_dormir.tm_min, &ts_dormir.tm_sec,
-                                ^
-prueba_thcom.c(171): error: use of undeclared identifier 'ts_dormir'
-           &ts_dormir.tm_hour, &ts_dormir.tm_min, &ts_dormir.tm_sec,
-                                                   ^
-prueba_thcom.c(172): error: use of undeclared identifier 'ts_dormir'
-           &ts_dormir.tm_mday, &ts_dormir.tm_mon, &ts_dormir.tm_year,
-            ^
-prueba_thcom.c(172): error: use of undeclared identifier 'ts_dormir'
-           &ts_dormir.tm_mday, &ts_dormir.tm_mon, &ts_dormir.tm_year,
-                                ^
-prueba_thcom.c(172): error: use of undeclared identifier 'ts_dormir'
-           &ts_dormir.tm_mday, &ts_dormir.tm_mon, &ts_dormir.tm_year,
-                                                   ^
-prueba_thcom.c(177): error: use of undeclared identifier 'ts_dormir'
-    ts_dormir.tm_mon  -= 1;      // tm_mon va de 0 a 11
-    ^
-prueba_thcom.c(178): error: use of undeclared identifier 'ts_dormir'
-    ts_dormir.tm_year -= 1900;   // tm_year es a<F1>os desde 1900
-    ^
-prueba_thcom.c(181): error: use of undeclared identifier 'ts_dormir'
-    RTC_CalendarConfig(ts_dormir);
-                       ^
-prueba_thcom.c(184): error: passing 'RTC_TimeTypeDef' to parameter of incompatible type 'struct tm'
-    RTC_Set_AlarmWakeup(hora_alarma);
-                        ^~~~~~~~~~~
-./RTC.h(16): note: passing argument to parameter 'ts_wake' here
-void RTC_Set_AlarmWakeup(struct tm ts_wake);
-                                   ^
-prueba_thcom.c(200): warning: passing 'uint8_t [50]' to parameter of type 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
+prueba_thcom.c(169): warning: passing 'uint8_t [50]' to parameter of type 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
                                         msg_tx.length=sprintf(msg_tx.buff ,"%.2f-%.2f",data_adc.valor1,data_adc.valor2);
                                                               ^~~~~~~~~~~
 C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h(417): note: passing argument to parameter here
 extern _ARMABI int sprintf(char * __restrict /*s*/, const char * __restrict /*format*/, ...) __attribute__((__nonnull__(1,2)));
                                                   ^
-prueba_thcom.c(204): warning: passing 'uint8_t [50]' to parameter of type 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
+prueba_thcom.c(173): warning: passing 'uint8_t [50]' to parameter of type 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
                                         msg_tx.length=sprintf(msg_tx.buff,"%.2f",data_adc.valor1);
                                                               ^~~~~~~~~~~
 C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h(417): note: passing argument to parameter here
 extern _ARMABI int sprintf(char * __restrict /*s*/, const char * __restrict /*format*/, ...) __attribute__((__nonnull__(1,2)));
                                                   ^
-9 warnings and 11 errors generated.
+2 warnings generated.
 compiling prueba_thcom.c...
-compiling main.c...
-compiling com.c...
-".\Objects\b3_extra.axf" - 11 Error(s), 9 Warning(s).
+linking...
+Program Size: Code=29420 RO-data=988 RW-data=188 ZI-data=35636  
+".\Objects\b3_extra.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -257,8 +195,7 @@ Package Vendor: Keil
       Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f429xx.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c
-Target not created.
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

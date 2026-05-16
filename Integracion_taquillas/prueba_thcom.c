@@ -154,30 +154,7 @@ void comp_cmd(ComData_t com_data){
 	
 	switch(msg_rx.cmd){
 		case RESP_HORA:
-			
-			sscanf(msg_rx.buff,"%d:%d:%d %d/%d/%d", ts.tm_hour,
-																							ts.tm_min,
-																							ts.tm_sec,
-																							ts.tm_mday,
-																							ts.tm_mon,
-																							ts.tm_year);
-			RTC_CalendarConfig(ts);
-			break;
-		case DORMIR: // AQUI HACE LA TRANSICION A MODO BAJO_CONSUMO
-			
-		sscanf((char*)msg_rx.buff,
-		"%d:%d:%d %d/%d/%d-%d:%d:%d %d/%d/%d",
-		&ts.tm_hour,  &ts.tm_min,  &ts.tm_sec,
-		&ts.tm_mday,  &ts.tm_mon,  &ts.tm_year,
-		&hora_alarma.Hours, &hora_alarma.Minutes, &hora_alarma.Seconds,
-		&fecha_alarma.Date, &fecha_alarma.Month,  &fecha_alarma.Year);
 
-    ts.tm_mon  -= 1;
-    ts.tm_year -= 1900;
-    RTC_CalendarConfig(ts);
-    RTC_Set_AlarmWakeup(ts);   // ? ver abajo
-    osDelay(200);
-    estado = BAJO_CONSUMO;
     break;
 			
 			
