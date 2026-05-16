@@ -124,6 +124,7 @@ void estado_Bajo_Consumo(void)
   osKernelResume(0);
   desinit_uart();
   init_uart();
+	osThreadFlagsSet(thcom_Rx, 0x1);
   NFC_Deinit_SPI();
   NFC_init_SPI();
   ADC1_pins_F429ZI_config();
@@ -210,19 +211,13 @@ void TimerRTC_Callback(void const *arg){
 void EXTI15_10_IRQHandler(void)
 {
 	HAL_GPIO_EXTI_IRQHandler(INT_PIN);
-	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
 }
 void HAL_GPIO_EXTI_Callback(uint16_t pin)
 {
     if (pin == INT_PIN)
     {
 		  osThreadFlagsSet(th_id_VCNL, 0x02);
-			estado = ACTIVO;
-    }
-		if (pin == GPIO_PIN_13)
-    {
-        // El botón despertó al micro del modo STOP
-        // Aquí puedes poner una bandera, etc.
+			estado = ALARMA;
     }
 }
 

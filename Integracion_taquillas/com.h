@@ -2,10 +2,13 @@
 #define __COM_H
 
 #include "stm32f4xx_hal.h"
+#include "cmsis_os2.h"
 
 void init_uart(void);
 void desinit_uart(void);
 int init_thcom (void);
+
+extern osThreadId_t thcom_Rx;
 
 #define baudrate 9600
 //principio y fin de trrama
