@@ -4,7 +4,6 @@
 
 
 RTC_HandleTypeDef RtcHandle;
-extern osThreadId_t thLed;
 
 //const NET_ADDR4 ntp_server = { NET_ADDR_IP4, 123, 216, 239, 35, 4 };
 struct tm ts;
@@ -115,7 +114,8 @@ void RTC_CalendarShow(uint8_t *showtime, uint8_t *showdate)
   sprintf((char *)showdate, "%2d-%2d-%2d", sdatestructureget.Date, sdatestructureget.Month, 2000 + sdatestructureget.Year);
 }
 
-void time_callback(uint32_t seconds, uint32_t seconds_fraction){
+void time_callback(uint32_t seconds, uint32_t seconds_fraction)
+{
  
  struct tm* ptr_ts;
   time_t sys_time=(time_t)seconds +3600;
@@ -126,4 +126,54 @@ void time_callback(uint32_t seconds, uint32_t seconds_fraction){
 
 
 }
+void RTC_Set_AlarmWakeup(struct tm ts_wake)
+{
+    RTC_AlarmTypeDef alarma;
 
+    alarma.AlarmTime.Hours          = ts_wake.tm_hour;
+    alarma.AlarmTime.Minutes        = ts_wake.tm_min;
+    alarma.AlarmTime.Seconds        = ts_wake.tm_sec;
+    alarma.AlarmTime.TimeFormat     = RTC_HOURFORMAT_24;
+    alarma.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+    alarma.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
+    alarma.AlarmMask                = RTC_ALARMMASK_NONE;
+    alarma.AlarmSubSecondMask       = RTC_ALARMSUBSECONDMASK_ALL;
+    alarma.AlarmDateWeekDaySel      = RTC_ALARMDATEWEEKDAYSEL_DATE;
+    alarma.AlarmDateWeekDay         = ts_wake.tm_mday;
+    alarma.Alarm                    = RTC_ALARM_A;
+
+    HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_A);
+    if (HAL_RTC_SetAlarm_IT(&RtcHandle, &alarma, RTC_FORMAT_BIN) != HAL_OK)
+        Error_Handler();
+
+    HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
+}
+
+void RTC_Set_AlarmSleep(struct tm ts_sleep)
+{
+    RTC_AlarmTypeDef alarma;
+
+    alarma.AlarmTime.Hours          = ts_sleep.tm_hour;
+    alarma.AlarmTime.Minutes        = ts_sleep.tm_min;
+    alarma.AlarmTime.Seconds        = ts_sleep.tm_sec;
+    alarma.AlarmTime.TimeFormat     = RTC_HOURFORMAT_24;
+    alarma.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+    alarma.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
+    alarma.AlarmMask                = RTC_ALARMMASK_NONE;
+    alarma.AlarmSubSecondMask       = RTC_ALARMSUBSECONDMASK_ALL;
+    alarma.AlarmDateWeekDaySel      = RTC_ALARMDATEWEEKDAYSEL_DATE;
+    alarma.AlarmDateWeekDay         = ts_sleep.tm_mday;
+    alarma.Alarm                    = RTC_ALARM_B;
+
+    HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_B);
+    if (HAL_RTC_SetAlarm_IT(&RtcHandle, &alarma, RTC_FORMAT_BIN) != HAL_OK)
+        Error_Handler();
+
+    HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);  // mismo vector que Alarma A
+}
+
+// Handler — no tocar
+void RTC_Alarm_IRQHandler(void)
+{
+    HAL_RTC_AlarmIRQHandler(&RtcHandle);
+}
