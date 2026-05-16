@@ -98,38 +98,6 @@ void Init_RTC(void)
     Error_Handler();
   }
   
-  /* Inicializar la alarma*/
-  
-//  RTC_AlarmTypeDef alarma;
-//  alarma.AlarmTime.Hours=0;
-//  alarma.AlarmTime.Minutes=0;
-//  alarma.AlarmTime.Seconds=5;
-//  alarma.AlarmTime.SubSeconds=0;
-//	
-//	
-//  alarma.AlarmTime.TimeFormat=RTC_HOURFORMAT_24;
-//  
-//  alarma.AlarmTime.DayLightSaving=RTC_DAYLIGHTSAVING_NONE;
-//  alarma.AlarmTime.StoreOperation=RTC_STOREOPERATION_RESET;
-//  
-//  alarma.AlarmMask=RTC_ALARMMASK_DATEWEEKDAY|RTC_ALARMMASK_HOURS|RTC_ALARMMASK_MINUTES;
-//  
-//  alarma.AlarmSubSecondMask=RTC_ALARMSUBSECONDMASK_ALL;
-//  alarma.AlarmDateWeekDaySel=RTC_ALARMDATEWEEKDAYSEL_DATE;
-//  
-//  alarma.AlarmDateWeekDay=0x01;
-//  alarma.Alarm=RTC_ALARM_A;
-//  HAL_RTC_SetAlarm_IT(&RtcHandle,&alarma,RTC_FORMAT_BCD);
-//  HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
-//  
-//  /* Inicializar la WAKEUP*/
-//  
-//  HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
-//  HAL_RTCEx_SetWakeUpTimer_IT(&RtcHandle, 8191 , RTC_WAKEUPCLOCK_RTCCLK_DIV16);//32k/16=2k  p=0.5ms
-  
-  //RTC_CalendarConfig();
-  
-  
 }
 
 void RTC_CalendarShow(uint8_t *showtime, uint8_t *showdate)
@@ -146,60 +114,6 @@ void RTC_CalendarShow(uint8_t *showtime, uint8_t *showdate)
   /* Display date Format : dd-mm-yy */
   sprintf((char *)showdate, "%2d-%2d-%2d", sdatestructureget.Date, sdatestructureget.Month, 2000 + sdatestructureget.Year);
 }
-void RTC_Set_AlarmWakeup(struct tm ts_wake)
-{
-    RTC_AlarmTypeDef alarma;
-
-    /* --- Tiempo de la alarma --- */
-    alarma.AlarmTime.Hours          = ts_wake.tm_hour;
-    alarma.AlarmTime.Minutes        = ts_wake.tm_min;
-    alarma.AlarmTime.Seconds        = ts_wake.tm_sec;
-
-    alarma.AlarmTime.TimeFormat     = RTC_HOURFORMAT_24;
-    alarma.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
-    alarma.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
-
-    /* --- Máscara: comparar TODO (día + hh:mm:ss) ---
-       En el código comentado se enmascaraban día/horas/minutos ? solo comparaba segundos.
-       Aquí queremos despertar en una fecha+hora exacta, así que AlarmMask = NONE */
-    alarma.AlarmMask                = RTC_ALARMMASK_NONE;
-
-    alarma.AlarmSubSecondMask       = RTC_ALARMSUBSECONDMASK_ALL;
-
-    /* --- Fecha del día de despertar --- */
-    alarma.AlarmDateWeekDaySel      = RTC_ALARMDATEWEEKDAYSEL_DATE;
-    alarma.AlarmDateWeekDay         = ts_wake.tm_mday;
-
-    alarma.Alarm                    = RTC_ALARM_A;
-
-//    /* --- Desactivar por si había una alarma previa --- */
-//    HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_A);
-
-    /* --- Activar con interrupción (BIN, igual que SetDate/SetTime) --- */
-    if (HAL_RTC_SetAlarm_IT(&RtcHandle, &alarma, RTC_FORMAT_BIN) != HAL_OK)
-    {
-        Error_Handler();
-    }
-		
-    HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
-}
-
-
-//HANDler no tocar
-void RTC_Alarm_IRQHandler(void){
-  HAL_RTC_AlarmIRQHandler(&RtcHandle);
-  
-}
-
-void RTC_WKUP_IRQHandler(void)
-{
-  HAL_RTCEx_WakeUpTimerIRQHandler(&RtcHandle);
-}
-
-//void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
-//{
-//  //osThreadFlagsSet(tid_Thread_LD1, 0x10);
-//}
 
 void time_callback(uint32_t seconds, uint32_t seconds_fraction){
  

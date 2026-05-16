@@ -133,7 +133,6 @@ void estado_Bajo_Consumo(void)
   
   
   osTimerStart(tim_RTC, 1000);
-  estado = ACTIVO;
 	
 }
 void estado_Alarma(void) 
@@ -148,6 +147,11 @@ void estado_Alarma(void)
 	}
 }
 void comp_cmd(ComData_t com_data){
+		
+	struct tm ts_dormir;
+  RTC_TimeTypeDef hora_alarma;
+  RTC_DateTypeDef fecha_alarma;
+	
 	switch(msg_rx.cmd){
 		case RESP_HORA:
 			
@@ -161,27 +165,20 @@ void comp_cmd(ComData_t com_data){
 			break;
 		case DORMIR: // AQUI HACE LA TRANSICION A MODO BAJO_CONSUMO
 			
-			//RTC_AlarmTypeDef alarma;
-//		sscanf((char*)msg_rx.buff,
-//           "%d:%d:%d %d/%d/%d-%d:%d:%d %d/%d/%d",
-//           &ts.tm_hour,  &ts.tm_min,  &ts.tm_sec,
-//           &ts.tm_mday,  &ts.tm_mon,  &ts.tm_year,
-//		       &alarma.AlarmTime.Hours,
-//           &alarma.AlarmTime.Minutes,
-//           &alarma.AlarmTime.Seconds);
-//		
-//		ts.tm_mon  -= 1;
-//		ts.tm_year -= 1900;
-//		
-//		RTC_CalendarConfig(ts);
+		sscanf((char*)msg_rx.buff,
+		"%d:%d:%d %d/%d/%d-%d:%d:%d %d/%d/%d",
+		&ts.tm_hour,  &ts.tm_min,  &ts.tm_sec,
+		&ts.tm_mday,  &ts.tm_mon,  &ts.tm_year,
+		&hora_alarma.Hours, &hora_alarma.Minutes, &hora_alarma.Seconds,
+		&fecha_alarma.Date, &fecha_alarma.Month,  &fecha_alarma.Year);
 
-    // Configurar alarma con la hora de despertar
-		//RTC_Set_AlarmWakeup(alarma.AlarmTime);
-
-		osDelay(200);
+    ts.tm_mon  -= 1;
+    ts.tm_year -= 1900;
+    RTC_CalendarConfig(ts);
+    RTC_Set_AlarmWakeup(ts);   // ? ver abajo
+    osDelay(200);
     estado = BAJO_CONSUMO;
-		
-			break;
+    break;
 			
 			
 		}
