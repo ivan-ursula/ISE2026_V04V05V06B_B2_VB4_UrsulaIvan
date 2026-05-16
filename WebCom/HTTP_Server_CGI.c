@@ -31,27 +31,35 @@ extern osMessageQueueId_t mid_Msg_Date;
 #define MAX_ALERTAS 15      //Número máximo de alertas
 #define MAX_LEN_ALERTAS 30  //Longitud máxima de alerta
 
+/*Flag para pedir medidas*/
+extern osThreadId_t thweb_comRx;
+
 // Local variables.
 static uint8_t ip_addr[NET_ADDR_IP6_LEN];
 
 static uint16_t pag = 1; //Página de visualización de alertas
 
 uint8_t estado_taq = 0;
-static uint8_t modo_func = 1;  //Indica en que modo de funcionamiento está el sistema
+uint8_t modo_func = 1;  //Indica en que modo de funcionamiento está el sistema
 
-static uint8_t hora_dorm = 0;
-static uint8_t min_dorm = 0;
+uint8_t alerta = 0;
+
+uint8_t hora_dorm = 0;
+uint8_t min_dorm = 0;
 static char fecha_dorm[12] = "2026-05-09";
 
-static uint8_t hora_desp = 0;
-static uint8_t min_desp = 0;
+uint8_t hora_desp = 0;
+uint8_t min_desp = 0;
 static char fecha_desp[12] = "2026-05-09";
 
 static TRABAJADOR_t tabla_trabajadores[5];
 
-uint8_t peso_taq1 = 0;
-uint8_t peso_taq2 = 0;
+float peso_taq1 = 0;
+float peso_taq2 = 0;
 float tens = 0;
+float intens = 0;
+
+char msg_web[50];
 
 MSGQUEUE_OBJ_DATE fecha_rec; //Fecha recibida del RTC
 
@@ -208,6 +216,20 @@ void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
 						if(idx == 4)  user_add(tabla_trabajadores);
 					}
 				}
+        
+        //Comparación para botones de alerta
+        else if (strncmp(var, "accion=alarm_ok", 15) == 0) {
+          // El usuario confirmó la Alarma Total
+          modo_func = 0x01; //Se queda en modo activo
+          alerta = 0;
+          osThreadFlagsSet(thweb_comRx, 0x02);
+        }
+        else if (strncmp(var, "accion=alarm_false", 18) == 0) {
+          // El usuario marcó Falsa Alarma
+          modo_func = 0x02; //Se queda dormido
+          alerta = 0;
+          osThreadFlagsSet(thweb_comRx, 0x04);
+        }
       }
     } while (data);
   }
@@ -268,12 +290,28 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 		case 'f': //peso de las taquillas
 			switch(env[2]){
 				case '1':
-						len = (uint32_t)sprintf (buf, &env[4], "5kg");
+            sprintf(msg_web, "%.1f g",peso_taq1);
+						len = (uint32_t)sprintf (buf, &env[4], msg_web);
 					break;
 				case '2':
-						len = (uint32_t)sprintf (buf, &env[4], "7kg");
+            sprintf(msg_web, "%.1f g",peso_taq2);
+						len = (uint32_t)sprintf (buf, &env[4], msg_web);
 					break;
 			}
+      break;
+      
+    case 'b':
+      switch(env[2]){
+				case '1':
+            sprintf(msg_web, "%.2f V",tens);
+            len = (uint32_t)sprintf (buf, &env[4], msg_web);
+					break;
+				case '2':
+            sprintf(msg_web, "%.2f mA",intens);
+						len = (uint32_t)sprintf (buf, &env[4], msg_web);
+					break;
+			}
+          
       break;
 			
 		case 'g': //estado de consumo
@@ -284,7 +322,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 			}
       break;
 		
-		case 'h': //cambio de estado de consumo checkboxes AQUI PONER ALGO PARA ENVIAR LA HORA CON 20 SEGUNDOS MÁS
+		case 'h': //cambio de estado de consumo checkboxes
 			switch(env[2]){
 				case '1':
 						len = (uint32_t)sprintf (buf, &env[4], (modo_func & 0x01) ? "checked" : "");
@@ -361,7 +399,29 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
         }
       }
     break;
-		
+      
+    case 'k': // Indicador de estado circular
+    // Si la variable modo_func (o la que decidas) es 0 -> verde, si es 1 -> rojo
+      if (alerta == 0) {
+        len = (uint32_t)sprintf(buf, &env[4], "background-color: #00FF00;"); // Verde
+      } else {
+        len = (uint32_t)sprintf(buf, &env[4], "background-color: #FF0000;"); // Rojo
+      }
+    break;
+      
+    case 'l': // Botones de gestión de alarma
+      if (alerta == 1) { // Si hay alarma activa
+        len = (uint32_t)sprintf(buf, 
+        "<div style='margin-top:20px;'>"
+        "<button type='submit' name='accion' value='alarm_ok' style='background-color:red; color:white; padding:10px;'>Alarma Total</button> "
+        "<button type='submit' name='accion' value='alarm_false' style='background-color:gray; color:white; padding:10px;'>Falsa Alarma</button>"
+        "</div>");
+      } else {
+      // Si no hay alarma, devolvemos una cadena vacía
+        len = (uint32_t)sprintf(buf, "");
+      }
+    break;
+     
   }
   return (len);
 }

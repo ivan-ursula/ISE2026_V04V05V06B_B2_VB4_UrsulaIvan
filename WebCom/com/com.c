@@ -108,16 +108,7 @@ void th_com_Rx(void *argument){
 }
 
 void init_uart(void){
-		GPIO_InitTypeDef GPIO_InitStruct = {0};
-  
   __HAL_RCC_GPIOB_CLK_ENABLE();
-	
-//  GPIO_InitStruct.Pin = GPIO_PIN_10 |GPIO_PIN_11;
-//  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-//  GPIO_InitStruct.Pull = GPIO_NOPULL;
-//  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-//		
-//  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 	
 	uart->Initialize(uart_callback);
     

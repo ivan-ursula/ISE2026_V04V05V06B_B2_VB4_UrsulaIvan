@@ -75,7 +75,10 @@ t  <input type="hidden" name="taquilla1" value="0">
 t  <input type="hidden" name="taquilla2" value="0">
 c e 1 <td><input type="checkbox" name="taquilla1" OnClick="return false;" %s></td>
 c e 2 <td><input type="checkbox" name="taquilla2" OnClick="return false;" %s></td>
-t </tr></table></form></div>
+t </tr></table>
+t 
+c b 1 <p><br>La tensi&oacute;n del sistema es: %s
+c b 2 <br>La corriente del sistema es: %s</p></form></div>
 t <script>
 t function actualizarDatos() {
 t  fetch("datos.cgi?nocache=" + new Date().getTime())
