@@ -51,7 +51,6 @@ __NO_RETURN void app_main (void *arg) {
   init_thcomweb ();
   
   netInitialize ();
-  osDelay(5000);
   init_Thread_RTC();
 
   osThreadExit();

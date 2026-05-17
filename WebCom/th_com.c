@@ -9,11 +9,14 @@ osThreadId_t thweb_comRx;
 extern osMessageQueueId_t qCom_Tx;
 extern osMessageQueueId_t qCom_Rx;
 
+extern osMessageQueueId_t mid_Msg_Taq;
+MSGQUEUE_OBJ_DATE fecha_rec_taq;
+
 static uint8_t flag = 0x01;
 static uint8_t flag_alarm = 0x02;
 
 static uint8_t int_taq = 0;
-static char mensaje[50];
+static char mensaje[75];
 
 void th_webcom_Tx(void *argument);                   
 void th_webcom_Rx(void *argument);
@@ -35,11 +38,12 @@ void th_webcom_Rx (void *argument) {
  
   while (1) {
     osMessageQueueGet(qCom_Rx,&msg,NULL,osWaitForever);
+		osMessageQueueGet(mid_Msg_Taq, &fecha_rec_taq, NULL, 0);
     
     switch(msg.cmd){
       case HORA:
         msg.cmd = RESP_HORA;
-        msg.length = sprintf(msg.buff, "%s %s", fecha_rec.BufHour, fecha_rec.BufDate);
+        msg.length = sprintf(msg.buff, "%s %s", fecha_rec_taq.BufHour, fecha_rec_taq.BufDate);
         osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
       
       break;
@@ -88,7 +92,7 @@ void th_webcom_Rx (void *argument) {
       
       case RESP_DORMIR:
         modo_func = 0x02;
-        sprintf(mensaje, "Se ha dormido - Se despertará: %d:%d",hora_desp, min_desp);
+        sprintf(mensaje, "Se ha dormido - Se despertará: %02d:%02d %s",hora_desp, min_desp, fecha_desp);
         alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
       break;
       
@@ -113,29 +117,65 @@ void th_webcom_Rx (void *argument) {
 
 void th_webcom_Tx(void *argument){
   ComData_t msg;
+	int anio = 0;
+	int mes = 0;
+  int dia = 0;
+	char fecha_dorm_taq[12];
+	char fecha_desp_taq[12];
   
   while(1){
-    osThreadFlagsWait(flag, osFlagsWaitAny, osWaitForever);
+    flag = osThreadFlagsWait(0x0F, osFlagsWaitAny, osWaitForever);
     
-    msg.cmd = DORMIR;
-    msg.length = sprintf(mensaje, "Se dormirá: %d:%d - Se despertará: %d:%d",hora_dorm, min_dorm, hora_desp, min_desp);
-    alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
-    osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
-    osDelay(5);
-    
-    msg.cmd = LECTURA_PESO;
-    msg.length = 0;
-    osDelay(5);
-    
-    msg.cmd = LECTURA_TENSION;
-    msg.length = 0;
-    osDelay(5);
-    
-    msg.cmd = LECTURA_CORRIENTE;
-    msg.length = 0;
-    osDelay(5);
+		if (flag == 0x01){ //Se guarda la hora y se envía directamente
+			msg.cmd = DORMIR;
+			if (sscanf(fecha_dorm, "%d-%d-%d", &anio, &mes, &dia) == 3) {
+        sprintf(fecha_dorm_taq, "%02d/%02d/%04d\n", dia, mes, anio);
+			}
+			if (sscanf(fecha_desp, "%d-%d-%d", &anio, &mes, &dia) == 3) {
+        sprintf(fecha_desp_taq, "%02d/%02d/%04d\n", dia, mes, anio);
+			}
+			
+			msg.length = sprintf(msg.buff, "%02d:%02d:00 %s-%02d:%02d:00 %s",hora_dorm, min_dorm, fecha_dorm_taq, hora_desp, min_desp, fecha_desp_taq);
+			sprintf(mensaje, "Se dormirá: %02d:%02d %s - Se despertará: %02d:%02d %s",hora_dorm, min_dorm, fecha_dorm, hora_desp, min_desp, fecha_desp);
+			alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
+			osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
+			osDelay(5);
+			
+		}else if (flag == 0x03){ //Se envía la fecha actual para dormir
+			msg.cmd = DORMIR;
+			osMessageQueueGet(mid_Msg_Taq, &fecha_rec_taq, NULL, 10);
+			if (sscanf(fecha_desp, "%d-%d-%d", &anio, &mes, &dia) == 3) {
+        sprintf(fecha_desp_taq, "%02d/%02d/%04d\n", dia, mes, anio);
+			}
+			
+			msg.length = sprintf(msg.buff, "%s %s-%02d:%02d:00 %s",fecha_rec_taq.BufHour, fecha_rec_taq.BufDate, hora_desp, min_desp, fecha_desp_taq);
+			sprintf(mensaje, "Se duerme - Se despertará: %02d:%02d %s", hora_desp, min_desp, fecha_desp);
+			alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
+			osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
+			osDelay(5);
+			
+		}else{ 
+			msg.cmd = LECTURA_PESO;
+			msg.length = 0;
+			msg.buff[0] = 0x00;
+			osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
+			osDelay(5);
+			
+			msg.cmd = LECTURA_TENSION;
+			msg.length = 0;
+			msg.buff[0] = 0x00;
+			osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
+			osDelay(5);
+			
+			msg.cmd = LECTURA_CORRIENTE;
+			msg.length = 0;
+			msg.buff[0] = 0x00;
+			osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
+			osDelay(5);
+		}
+		
+		flag = 0;
     
     osThreadYield();
-
   }
 }

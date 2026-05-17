@@ -43,10 +43,15 @@ extern uint8_t modo_func;
 
 extern uint8_t hora_desp;
 extern uint8_t min_desp;
+extern char fecha_desp[11];
+
 extern uint8_t hora_dorm;
 extern uint8_t min_dorm;
+extern char fecha_dorm[11];
+	
 extern float tens;
 extern float intens;
+extern float bat;
 extern uint8_t alerta;
 
 #endif

@@ -33,6 +33,7 @@ extern osMessageQueueId_t mid_Msg_Date;
 
 /*Flag para pedir medidas*/
 extern osThreadId_t thweb_comRx;
+extern osThreadId_t thweb_comTx;
 
 // Local variables.
 static uint8_t ip_addr[NET_ADDR_IP6_LEN];
@@ -46,18 +47,19 @@ uint8_t alerta = 0;
 
 uint8_t hora_dorm = 0;
 uint8_t min_dorm = 0;
-static char fecha_dorm[12] = "2026-05-09";
+char fecha_dorm[11] = "2026-05-09";
 
 uint8_t hora_desp = 0;
 uint8_t min_desp = 0;
-static char fecha_desp[12] = "2026-05-09";
+char fecha_desp[11] = "2026-05-09";
 
 static TRABAJADOR_t tabla_trabajadores[5];
 
 float peso_taq1 = 0;
 float peso_taq2 = 0;
-float tens = 0;
+float tens = 4.2;
 float intens = 0;
+float bat = 100;
 
 char msg_web[50];
 
@@ -265,7 +267,12 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 			osMessageQueueGet(mid_Msg_Date, &fecha_rec, NULL, 0);
 			switch(env[2]){
 				case '1':
-						len = (uint32_t)sprintf (buf, &env[4], "97%");
+						if (tens >= 4.2f) bat = 100;
+						if (tens <= 2.8f) bat = 0;
+				
+						bat = ((tens - 2.8)/(4.2-2.8))*100.0f;
+						sprintf(msg_web, "%.1f %%",bat);
+						len = (uint32_t)sprintf (buf, &env[4], msg_web);
 					break;
 				case '2':
 						len = (uint32_t)sprintf(buf, &env[4], fecha_rec.BufHour);
@@ -318,6 +325,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 			if(modo_func == 0x01){
 				len = (uint32_t)sprintf (buf, &env[4], "<span style='color:green;'>ACTIVO</span>");
 			}else if(modo_func == 0x02){
+				osThreadFlagsSet(thweb_comTx, 0x03);
 				len = (uint32_t)sprintf (buf, &env[4], "<span style='color:red;'>STOP</span>");
 			}
       break;
@@ -357,6 +365,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 						len = (uint32_t)sprintf(buf, &env[4], fecha_rec.BufDate);
           break;
         case '8':
+						if(modo_func != 0x02)	osThreadFlagsSet(thweb_comTx, 0x01);
 						len = (uint32_t)sprintf(buf, &env[4], fecha_desp);
           break;
 			}

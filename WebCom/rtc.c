@@ -19,6 +19,7 @@ RTC_HandleTypeDef RtcHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 static void RTC_CalendarShowHTML(char *showtime, char *showdate);
+static void RTC_CalendarShow(char *showtime, char *showdate);
 static void Init_RTC(void);
 
 /* Thread_RTC*/
@@ -28,7 +29,10 @@ void Thread_RTC (void *argument);
 /* Message */
 MSGQUEUE_OBJ_DATE msg_DATE_leido;
 MSGQUEUE_OBJ_DATE msg_env_web;
+MSGQUEUE_OBJ_DATE msg_env_taq;
 osMessageQueueId_t mid_Msg_Date;
+osMessageQueueId_t mid_Msg_Taq;
+
 int Init_MsgQueue_Date (void);
 
 /* Stack */
@@ -40,7 +44,9 @@ const osThreadAttr_t Thread_RTC_attr = {.stack_size = 1024};
 int Init_MsgQueue_Date (void) {
 
   mid_Msg_Date = osMessageQueueNew(2, sizeof(MSGQUEUE_OBJ_DATE), NULL);
-  if (mid_Msg_Date == NULL) {
+	mid_Msg_Taq  = osMessageQueueNew(2, sizeof(MSGQUEUE_OBJ_DATE), NULL);
+	
+  if (mid_Msg_Date == NULL || mid_Msg_Taq == NULL) {
     return(-1);
   }
 	
@@ -137,6 +143,20 @@ static void RTC_CalendarShowHTML(char *showtime, char *showdate){
   sprintf((char *)showdate, "%04d-%02d-%02d", 2000 + sdatestructureget.Year, sdatestructureget.Month, sdatestructureget.Date );
 }
 
+static void RTC_CalendarShow(char *showtime, char *showdate){
+  RTC_DateTypeDef sdatestructureget;
+  RTC_TimeTypeDef stimestructureget;
+
+  /* Get the RTC current Time */
+  HAL_RTC_GetTime(&RtcHandle, &stimestructureget, RTC_FORMAT_BIN);
+  /* Get the RTC current Date */
+  HAL_RTC_GetDate(&RtcHandle, &sdatestructureget, RTC_FORMAT_BIN);
+  /* Display time Format : hh:mm:ss */
+  sprintf((char *)showtime, "%02d:%02d:%02d", stimestructureget.Hours, stimestructureget.Minutes, stimestructureget.Seconds);
+  /* Display date Format : mm-dd-yy */
+  sprintf((char *)showdate, "%02d/%02d/%04d", sdatestructureget.Date, sdatestructureget.Month, 2000 + sdatestructureget.Year );
+}
+
 /*----------------------------------------------------------------------------
 *      SNTP: sincronización con el servidor
  *---------------------------------------------------------------------------*/
@@ -153,14 +173,14 @@ static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
  *---------------------------------------------------------------------------*/
 static void TimerRTC_Callback (void const *arg) {
   netSNTPc_GetTime ((NET_ADDR *)&ntp_server, time_callback);
-  osThreadFlagsSet(thweb_comTx, 0x01);
+  osThreadFlagsSet(thweb_comTx, 0x05);
 }
 
 //Create and Start timers
 int init_TimerRTC (void) {
   exec1 = 1U;
   tim_idRTC = osTimerNew((osTimerFunc_t)&TimerRTC_Callback, osTimerPeriodic, &exec1, NULL);
-  osTimerStart(tim_idRTC, 5000U); 
+  osTimerStart(tim_idRTC, 180000U); 
   return NULL;
 }
 /*----------------------------------------------------------------------------
@@ -189,7 +209,9 @@ void Thread_RTC (void *argument) {
   
   while (1) {
     RTC_CalendarShowHTML(msg_env_web.BufHour, msg_env_web.BufDate);
+		RTC_CalendarShow(msg_env_taq.BufHour, msg_env_taq.BufDate);
     osMessageQueuePut(mid_Msg_Date, &msg_env_web, 0, osWaitForever);
+		osMessageQueuePut(mid_Msg_Taq,  &msg_env_taq, 0, 0);
         
     osThreadYield();
   }
