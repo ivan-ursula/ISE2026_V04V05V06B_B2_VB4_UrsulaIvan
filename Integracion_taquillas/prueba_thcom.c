@@ -217,7 +217,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t pin)
 			estado = ALARMA;
     }
 }
-
+void RTC_Alarm_IRQHandler(void)
+{
+    HAL_RTC_AlarmIRQHandler(&RtcHandle);
+	
+}
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
     HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_A);

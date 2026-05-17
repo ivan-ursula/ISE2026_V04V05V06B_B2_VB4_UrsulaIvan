@@ -154,8 +154,5 @@ void RTC_Set_AlarmSleep(struct tm ts_sleep)
 
     HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);  // mismo vector que Alarma A
 }
-void RTC_Alarm_IRQHandler(void)
-{
-    HAL_RTC_AlarmIRQHandler(&RtcHandle);
-}
+
 
