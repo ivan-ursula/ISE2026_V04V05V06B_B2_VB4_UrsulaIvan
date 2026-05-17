@@ -183,3 +183,4 @@ static void SYSCLKConfig_STOP(void)
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   HAL_RCC_ClockConfig(&RCC_ClkInitStruct, pFLatency); // ? FALTA ESTO
 }
+

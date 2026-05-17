@@ -224,8 +224,14 @@ void HAL_GPIO_EXTI_Callback(uint16_t pin)
     }
 }
 
-void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
+void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
-  //osThreadFlagsSet(tid_Thread_LD1, 0x10);
-	estado = ACTIVO;
+    HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_A);
+    estado = ACTIVO;        // Alarma A ? despertar
+}
+
+void HAL_RTC_AlarmBEventCallback(RTC_HandleTypeDef *hrtc)
+{
+    HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_B);
+    estado = BAJO_CONSUMO;  // Alarma B ? dormir
 }
