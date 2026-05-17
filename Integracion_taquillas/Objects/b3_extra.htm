@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\b3_extra.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\b3_extra.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6160001: Last Updated: Sun May 17 16:28:14 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6160001: Last Updated: Sun May 17 16:43:14 2026
 <BR><P>
 <H3>Maximum Stack Usage =        432 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1141,27 +1141,31 @@ Global Symbols
 <LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
 </UL>
 
-<P><STRONG><a name="[106]"></a>HAL_RTCEx_AlarmBEventCallback</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f4xx_hal_rtc_ex.o(.text.HAL_RTCEx_AlarmBEventCallback))
-<BR><BR>[Called By]<UL><LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTC_AlarmIRQHandler
+<P><STRONG><a name="[103]"></a>HAL_RTCEx_AlarmBEventCallback</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, prueba_thcom.o(.text.HAL_RTCEx_AlarmBEventCallback))
+<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = HAL_RTCEx_AlarmBEventCallback &rArr; HAL_RTC_DeactivateAlarm &rArr; HAL_GetTick
+</UL>
+<BR>[Calls]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTC_DeactivateAlarm
+</UL>
+<BR>[Called By]<UL><LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTC_AlarmIRQHandler
 </UL>
 
 <P><STRONG><a name="[13a]"></a>HAL_RTCEx_BKUPWrite</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, stm32f4xx_hal_rtc_ex.o(.text.HAL_RTCEx_BKUPWrite))
 <BR><BR>[Called By]<UL><LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_CalendarConfig
 </UL>
 
-<P><STRONG><a name="[103]"></a>HAL_RTC_AlarmAEventCallback</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, prueba_thcom.o(.text.HAL_RTC_AlarmAEventCallback))
+<P><STRONG><a name="[105]"></a>HAL_RTC_AlarmAEventCallback</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, prueba_thcom.o(.text.HAL_RTC_AlarmAEventCallback))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = HAL_RTC_AlarmAEventCallback &rArr; HAL_RTC_DeactivateAlarm &rArr; HAL_GetTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTC_DeactivateAlarm
 </UL>
-<BR>[Called By]<UL><LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTC_AlarmIRQHandler
+<BR>[Called By]<UL><LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTC_AlarmIRQHandler
 </UL>
 
-<P><STRONG><a name="[105]"></a>HAL_RTC_AlarmIRQHandler</STRONG> (Thumb, 100 bytes, Stack size 8 bytes, stm32f4xx_hal_rtc.o(.text.HAL_RTC_AlarmIRQHandler))
+<P><STRONG><a name="[106]"></a>HAL_RTC_AlarmIRQHandler</STRONG> (Thumb, 100 bytes, Stack size 8 bytes, stm32f4xx_hal_rtc.o(.text.HAL_RTC_AlarmIRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = HAL_RTC_AlarmIRQHandler &rArr; HAL_RTC_AlarmAEventCallback &rArr; HAL_RTC_DeactivateAlarm &rArr; HAL_GetTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTC_AlarmAEventCallback
-<LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTCEx_AlarmBEventCallback
+<BR>[Calls]<UL><LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTC_AlarmAEventCallback
+<LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTCEx_AlarmBEventCallback
 </UL>
 <BR>[Called By]<UL><LI><a href="#[33]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_Alarm_IRQHandler
 </UL>
@@ -1173,7 +1177,8 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[13e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_Set_AlarmWakeup
 <LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_Set_AlarmSleep
-<LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTC_AlarmAEventCallback
+<LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTC_AlarmAEventCallback
+<LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTCEx_AlarmBEventCallback
 </UL>
 
 <P><STRONG><a name="[107]"></a>HAL_RTC_GetDate</STRONG> (Thumb, 66 bytes, Stack size 16 bytes, stm32f4xx_hal_rtc.o(.text.HAL_RTC_GetDate))
@@ -1463,7 +1468,7 @@ Global Symbols
 <P><STRONG><a name="[33]"></a>RTC_Alarm_IRQHandler</STRONG> (Thumb, 16 bytes, Stack size 8 bytes, prueba_thcom.o(.text.RTC_Alarm_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = RTC_Alarm_IRQHandler &rArr; HAL_RTC_AlarmIRQHandler &rArr; HAL_RTC_AlarmAEventCallback &rArr; HAL_RTC_DeactivateAlarm &rArr; HAL_GetTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTC_AlarmIRQHandler
+<BR>[Calls]<UL><LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTC_AlarmIRQHandler
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f429xx.o(RESET)
 </UL>

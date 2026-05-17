@@ -228,7 +228,7 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
     estado = ACTIVO;        // Alarma A ? despertar
 }
 
-void HAL_RTC_AlarmBEventCallback(RTC_HandleTypeDef *hrtc)
+void HAL_RTCEx_AlarmBEventCallback(RTC_HandleTypeDef *hrtc)
 {
     HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_B);
     estado = BAJO_CONSUMO;  // Alarma B ? dormir
