@@ -19,41 +19,34 @@ void Error_Handler(void)
 
 void RTC_CalendarConfig(struct tm ts)
 {
-  RTC_DateTypeDef sdatestructure;
-  RTC_TimeTypeDef stimestructure;
+    RTC_DateTypeDef sdatestructure;
+    RTC_TimeTypeDef stimestructure;
 
-  /*##-1- Configure the Date #################################################*/
-  /* Set Date: Lunes 2 de Marzo de 2026 */
-  sdatestructure.Year = ts.tm_year-100;
-  sdatestructure.Month = ts.tm_mon+1;
-  sdatestructure.Date = ts.tm_mday;
-  sdatestructure.WeekDay = RTC_WEEKDAY_MONDAY;
-  
-  if(HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BIN) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
+    // Calcular día de la semana automáticamente
+    mktime(&ts);  // rellena ts.tm_wday (0=domingo, 1=lunes...)
 
-  /*##-2- Configure the Time #################################################*/
-  /* Set Time: 14:00:00 */
-  stimestructure.Hours = ts.tm_hour;
-  stimestructure.Minutes = ts.tm_min;
-  stimestructure.Seconds = ts.tm_sec;
-  stimestructure.TimeFormat = RTC_HOURFORMAT_24;
-  stimestructure.DayLightSaving = RTC_DAYLIGHTSAVING_NONE ;
-  stimestructure.StoreOperation = RTC_STOREOPERATION_RESET;
+    // tm_wday: 0=domingo ? HAL: 7=domingo, 1=lunes...
+    uint8_t weekday = (ts.tm_wday == 0) ? RTC_WEEKDAY_SUNDAY : ts.tm_wday;
 
-  if (HAL_RTC_SetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BIN) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
-  
-  
-  
-  /*##-3- Writes a data in a RTC Backup data Register1 #######################*/
-  HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, 0x32F2);
+    sdatestructure.Year    = ts.tm_year - 100;
+    sdatestructure.Month   = ts.tm_mon + 1;
+    sdatestructure.Date    = ts.tm_mday;
+    sdatestructure.WeekDay = weekday;   // ? ya no hardcodeado
+
+    if(HAL_RTC_SetDate(&RtcHandle, &sdatestructure, RTC_FORMAT_BIN) != HAL_OK)
+        Error_Handler();
+
+    stimestructure.Hours          = ts.tm_hour;
+    stimestructure.Minutes        = ts.tm_min;
+    stimestructure.Seconds        = ts.tm_sec;
+    stimestructure.TimeFormat     = RTC_HOURFORMAT_24;
+    stimestructure.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+    stimestructure.StoreOperation = RTC_STOREOPERATION_RESET;
+
+    if(HAL_RTC_SetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BIN) != HAL_OK)
+        Error_Handler();
+
+    HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, 0x32F2);
 }
 
 void Init_RTC(void)
@@ -109,9 +102,9 @@ void RTC_CalendarShow(uint8_t *showtime, uint8_t *showdate)
   /* Get the RTC current Date */
   HAL_RTC_GetDate(&RtcHandle, &sdatestructureget, RTC_FORMAT_BIN);
   /* Display time Format : hh:mm:ss */
-  sprintf((char *)showtime, "%2d:%2d:%2d", stimestructureget.Hours, stimestructureget.Minutes, stimestructureget.Seconds);
+  sprintf((char *)showtime, "%02d:%02d:%02d", stimestructureget.Hours, stimestructureget.Minutes, stimestructureget.Seconds);
   /* Display date Format : dd-mm-yy */
-  sprintf((char *)showdate, "%2d-%2d-%2d", sdatestructureget.Date, sdatestructureget.Month, 2000 + sdatestructureget.Year);
+  sprintf((char *)showdate, "%02d-%02d-%02d", sdatestructureget.Date, sdatestructureget.Month, 2000 + sdatestructureget.Year);
 }
 
 void time_callback(uint32_t seconds, uint32_t seconds_fraction)
@@ -171,9 +164,8 @@ void RTC_Set_AlarmSleep(struct tm ts_sleep)
 
     HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);  // mismo vector que Alarma A
 }
-
-// Handler — no tocar
 void RTC_Alarm_IRQHandler(void)
 {
     HAL_RTC_AlarmIRQHandler(&RtcHandle);
 }
+

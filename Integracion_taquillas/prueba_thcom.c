@@ -14,6 +14,10 @@ extern osMessageQueueId_t q_adc_peticion;
 extern osMessageQueueId_t q_adc_data;
 extern ADC_HandleTypeDef adc;
 
+uint8_t showtime[10];
+uint8_t showdate[12];
+uint8_t elementos;
+
 //VARIABLES DE COLAS DE MENSAJES
 msg_nfc uid;
 ComData_t msg_tx;
@@ -54,6 +58,8 @@ int Init_main (void) {
 void th_main (void *argument) {
   estado= ACTIVO;
 	osTimerStart(tim_RTC,1000);
+	Init_RTC();
+	
 	while (1) {
 		
 		
@@ -84,7 +90,6 @@ void th_main (void *argument) {
                        
   }
 }
-uint8_t elementos;
 
 void estado_Activo(void)
 {
@@ -110,6 +115,8 @@ void estado_Activo(void)
 		msg_tx.length=0;
 		osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
 		flag_tim_rtc=0;
+		
+		RTC_CalendarShow(showtime, showdate);
 	}
 	
 }
@@ -147,6 +154,8 @@ void estado_Alarma(void)
 }
 void comp_cmd(ComData_t com_data){
 	
+	struct tm ts_wake;
+	
 	switch(msg_rx.cmd){
 		
 		case RESP_HORA:
@@ -158,7 +167,25 @@ void comp_cmd(ComData_t com_data){
 			RTC_CalendarConfig(ts);
 
     break;
+		case DORMIR:
 			
+		
+		sscanf((char*)msg_rx.buff,
+           "%d:%d:%d %d/%d/%d-%d:%d:%d %d/%d/%d",
+           &ts.tm_hour,    &ts.tm_min,    &ts.tm_sec,
+           &ts.tm_mday,    &ts.tm_mon,    &ts.tm_year,
+           &ts_wake.tm_hour, &ts_wake.tm_min, &ts_wake.tm_sec,
+           &ts_wake.tm_mday, &ts_wake.tm_mon, &ts_wake.tm_year);
+
+    ts.tm_mon      -= 1;
+    ts.tm_year     -= 1900;
+    ts_wake.tm_mon  -= 1;
+    ts_wake.tm_year -= 1900;
+		
+    RTC_Set_AlarmSleep(ts);        // Alarma B: cuándo dormirse
+    RTC_Set_AlarmWakeup(ts_wake);  // Alarma A: cuándo despertar
+
+    break;
 			
 		}
 		if(msg_rx.cmd==LECTURA_CORRIENTE||msg_rx.cmd==LECTURA_PESO||msg_rx.cmd==LECTURA_TENSION){

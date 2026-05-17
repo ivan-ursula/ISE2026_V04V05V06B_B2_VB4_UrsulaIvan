@@ -176,11 +176,14 @@ uint8_t err;
 uint8_t fifodata_lh;
 uint8_t status;
 uint8_t irq_status;
+
 int NFC_requestA(uint8_t *buff){
 	uint8_t irq_en=0x77;
 	uint8_t irq=0x30;
 	uint8_t aux;
-	 uint8_t n,i;
+	uint8_t n;
+	uint16_t i;
+	
   uint8_t trasmit_fin;
 
 	NFC_wr_register(BITFRAMINGREG,0x07);
@@ -229,7 +232,7 @@ int NFC_read_UID(uint8_t *buff){
   uint8_t irq_en=0x77;
 	uint8_t irq=0x30;
 	uint8_t aux;
-	uint8_t n,i;
+	uint16_t n,i;
   uint8_t trasmit_fin;
   NFC_wr_register(BITFRAMINGREG,0x00);
   NFC_clear_mask(STATUS2REG,0x08);
