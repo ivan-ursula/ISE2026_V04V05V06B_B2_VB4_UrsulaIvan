@@ -14,14 +14,11 @@ void time_callback(uint32_t seconds, uint32_t seconds_fraction);
 
 void RTC_Set_AlarmWakeup(struct tm ts_wake);
 void RTC_Set_AlarmSleep(struct tm ts_sleep);
+
 typedef struct{
   uint8_t hora[50];
   uint8_t fecha[50];
-  
 } rtc_t;
 
-//extern const NET_ADDR4 ntp_server ;
-extern struct tm ts;
-extern struct tm ts_alarma;
 extern RTC_HandleTypeDef RtcHandle;
 #endif

@@ -62,21 +62,19 @@ void th_main (void *argument) {
 	
 	while (1) {
 		
-		
-
-		
 		switch(estado){
 			case ACTIVO:
 				
 			estado_Activo();
-
-				
-				break ;
+			
+			break ;
+			
 			case BAJO_CONSUMO:
 				
 			estado_Bajo_Consumo();
 				
-				break;
+			break;
+			
 			case ALARMA:
 				
 			estado_Alarma();
@@ -123,8 +121,6 @@ void estado_Activo(void)
 
 void estado_Bajo_Consumo(void)
 { 
-	/* Tengo que meterme en el modo bajo consumo. Tengo que poner algo en el handler de la
-	interrupcion? Tengo que reactivar el resto de pines*/
 	osTimerStop(tim_RTC);
   StopMode_Measure();
   
@@ -145,16 +141,21 @@ void estado_Alarma(void)
 {
 	msg_tx.cmd = ALARM; 
 	msg_tx.length = 0x00;
-	//msg_tx.buff = ; 
 	osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
 	osMessageQueueGet(qCom_Rx, &msg_rx, 0, osWaitForever);
-	if(msg_rx.cmd == RESP_ALARMA){
+	
+	if(msg_rx.cmd == RESP_ALARMA && msg_tx.buff[1] == 1){
 		estado = ACTIVO;
+	}
+	else if(msg_rx.cmd == RESP_ALARMA && msg_tx.buff[1] == 0){
+		estado = BAJO_CONSUMO; 
 	}
 }
 void comp_cmd(ComData_t com_data){
 	
 	struct tm ts_wake;
+	struct tm ts_sleep;
+	struct tm ts;
 	
 	switch(msg_rx.cmd){
 		
@@ -162,8 +163,6 @@ void comp_cmd(ComData_t com_data){
 			sscanf((char*)msg_rx.buff, "%d:%d:%d %d/%d/%d",
 			&ts.tm_hour, &ts.tm_min,  &ts.tm_sec,
 			&ts.tm_mday, &ts.tm_mon,  &ts.tm_year);
-			ts.tm_mon  -= 1;
-			ts.tm_year -= 1900;
 			RTC_CalendarConfig(ts);
 
     break;
@@ -172,17 +171,12 @@ void comp_cmd(ComData_t com_data){
 		
 		sscanf((char*)msg_rx.buff,
            "%d:%d:%d %d/%d/%d-%d:%d:%d %d/%d/%d",
-           &ts.tm_hour,    &ts.tm_min,    &ts.tm_sec,
-           &ts.tm_mday,    &ts.tm_mon,    &ts.tm_year,
+           &ts_sleep.tm_hour,&ts_sleep.tm_min,&ts_sleep.tm_sec,
+           &ts_sleep.tm_mday,&ts_sleep.tm_mon,&ts_sleep.tm_year,
            &ts_wake.tm_hour, &ts_wake.tm_min, &ts_wake.tm_sec,
            &ts_wake.tm_mday, &ts_wake.tm_mon, &ts_wake.tm_year);
-
-    ts.tm_mon      -= 1;
-    ts.tm_year     -= 1900;
-    ts_wake.tm_mon  -= 1;
-    ts_wake.tm_year -= 1900;
 		
-    RTC_Set_AlarmSleep(ts);        // Alarma B: cuándo dormirse
+    RTC_Set_AlarmSleep(ts_sleep);        // Alarma B: cuándo dormirse
     RTC_Set_AlarmWakeup(ts_wake);  // Alarma A: cuándo despertar
 
     break;

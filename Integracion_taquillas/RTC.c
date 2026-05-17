@@ -5,9 +5,6 @@
 
 RTC_HandleTypeDef RtcHandle;
 
-//const NET_ADDR4 ntp_server = { NET_ADDR_IP4, 123, 216, 239, 35, 4 };
-struct tm ts;
-struct tm ts_alarma;
 void Error_Handler(void)
 {
   /* Manda mensaje  */
@@ -17,28 +14,31 @@ void Error_Handler(void)
   }
 }
 
-void RTC_CalendarConfig(struct tm ts)
+void RTC_CalendarConfig(struct tm ts_conf)
 {
     RTC_DateTypeDef sdatestructure;
     RTC_TimeTypeDef stimestructure;
 
     // Calcular día de la semana automáticamente
-    mktime(&ts);  // rellena ts.tm_wday (0=domingo, 1=lunes...)
+	  ts_conf.tm_mon  -= 1;
+    ts_conf.tm_year -= 1900;
+    
+	  mktime(&ts_conf);  // rellena ts.tm_wday (0=domingo, 1=lunes...)
 
     // tm_wday: 0=domingo ? HAL: 7=domingo, 1=lunes...
-    uint8_t weekday = (ts.tm_wday == 0) ? RTC_WEEKDAY_SUNDAY : ts.tm_wday;
+    uint8_t weekday = (ts_conf.tm_wday == 0) ? RTC_WEEKDAY_SUNDAY : ts_conf.tm_wday;
 
-    sdatestructure.Year    = ts.tm_year - 100;
-    sdatestructure.Month   = ts.tm_mon + 1;
-    sdatestructure.Date    = ts.tm_mday;
-    sdatestructure.WeekDay = weekday;   // ? ya no hardcodeado
+    sdatestructure.Year    = ts_conf.tm_year - 100;
+    sdatestructure.Month   = ts_conf.tm_mon + 1;
+    sdatestructure.Date    = ts_conf.tm_mday;
+    sdatestructure.WeekDay = weekday;
 
     if(HAL_RTC_SetDate(&RtcHandle, &sdatestructure, RTC_FORMAT_BIN) != HAL_OK)
         Error_Handler();
 
-    stimestructure.Hours          = ts.tm_hour;
-    stimestructure.Minutes        = ts.tm_min;
-    stimestructure.Seconds        = ts.tm_sec;
+    stimestructure.Hours          = ts_conf.tm_hour;
+    stimestructure.Minutes        = ts_conf.tm_min;
+    stimestructure.Seconds        = ts_conf.tm_sec;
     stimestructure.TimeFormat     = RTC_HOURFORMAT_24;
     stimestructure.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
     stimestructure.StoreOperation = RTC_STOREOPERATION_RESET;
@@ -89,6 +89,8 @@ void Init_RTC(void)
     /* Initialization Error */
     Error_Handler();
   }
+	__HAL_RTC_ALARM_CLEAR_FLAG(&RtcHandle, RTC_FLAG_ALRBF);  // limpiar flag Alarma B
+	__HAL_RTC_ALARM_CLEAR_FLAG(&RtcHandle, RTC_FLAG_ALRAF);  // limpiar flag Alarma A
   
 }
 
@@ -107,18 +109,6 @@ void RTC_CalendarShow(uint8_t *showtime, uint8_t *showdate)
   sprintf((char *)showdate, "%02d-%02d-%02d", sdatestructureget.Date, sdatestructureget.Month, 2000 + sdatestructureget.Year);
 }
 
-void time_callback(uint32_t seconds, uint32_t seconds_fraction)
-{
- 
- struct tm* ptr_ts;
-  time_t sys_time=(time_t)seconds +3600;
-  ptr_ts=localtime(&sys_time);
-  ts=*ptr_ts;
-  RTC_CalendarConfig(ts);
-  //ts=*localtime(&sys_time);
-
-
-}
 void RTC_Set_AlarmWakeup(struct tm ts_wake)
 {
     RTC_AlarmTypeDef alarma;
@@ -157,8 +147,8 @@ void RTC_Set_AlarmSleep(struct tm ts_sleep)
     alarma.AlarmDateWeekDaySel      = RTC_ALARMDATEWEEKDAYSEL_DATE;
     alarma.AlarmDateWeekDay         = ts_sleep.tm_mday;
     alarma.Alarm                    = RTC_ALARM_B;
-
-    HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_B);
+	
+	  HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_B);
     if (HAL_RTC_SetAlarm_IT(&RtcHandle, &alarma, RTC_FORMAT_BIN) != HAL_OK)
         Error_Handler();
 
