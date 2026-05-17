@@ -57,9 +57,11 @@ int Init_main (void) {
 
 void th_main (void *argument) {
   estado= ACTIVO;
-	osTimerStart(tim_RTC,1000);
+	osTimerStart(tim_RTC,300000);
 	Init_RTC();
-	
+	msg_tx.cmd= HORA;
+	msg_tx.length=0;
+	osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
 	while (1) {
 		
 		switch(estado){
@@ -134,7 +136,7 @@ void estado_Bajo_Consumo(void)
   Deinit_ADC(&adc);
   ADC_Init(&adc, ADC1);
   
-  osTimerStart(tim_RTC, 1000);
+  osTimerStart(tim_RTC, 300000);
 	
 }
 void estado_Alarma(void) 

@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\b3_extra.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\b3_extra.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6160001: Last Updated: Sun May 17 16:43:14 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6160001: Last Updated: Sun May 17 20:17:24 2026
 <BR><P>
 <H3>Maximum Stack Usage =        432 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1666,7 +1666,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;th_main
 </UL>
 
-<P><STRONG><a name="[179]"></a>estado_Bajo_Consumo</STRONG> (Thumb, 102 bytes, Stack size 16 bytes, prueba_thcom.o(.text.estado_Bajo_Consumo))
+<P><STRONG><a name="[179]"></a>estado_Bajo_Consumo</STRONG> (Thumb, 106 bytes, Stack size 16 bytes, prueba_thcom.o(.text.estado_Bajo_Consumo))
 <BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = estado_Bajo_Consumo &rArr; StopMode_Measure &rArr; SYSCLKConfig_STOP &rArr; HAL_RCC_ClockConfig &rArr; HAL_RCC_GetSysClockFreq &rArr; __aeabi_uldivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[17a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osTimerStop
@@ -1801,6 +1801,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;thread_ADC
 <LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;thread_NFC
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;th_main
 <LI><a href="#[178]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;estado_Alarma
 <LI><a href="#[176]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;estado_Activo
 <LI><a href="#[171]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;comp_cmd
@@ -2159,7 +2160,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> com.o(.text.init_thcom)
 </UL>
-<P><STRONG><a name="[6b]"></a>th_main</STRONG> (Thumb, 66 bytes, Stack size 0 bytes, prueba_thcom.o(.text.th_main))
+<P><STRONG><a name="[6b]"></a>th_main</STRONG> (Thumb, 106 bytes, Stack size 0 bytes, prueba_thcom.o(.text.th_main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 432<LI>Call Chain = th_main &rArr; estado_Activo &rArr; comp_cmd &rArr; __0sscanf &rArr; __vfscanf_char &rArr; __vfscanf &rArr; _scanf_int
 </UL>
 <BR>[Calls]<UL><LI><a href="#[17f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osTimerStart
@@ -2167,6 +2168,7 @@ Global Symbols
 <LI><a href="#[178]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;estado_Alarma
 <LI><a href="#[176]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;estado_Activo
 <LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_RTC
+<LI><a href="#[172]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osMessageQueuePut
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> prueba_thcom.o(.text.Init_main)
 </UL>
