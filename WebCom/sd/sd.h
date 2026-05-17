@@ -31,8 +31,6 @@ int alarm_read_page(uint16_t pag_actual, char buffer_dest[10][90]);
 int nfc_search(const char *nfc_id_target);
 
 int user_add(TRABAJADOR_t trabajador[]);
-int user_edit(const char *nfc_id_target, const char *new_user);
-int user_delete(const char *nfc_id_target);
 
 //variables server
 extern uint8_t estado_taq; //Indica que taquilla está abierta o cerrada

@@ -72,18 +72,22 @@ void th_webcom_Rx (void *argument) {
           // Alterna el bit 1 (valor decimal 1, binario 00000001)
           estado_taq ^= (1 << 0);
           if ((estado_taq & 0x01) == 0){
-            alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, "Se ha CERRADO la taquilla 1");
+						sprintf(mensaje, "Se ha CERRADO la taquilla 1: %s", msg.buff);
+            alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
           }else{
-            alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, "Se ha ABIERTO la taquilla 1");
+						sprintf(mensaje, "Se ha ABIERTO la taquilla 1: %s", msg.buff);
+            alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
           }
           
         }else if (int_taq == 2){
           // Alterna el bit 2 (valor decimal 2, binario 00000010)
           estado_taq ^= (1 << 1);
           if ((estado_taq & 0x02) == 0){
-            alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, "Se ha CERRADO la taquilla 2");
+						sprintf(mensaje, "Se ha CERRADO la taquilla 2: %s", msg.buff);
+            alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
           }else{
-             alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, "Se ha ABIERTO la taquilla 2");
+						 sprintf(mensaje, "Se ha ABIERTO la taquilla 2: %s", msg.buff);
+             alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
            }
         }
         msg.length = sprintf(msg.buff, "%d", estado_taq);
