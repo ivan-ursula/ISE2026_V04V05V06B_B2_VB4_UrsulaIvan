@@ -86,7 +86,11 @@ void th_webcom_Rx (void *argument) {
 						sprintf(mensaje, "Se ha CERRADO la taquilla 2: %s", msg.buff);
             alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
           }else{
+<<<<<<< HEAD
 						sprintf(mensaje, "Se ha ABIERTO la taquilla 2: %s", msg.buff);
+=======
+						 sprintf(mensaje, "Se ha ABIERTO la taquilla 2: %s", msg.buff);
+>>>>>>> 2ea7b0267b3336809a0aa75e6819b69e5cabb3ec
              alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
            }
         }
