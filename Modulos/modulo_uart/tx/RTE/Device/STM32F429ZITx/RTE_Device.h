@@ -302,7 +302,7 @@
 #endif
 
 //   <o> USART3_RX Pin <0=>Not Used <1=>PB11 <2=>PC11 <3=>PD9 <4=>PC5
-#define RTE_USART3_RX_ID                1
+#define RTE_USART3_RX_ID                2
 #if    (RTE_USART3_RX_ID == 0)
 #define RTE_USART3_RX                   0
 #elif  (RTE_USART3_RX_ID == 1)
