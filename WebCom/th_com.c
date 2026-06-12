@@ -86,11 +86,7 @@ void th_webcom_Rx (void *argument) {
 						sprintf(mensaje, "Se ha CERRADO la taquilla 2: %s", msg.buff);
             alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
           }else{
-<<<<<<< HEAD
-						sprintf(mensaje, "Se ha ABIERTO la taquilla 2: %s", msg.buff);
-=======
 						 sprintf(mensaje, "Se ha ABIERTO la taquilla 2: %s", msg.buff);
->>>>>>> 2ea7b0267b3336809a0aa75e6819b69e5cabb3ec
              alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
            }
         }
@@ -133,55 +129,55 @@ void th_webcom_Tx(void *argument){
   
   while(1){
     flag = osThreadFlagsWait(0x0F, osFlagsWaitAny, osWaitForever);
-    
-		if (flag == 0x01){ //Se guarda la hora y se envía directamente
-			msg.cmd = DORMIR;
-			if (sscanf(fecha_dorm, "%d-%d-%d", &anio, &mes, &dia) == 3) {
-        sprintf(fecha_dorm_taq, "%02d/%02d/%04d\n", dia, mes, anio);
+    if(modo_func == 1){
+			if (flag == 0x01){ //Se guarda la hora y se envía directamente
+				msg.cmd = DORMIR;
+				if (sscanf(fecha_dorm, "%d-%d-%d", &anio, &mes, &dia) == 3) {
+					sprintf(fecha_dorm_taq, "%02d/%02d/%04d\n", dia, mes, anio);
+				}
+				if (sscanf(fecha_desp, "%d-%d-%d", &anio, &mes, &dia) == 3) {
+					sprintf(fecha_desp_taq, "%02d/%02d/%04d\n", dia, mes, anio);
+				}
+				
+				msg.length = sprintf(msg.buff, "%02d:%02d:00 %s-%02d:%02d:00 %s",hora_dorm, min_dorm, fecha_dorm_taq, hora_desp, min_desp, fecha_desp_taq);
+				sprintf(mensaje, "Se dormirá: %02d:%02d %s - Se despertará: %02d:%02d %s",hora_dorm, min_dorm, fecha_dorm, hora_desp, min_desp, fecha_desp);
+				alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
+				osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
+				osDelay(5);
+				
+			}else if (flag == 0x03){ //Se envía la fecha actual para dormir
+				msg.cmd = DORMIR;
+				osMessageQueueGet(mid_Msg_Taq, &fecha_rec_taq, NULL, 10);
+				if (sscanf(fecha_desp, "%d-%d-%d", &anio, &mes, &dia) == 3) {
+					sprintf(fecha_desp_taq, "%02d/%02d/%04d\n", dia, mes, anio);
+				}
+				
+				msg.length = sprintf(msg.buff, "%s %s-%02d:%02d:00 %s",fecha_rec_taq.BufHour, fecha_rec_taq.BufDate, hora_desp, min_desp, fecha_desp_taq);
+				sprintf(mensaje, "Se duerme - Se despertará: %02d:%02d %s", hora_desp, min_desp, fecha_desp);
+				alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
+				osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
+				osDelay(5);
+				
+			}else{ 
+				msg.cmd = LECTURA_PESO;
+				msg.length = 0;
+				msg.buff[0] = 0x00;
+				osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
+				osDelay(5);
+				
+				msg.cmd = LECTURA_TENSION;
+				msg.length = 0;
+				msg.buff[0] = 0x00;
+				osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
+				osDelay(5);
+				
+				msg.cmd = LECTURA_CORRIENTE;
+				msg.length = 0;
+				msg.buff[0] = 0x00;
+				osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
+				osDelay(5);
 			}
-			if (sscanf(fecha_desp, "%d-%d-%d", &anio, &mes, &dia) == 3) {
-        sprintf(fecha_desp_taq, "%02d/%02d/%04d\n", dia, mes, anio);
-			}
-			
-			msg.length = sprintf(msg.buff, "%02d:%02d:00 %s-%02d:%02d:00 %s",hora_dorm, min_dorm, fecha_dorm_taq, hora_desp, min_desp, fecha_desp_taq);
-			sprintf(mensaje, "Se dormirá: %02d:%02d %s - Se despertará: %02d:%02d %s",hora_dorm, min_dorm, fecha_dorm, hora_desp, min_desp, fecha_desp);
-			alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
-			osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
-			osDelay(5);
-			
-		}else if (flag == 0x03){ //Se envía la fecha actual para dormir
-			msg.cmd = DORMIR;
-			osMessageQueueGet(mid_Msg_Taq, &fecha_rec_taq, NULL, 10);
-			if (sscanf(fecha_desp, "%d-%d-%d", &anio, &mes, &dia) == 3) {
-        sprintf(fecha_desp_taq, "%02d/%02d/%04d\n", dia, mes, anio);
-			}
-			
-			msg.length = sprintf(msg.buff, "%s %s-%02d:%02d:00 %s",fecha_rec_taq.BufHour, fecha_rec_taq.BufDate, hora_desp, min_desp, fecha_desp_taq);
-			sprintf(mensaje, "Se duerme - Se despertará: %02d:%02d %s", hora_desp, min_desp, fecha_desp);
-			alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
-			osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
-			osDelay(5);
-			
-		}else{ 
-			msg.cmd = LECTURA_PESO;
-			msg.length = 0;
-			msg.buff[0] = 0x00;
-			osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
-			osDelay(5);
-			
-			msg.cmd = LECTURA_TENSION;
-			msg.length = 0;
-			msg.buff[0] = 0x00;
-			osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
-			osDelay(5);
-			
-			msg.cmd = LECTURA_CORRIENTE;
-			msg.length = 0;
-			msg.buff[0] = 0x00;
-			osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
-			osDelay(5);
 		}
-		
 		flag = 0;
     
     osThreadYield();

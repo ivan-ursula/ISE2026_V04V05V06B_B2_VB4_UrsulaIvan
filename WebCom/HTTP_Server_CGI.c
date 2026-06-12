@@ -53,6 +53,14 @@ uint8_t hora_desp = 0;
 uint8_t min_desp = 0;
 char fecha_desp[11] = "2026-05-09";
 
+uint8_t hora_dorm_per = 0;
+uint8_t min_dorm_per = 0;
+char fecha_dorm_per[11] = "2026-05-09";
+
+uint8_t hora_desp_per = 0;
+uint8_t min_desp_per = 0;
+char fecha_desp_per[11] = "2026-05-09";
+
 static TRABAJADOR_t tabla_trabajadores[5];
 
 float peso_taq1 = 0;
@@ -429,6 +437,23 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
       // Si no hay alarma, devolvemos una cadena vacía
         len = (uint32_t)sprintf(buf, "");
       }
+    break;
+			
+		case 'm': // Botones de gestión de alarma
+			switch(env[2]) {
+				case '1':
+						len = (uint32_t)sprintf(buf, &env[4], hora_dorm_per);
+					break;
+				case '2':
+						len = (uint32_t)sprintf(buf, &env[4], min_dorm_per);
+          break;
+				case '3':
+						len = (uint32_t)sprintf(buf, &env[4], hora_desp_per);
+          break;
+				case '4':
+						len = (uint32_t)sprintf(buf, &env[4], min_desp_per);
+          break;
+			}
     break;
      
   }

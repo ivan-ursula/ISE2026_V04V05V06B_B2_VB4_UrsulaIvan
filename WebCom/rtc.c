@@ -11,6 +11,7 @@ static struct tm ts;
 
 /* Timer IDs */
 osTimerId_t tim_idRTC;
+osTimerId_t tim_idFlag;
 static uint32_t exec1;
 static int init_TimerRTC (void);
 
@@ -173,6 +174,9 @@ static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
  *---------------------------------------------------------------------------*/
 static void TimerRTC_Callback (void const *arg) {
   netSNTPc_GetTime ((NET_ADDR *)&ntp_server, time_callback);
+}
+
+static void TimerFlag_Callback (void const *arg) {
   osThreadFlagsSet(thweb_comTx, 0x05);
 }
 
@@ -181,6 +185,13 @@ int init_TimerRTC (void) {
   exec1 = 1U;
   tim_idRTC = osTimerNew((osTimerFunc_t)&TimerRTC_Callback, osTimerPeriodic, &exec1, NULL);
   osTimerStart(tim_idRTC, 180000U); 
+  return NULL;
+}
+
+int init_TimerFlag (void) {
+  exec1 = 1U;
+  tim_idFlag = osTimerNew((osTimerFunc_t)&TimerFlag_Callback, osTimerPeriodic, &exec1, NULL);
+  osTimerStart(tim_idFlag, 1000U); 
   return NULL;
 }
 /*----------------------------------------------------------------------------
@@ -206,6 +217,7 @@ void Thread_RTC (void *argument) {
 	//Sincronización con el servidor
   netSNTPc_GetTime((NET_ADDR *)&ntp_server, time_callback);
   init_TimerRTC(); //Timer para sincronización cada 3 minutos
+	init_TimerFlag(); //Timer cada segundo para pedir medidas
   
   while (1) {
     RTC_CalendarShowHTML(msg_env_web.BufHour, msg_env_web.BufDate);

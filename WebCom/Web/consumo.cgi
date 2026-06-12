@@ -71,6 +71,8 @@ c h 1 <td><input type="radio" name="modo" value="1" OnClick="submit();" %s></td>
 c h 2 <td><input type="radio" name="modo" value="2" OnClick="submit();" %s></td>
 t  </tr></table>
 t
+t
+t
 t <p><br>Introducir fecha y hora para entrar al modo sleep</p>
 t
 t <div style="display:flex; justify-content:center; align-items:center; 
@@ -96,13 +98,7 @@ t
 t <div style="display:flex; justify-content:center; align-items:center; 
 t margin-top:20px; font-size:30px; gap:10px;">
 t
-t <tr>
-t   <td colspan="2">
-t     <input type="submit" value="Guardar" style="text-align:center; font-size:30px; background: transparent; 
-t 	  outline: none; color: inherit; font: inherit; 
-t     text-shadow: inherit;">
-t   </td>
-t </tr></div>
+t
 t
 t <p><br>Introducir fecha y hora para salir del modo sleep</p>
 t
@@ -125,6 +121,58 @@ c i 7 min="%s"
 c i 8 value="%s"
 t style="text-align:center; font-size:30px; background: transparent; 
 t outline: none; color: inherit; font: inherit; text-shadow: inherit;"></div>
+t
+t <div style="display:flex; justify-content:center; align-items:center; 
+t margin-top:20px; font-size:30px; gap:10px;">
+t
+t <tr>
+t   <td colspan="2">
+t     <input type="submit" value="Guardar" style="text-align:center; font-size:30px; background: transparent; 
+t     outline: none; color: inherit; font: inherit; 
+t     text-shadow: inherit;">
+t   </td>
+t </tr></div>
+t
+t
+t
+t <p><br>Introducir fecha y hora para entrar al modo periódico</p>
+t
+t <div style="display:flex; justify-content:center; align-items:center; 
+t margin-top:20px; font-size:30px; gap:10px;">
+t
+t <td colspan="2">
+t <input type="number" name="hora_dorm_per" min="0" max="23"
+c m 1  value="%d" style="text-align:center; font-size:30px; background: transparent; 
+t outline: none; color: inherit; font: inherit; 
+t text-shadow: inherit;" placeholder="HH"> :
+t
+t <input type="number" name="min_dorm_per" min="0" max="59" 
+c m 2 value="%d" style="text-align:center; font-size:30px; background: transparent; 
+t outline: none; color: inherit; font: inherit; 
+t text-shadow: inherit;" placeholder="MM"></td></div>
+t
+t <div style="display:flex; justify-content:center; align-items:center; 
+t margin-top:20px; font-size:30px; gap:10px;">
+t
+t
+t
+t <p><br>Introducir fecha y hora para salir del modo periódico</p>
+t
+t <div style="display:flex; justify-content:center; align-items:center; 
+t margin-top:20px; font-size:30px; gap:10px;">
+t
+t <td colspan="2">
+t <input type="number" name="hora_desp" min="0" max="23"
+c m 3  value="%d" style="text-align:center; font-size:30px; background: transparent; 
+t outline: none; color: inherit; font: inherit; 
+t text-shadow: inherit;" placeholder="HH"> :
+t
+t <input type="number" name="min_desp" min="0" max="59" 
+c m 4 value="%d" style="text-align:center; font-size:30px; background: transparent; 
+t outline: none; color: inherit; font: inherit; 
+t text-shadow: inherit;" placeholder="MM"></td></div>
+t
+t
 t
 t <div style="display:flex; justify-content:center; align-items:center; 
 t margin-top:20px; font-size:30px; gap:10px;">
