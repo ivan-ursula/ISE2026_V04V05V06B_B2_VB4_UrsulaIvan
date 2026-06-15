@@ -90,6 +90,11 @@ void th_webcom_Rx (void *argument) {
              alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
            }
         }
+				
+				else{
+					strcpy(id_nfc_new, msg.buff);
+				}
+				
         msg.length = sprintf(msg.buff, "%d", estado_taq);
         osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
       break;

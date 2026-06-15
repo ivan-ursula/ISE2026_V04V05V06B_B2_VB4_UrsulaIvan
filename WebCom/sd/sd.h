@@ -52,5 +52,7 @@ extern float intens;
 extern float bat;
 extern uint8_t alerta;
 
+extern char id_nfc_new[9];
+
 #endif
 

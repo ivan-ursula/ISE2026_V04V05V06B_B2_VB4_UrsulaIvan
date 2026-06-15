@@ -157,55 +157,81 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>105</LineNumber>
+          <LineNumber>95</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
+          <Address>134226220</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>.\rtc.c</Filename>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\th_com.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\HTTP_Server\th_com.c\95</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>70</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134226038</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\th_com.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\HTTP_Server\th_com.c\70</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>fecha_rec</ItemText>
+          <ItemText>hora_dorm_per</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>flag</ItemText>
+          <ItemText>min_dorm_per</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>msg</ItemText>
+          <ItemText>hora_desp_per</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>modo_func</ItemText>
+          <ItemText>min_desp_per</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>fecha_rec_taq</ItemText>
+          <ItemText>hora_dorm</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>fecha_dorm_taq</ItemText>
+          <ItemText>id_nfc_new</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>fecha_desp_taq</ItemText>
+          <ItemText>int_taq</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>msg</ItemText>
+        </Ww>
+        <Ww>
+          <count>8</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\HTTP_Server\sd/sd.c\id_nfc_new</ItemText>
         </Ww>
       </WatchWindow1>
       <ScvdPack>
@@ -610,7 +636,7 @@
 
   <Group>
     <GroupName>::Network</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>1</RteFlg>

@@ -203,6 +203,19 @@ void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
           strncpy(fecha_desp, var + 11, sizeof(fecha_desp) - 1);
         }
 				
+				else if (strncmp(var, "hora_dorm_per=", 14) == 0) {
+          hora_dorm_per = atoi(var + 14);
+        }
+        else if (strncmp(var, "min_dorm_per=", 13) == 0) {
+          min_dorm_per = atoi(var + 13);
+        }
+        else if (strncmp(var, "hora_desp_per=", 14) == 0) {
+          hora_desp_per = atoi(var + 14);
+        }
+        else if (strncmp(var, "min_desp_per=", 13) == 0) {
+          min_desp_per = atoi(var + 13);
+        }
+				
 				//Comparación para gestión de tarjetas
         else if (strncmp(var, "id_tarj", 7) == 0) {
           int idx = atoi(&var[7]) - 1;
@@ -439,7 +452,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
       }
     break;
 			
-		case 'm': // Botones de gestión de alarma
+		case 'm': // Gestión de hora de dormir
 			switch(env[2]) {
 				case '1':
 						len = (uint32_t)sprintf(buf, &env[4], hora_dorm_per);
@@ -454,6 +467,10 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 						len = (uint32_t)sprintf(buf, &env[4], min_desp_per);
           break;
 			}
+    break;
+			
+		case 'n': // Gestión de nueva nfc
+			len = sprintf(buf, "%02X%02X%02X%02X", id_nfc_new[0], id_nfc_new[1], id_nfc_new[2], id_nfc_new[3]);
     break;
      
   }

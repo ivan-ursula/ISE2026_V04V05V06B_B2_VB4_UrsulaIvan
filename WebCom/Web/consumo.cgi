@@ -95,9 +95,6 @@ c i 4 value="%s"
 t style="text-align:center; font-size:30px; background: transparent; 
 t outline: none; color: inherit; font: inherit; text-shadow: inherit;"></div>
 t
-t <div style="display:flex; justify-content:center; align-items:center; 
-t margin-top:20px; font-size:30px; gap:10px;">
-t
 t
 t
 t <p><br>Introducir fecha y hora para salir del modo sleep</p>
@@ -151,9 +148,6 @@ c m 2 value="%d" style="text-align:center; font-size:30px; background: transpare
 t outline: none; color: inherit; font: inherit; 
 t text-shadow: inherit;" placeholder="MM"></td></div>
 t
-t <div style="display:flex; justify-content:center; align-items:center; 
-t margin-top:20px; font-size:30px; gap:10px;">
-t
 t
 t
 t <p><br>Introducir fecha y hora para salir del modo periódico</p>
@@ -162,12 +156,12 @@ t <div style="display:flex; justify-content:center; align-items:center;
 t margin-top:20px; font-size:30px; gap:10px;">
 t
 t <td colspan="2">
-t <input type="number" name="hora_desp" min="0" max="23"
+t <input type="number" name="hora_desp_per" min="0" max="23"
 c m 3  value="%d" style="text-align:center; font-size:30px; background: transparent; 
 t outline: none; color: inherit; font: inherit; 
 t text-shadow: inherit;" placeholder="HH"> :
 t
-t <input type="number" name="min_desp" min="0" max="59" 
+t <input type="number" name="min_desp_per" min="0" max="59" 
 c m 4 value="%d" style="text-align:center; font-size:30px; background: transparent; 
 t outline: none; color: inherit; font: inherit; 
 t text-shadow: inherit;" placeholder="MM"></td></div>

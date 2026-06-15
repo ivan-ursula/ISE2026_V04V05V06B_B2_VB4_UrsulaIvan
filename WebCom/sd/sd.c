@@ -10,7 +10,9 @@ osMessageQueueId_t mid_Msg_SD;
 static int  Init_MsgQueue_SD (void);
 
 static int sd_init(void);
-void th_SD(void *argument);      
+void th_SD(void *argument);    
+
+char id_nfc_new [9];
 
 int Init_MsgQueue_SD (void) {
 	
@@ -82,7 +84,7 @@ int nfc_search(const char *nfc_id_target)
     unsigned int id_target_numeric;
     char user[64];
     int locker_num;
-    int found = -1;
+    int found = 0;
 
     // 1. CONVERSIÓN ROBUSTA
     // Usamos unsigned char para evitar problemas de signo con valores altos como 0xAE
@@ -98,7 +100,7 @@ int nfc_search(const char *nfc_id_target)
                         ((unsigned int)b[1] << 8) | 
                         ((unsigned int)b[2] << 16) | 
                         ((unsigned int)b[3] << 24);
-
+												
     // DEBUG: Imprime esto para ver qué número buscar en tu archivo .txt
     // printf("Buscando en archivo el valor: %08X\n", id_target_numeric);
 
@@ -114,7 +116,7 @@ int nfc_search(const char *nfc_id_target)
             }
         }
     }
-
+		
     fclose(f);
     return found;
 }

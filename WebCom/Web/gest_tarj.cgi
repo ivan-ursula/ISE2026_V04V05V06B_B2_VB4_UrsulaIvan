@@ -83,6 +83,15 @@ t
 t  <input type="submit" id="btnGuardar" value="Guardar Cambios" style="font-size:25px;
 t  padding:10px 20px; display:none;"></div>
 t
+t
+t
+t <div style="text-align:center; margin-top:20px;">
+t
+t <p></br> Última tarjeta nueva introducida </p>
+c n 1 <td>%s</td>
+t
+t </div>
+t
 t  <input type="hidden" value="gest_tarj" name="pg">
 t  </form></body></html>
 .
