@@ -36,16 +36,15 @@ int user_add(TRABAJADOR_t trabajador[]);
 extern uint8_t estado_taq; //Indica que taquilla está abierta o cerrada
 extern float peso_taq1;
 extern float peso_taq2;
+extern float peso_ini1;
+extern float peso_ini2;
 
 extern uint8_t modo_func;
 
-extern uint8_t hora_desp;
-extern uint8_t min_desp;
-extern char fecha_desp[11];
-
-extern uint8_t hora_dorm;
-extern uint8_t min_dorm;
-extern char fecha_dorm[11];
+extern uint8_t hora_dorm_per ;
+extern uint8_t min_dorm_per;
+extern uint8_t hora_desp_per;
+extern uint8_t min_desp_per;
 	
 extern float tens;
 extern float intens;

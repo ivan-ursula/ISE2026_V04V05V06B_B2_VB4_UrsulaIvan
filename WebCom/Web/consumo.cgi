@@ -56,7 +56,7 @@ t <body text="white">
 t <div id="datos"><h2 align=center><br>CONFIGURACI&Oacute;N HORAS</h2>
 t <p>Configuraci&oacute;n de las horas para dormir y despertar<br></p>
 t
-t <form action=consumo.cgi method=post name=cgi>
+t <form action=consumo.cgi method=post name=cgi_dormir>
 t
 t <p><br>Introducir hora para dormir</p>
 t
@@ -83,8 +83,10 @@ t     <input type="submit" value="Guardar" style="text-align:center; font-size:3
 t     outline: none; color: inherit; font: inherit; 
 t     text-shadow: inherit;">
 t   </td>
-t </tr></div>
+t </tr></div></form>
 t
+t
+t <form action=consumo.cgi method=post name=cgi_despertar>
 t
 t <p><br>Introducir hora para despertar</p>
 t
@@ -111,7 +113,7 @@ t     <input type="submit" value="Guardar" style="text-align:center; font-size:3
 t     outline: none; color: inherit; font: inherit; 
 t     text-shadow: inherit;">
 t   </td>
-t </tr></div>
+t </tr></div></form>
 t
 t </form></div></body></html>
 .

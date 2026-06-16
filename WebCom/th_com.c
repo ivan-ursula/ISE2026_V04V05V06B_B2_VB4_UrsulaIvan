@@ -92,22 +92,31 @@ void th_webcom_Rx (void *argument) {
            }
         }
 				
-				else{
-					strcpy(id_nfc_new, msg_rx.buff);
-				}
-				
+        strcpy(id_nfc_new, msg_rx.buff);
+
         msg_rx.length = sprintf(msg_rx.buff, "%d", estado_taq);
         osMessageQueuePut(qCom_Tx,&msg_rx,NULL,osWaitForever);
       break;
       
       case RESP_DORMIR:
         modo_func = 0x02;
-        sprintf(mensaje, "Se ha dormido - Se despertará: %02d:%02d %s",hora_desp, min_desp, fecha_desp);
+        sprintf(mensaje, "Se ha dormido: %02d:%02d",hora_dorm_per, min_dorm_per);
+        alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
+      break;
+      
+      case RESP_DESPERTAR:
+        modo_func = 0x01;
+        sprintf(mensaje, "Se ha despertado: %02d:%02d",hora_desp_per, min_desp_per);
         alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
       break;
       
       case RESP_LECTURA_PESO:
-        sscanf(msg_rx.buff, "%f-%f", &peso_taq1, &peso_taq2);
+        if (peso_ini1 == 0 && peso_ini2 == 0){
+          sscanf(msg_rx.buff, "%f-%f", &peso_ini2, &peso_ini1);
+        }else {
+          sscanf(msg_rx.buff, "%f-%f", &peso_taq1, &peso_taq2);
+        }
+          
       break;
       
       case RESP_LECTURA_TENSION:
@@ -127,11 +136,6 @@ void th_webcom_Rx (void *argument) {
 
 void th_webcom_Tx(void *argument){
   ComData_t msg_tx;
-	int anio = 0;
-	int mes = 0;
-  int dia = 0;
-	char fecha_dorm_taq[12];
-	char fecha_desp_taq[12];
   
   while(1){
     flag = osThreadFlagsWait(0x0F, osFlagsWaitAny, osWaitForever);
@@ -139,20 +143,20 @@ void th_webcom_Tx(void *argument){
 			if (flag == 0x01){ //Se guarda la hora y se envía directamente
         osDelay(50);
 				msg_tx.cmd = DORMIR;
-				if (sscanf(fecha_dorm, "%d-%d-%d", &anio, &mes, &dia) == 3) {
-					sprintf(fecha_dorm_taq, "%02d/%02d/%04d", dia, mes, anio);
-				}
-				if (sscanf(fecha_desp, "%d-%d-%d", &anio, &mes, &dia) == 3) {
-					sprintf(fecha_desp_taq, "%02d/%02d/%04d", dia, mes, anio);
-				}
-				
-				msg_tx.length = sprintf(msg_tx.buff, "%02d:%02d-%s-%02d:%02d-%s",hora_dorm, min_dorm, fecha_dorm, hora_desp, min_desp, fecha_desp);
-				sprintf(mensaje, "Se dormirá: %02d:%02d %s - Se despertará: %02d:%02d %s",hora_dorm, min_dorm, fecha_dorm, hora_desp, min_desp, fecha_desp);
+				msg_tx.length = sprintf(msg_tx.buff, "%02d:%02d",hora_dorm_per, min_dorm_per);
+				sprintf(mensaje, "Se dormirá: %02d:%02d",hora_dorm_per, min_dorm_per);
 				alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
 				osMessageQueuePut(qCom_Tx,&msg_tx,NULL,osWaitForever);
-
 				
-			}else{ 
+			}else if (flag == 0x02){ 
+        osDelay(50);
+				msg_tx.cmd = DESPERTAR;
+				msg_tx.length = sprintf(msg_tx.buff, "%02d:%02d", hora_desp_per, min_desp_per);
+				sprintf(mensaje, "Se despertará: %02d:%02d ", hora_desp_per, min_desp_per);
+				alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
+				osMessageQueuePut(qCom_Tx,&msg_tx,NULL,osWaitForever);
+        
+      } else {
         osDelay(50);
 				msg_tx.cmd = LECTURA_PESO;
 				msg_tx.length = 0;
@@ -164,13 +168,12 @@ void th_webcom_Tx(void *argument){
 				msg_tx.length = 0;
 				msg_tx.buff[0] = 0x00;
 				osMessageQueuePut(qCom_Tx,&msg_tx,NULL,osWaitForever);
-//				osDelay(1000);
-//				
-//				msg.cmd = LECTURA_CORRIENTE;
-//				msg.length = 0;
-//				msg.buff[0] = 0x00;
-//				osMessageQueuePut(qCom_Tx,&msg,NULL,osWaitForever);
-//				osDelay(1000);
+
+				osDelay(50);
+				msg_tx.cmd = LECTURA_CORRIENTE;
+				msg_tx.length = 0;
+				msg_tx.buff[0] = 0x00;
+				osMessageQueuePut(qCom_Tx,&msg_tx,NULL,osWaitForever);
 			}
 		}
 		flag = 0;

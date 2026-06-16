@@ -45,27 +45,19 @@ uint8_t modo_func = 1;  //Indica en que modo de funcionamiento está el sistema
 
 uint8_t alerta = 0;
 
-uint8_t hora_dorm = 0;
-uint8_t min_dorm = 0;
-char fecha_dorm[11] = "2026-05-09";
-
-uint8_t hora_desp = 0;
-uint8_t min_desp = 0;
-char fecha_desp[11] = "2026-05-09";
-
 uint8_t hora_dorm_per = 0;
 uint8_t min_dorm_per = 0;
-char fecha_dorm_per[11] = "2026-05-09";
-
 uint8_t hora_desp_per = 0;
 uint8_t min_desp_per = 0;
-char fecha_desp_per[11] = "2026-05-09";
 
 static TRABAJADOR_t tabla_trabajadores[5];
 
 float peso_taq1 = 0;
 float peso_taq2 = 0;
-float tens = 8.4;
+float peso_ini1 = 0;
+float peso_ini2 = 0;
+
+float tens = 4.20;
 float intens = 0;
 float bat = 100;
 
@@ -154,8 +146,6 @@ void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
   }
 
 	estado_taq = 0;
-	strncpy(fecha_desp, fecha_rec.BufDate, sizeof(fecha_desp) - 1);
-	strncpy(fecha_dorm, fecha_rec.BufDate, sizeof(fecha_desp) - 1);
   
   if (len > 0 && data != NULL) {
     // No data or all items (radio, checkbox) are off
@@ -189,12 +179,14 @@ void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
         }
         else if (strncmp(var, "min_dorm_per=", 13) == 0) {
           min_dorm_per = atoi(var + 13);
+          if(modo_func != 0x02)	osThreadFlagsSet(thweb_comTx, 0x01);
         }
         else if (strncmp(var, "hora_desp_per=", 14) == 0) {
           hora_desp_per = atoi(var + 14);
         }
         else if (strncmp(var, "min_desp_per=", 13) == 0) {
           min_desp_per = atoi(var + 13);
+          if(modo_func != 0x02)	osThreadFlagsSet(thweb_comTx, 0x02);
         }
 				
 				//Comparación para gestión de tarjetas
@@ -269,17 +261,9 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 			osMessageQueueGet(mid_Msg_Date, &fecha_rec, NULL, 0);
 			switch(env[2]){
 				case '1':
-						if (tens >= 8.4f) bat = 100;
-						if (tens <= 5.6f) bat = 0;
-				
-						bat = ((tens - 5.6)/(8.4-5.6))*100.0f;
-						sprintf(msg_web, "%.1f %%",bat);
-						len = (uint32_t)sprintf (buf, &env[4], msg_web);
+            len = (uint32_t)sprintf(buf, &env[4], fecha_rec.BufHour);
 					break;
 				case '2':
-						len = (uint32_t)sprintf(buf, &env[4], fecha_rec.BufHour);
-					break;
-				case '3':	
 						len = (uint32_t)sprintf(buf, &env[4], fecha_rec.BufDate);
 					break;
 			}
@@ -410,7 +394,6 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 						len = (uint32_t)sprintf(buf, &env[4], hora_desp_per);
           break;
 				case '4':
-						if(modo_func != 0x02)	osThreadFlagsSet(thweb_comTx, 0x01);
 						len = (uint32_t)sprintf(buf, &env[4], min_desp_per);
           break;
 			}

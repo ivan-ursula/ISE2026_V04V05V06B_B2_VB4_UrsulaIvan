@@ -49,9 +49,8 @@ t </div>
 t
 t <div id="datos">
 t
-c d 1 <p> %s // 
-c d 2  %s // 
-c d 3  %s</p>
+c d 1  <p>%s // 
+c d 2  %s</p>
 t </div></form></div>
 t
 t <script>

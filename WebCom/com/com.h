@@ -21,6 +21,7 @@ int init_thcomweb (void);
 //CMD
 #define HORA 0X20 //
 #define DORMIR 0x21 //
+#define DESPERTAR 0x22 //
 #define ALARM_COM 0x25 //
 #define LECTURA_NFC 0x70 //
 #define LECTURA_PESO 0x80 //
@@ -31,6 +32,7 @@ int init_thcomweb (void);
 //respuestas
 #define RESP_HORA 0XDF //
 #define RESP_DORMIR 0xDE //
+#define RESP_DESPERTAR 0xDD //
 #define RESP_ALARM_COM 0xDA //
 #define RESP_LECTURA_PESO 0x7F //
 #define RESP_LECTURA_TENSION 0x7E //
