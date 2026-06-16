@@ -1,5 +1,6 @@
 #include "sleep.h"
 #include "vcnl.h"
+#include "pwm.h"
 #include "main.h"
 
 static void SYSCLKConfig_STOP(void);
@@ -137,6 +138,7 @@ void StopMode_Measure(void)
 	
 	
   init_thVCNL();
+	Init_Thread_PWM();
   osDelay(1000);
 	
   /*## Configure the Wake up timer ###########################################*/

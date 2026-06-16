@@ -93,6 +93,7 @@ void th_main (void *argument) {
 
 void estado_Activo(void)
 {
+	
 	status_q=osMessageQueueGet(qCom_Rx,&msg_rx,0,20);
 	if(status_q==osOK){
 		comp_cmd(msg_rx);
@@ -110,14 +111,7 @@ void estado_Activo(void)
 		osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
 	}
 	
-	if(flag_tim_rtc==1){
-		msg_tx.cmd= HORA;
-		msg_tx.length=0;
-		osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
-		flag_tim_rtc=0;
-		
-		RTC_CalendarShow(showtime, showdate);
-	}
+
 	
 }
 
@@ -155,8 +149,8 @@ void estado_Alarma(void)
 }
 void comp_cmd(ComData_t com_data){
 	
-	struct tm ts_wake;
-	struct tm ts_sleep;
+	struct tm ts_wake  = {0};
+	struct tm ts_sleep = {0};
 	struct tm ts;
 	
 	switch(msg_rx.cmd){
@@ -166,23 +160,23 @@ void comp_cmd(ComData_t com_data){
 			&ts.tm_hour, &ts.tm_min,  &ts.tm_sec,
 			&ts.tm_mday, &ts.tm_mon,  &ts.tm_year);
 			RTC_CalendarConfig(ts);
+			RTC_CalendarShow(showtime, showdate); 
 
     break;
 		case DORMIR:
 			
-		
 		sscanf((char*)msg_rx.buff,
-           "%d:%d:%d %d/%d/%d-%d:%d:%d %d/%d/%d",
-           &ts_sleep.tm_hour,&ts_sleep.tm_min,&ts_sleep.tm_sec,
-           &ts_sleep.tm_mday,&ts_sleep.tm_mon,&ts_sleep.tm_year,
-           &ts_wake.tm_hour, &ts_wake.tm_min, &ts_wake.tm_sec,
-           &ts_wake.tm_mday, &ts_wake.tm_mon, &ts_wake.tm_year);
+           "%d:%d-%d:%d",
+           &ts_sleep.tm_hour,&ts_sleep.tm_min,
+           &ts_wake.tm_hour, &ts_wake.tm_min);
+		ts_sleep.tm_sec = 0;
+		ts_wake.tm_sec = 0;
 		
     RTC_Set_AlarmSleep(ts_sleep);        // Alarma B: cuándo dormirse
     RTC_Set_AlarmWakeup(ts_wake);  // Alarma A: cuándo despertar
 
     break;
-			
+		
 		}
 		if(msg_rx.cmd==LECTURA_CORRIENTE||msg_rx.cmd==LECTURA_PESO||msg_rx.cmd==LECTURA_TENSION){
 			osMessageQueuePut(q_adc_peticion,&msg_rx.cmd,0,5);
@@ -191,11 +185,18 @@ void comp_cmd(ComData_t com_data){
 			elementos=osMessageQueueGetCount(q_adc_data);
 			if(status_q==osOK){
 				if(data_adc.cmd==RESP_LECTURA_PESO){
+					msg_tx.cmd = RESP_LECTURA_PESO;
 					msg_tx.length=sprintf((char*)msg_tx.buff ,"%.2f-%.2f",data_adc.valor1,data_adc.valor2);
 					osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+					osDelay(1000);
+						msg_tx.cmd= HORA;
+						msg_tx.length=0;
+						osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
 					
 				}else{
+					
 					msg_tx.length=sprintf((char*)msg_tx.buff,"%.2f",data_adc.valor1);
+					msg_tx.cmd = RESP_LECTURA_TENSION;
 					osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
 				}
 			}		

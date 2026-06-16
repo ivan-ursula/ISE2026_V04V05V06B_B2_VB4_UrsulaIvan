@@ -23,7 +23,7 @@ void th_prueba_N (void *argument) {
  ComData_t msg_rx;
  ComData_t msg_tx;
   while (1) {
-    msg_tx.cmd = HORA;
+O    msg_tx.cmd = HORA;
 		char *d= "Hola, soy el receptor";
 		msg_tx.length=sprintf(msg_tx.buff,"%s",d);
     osMessageQueuePut(qCom_Tx,&msg_tx,0,0);

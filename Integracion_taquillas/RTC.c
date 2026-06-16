@@ -111,7 +111,7 @@ void RTC_CalendarShow(uint8_t *showtime, uint8_t *showdate)
 
 void RTC_Set_AlarmWakeup(struct tm ts_wake)
 {
-    RTC_AlarmTypeDef alarma;
+    RTC_AlarmTypeDef alarma = {0};
 
     alarma.AlarmTime.Hours          = ts_wake.tm_hour;
     alarma.AlarmTime.Minutes        = ts_wake.tm_min;
@@ -119,10 +119,9 @@ void RTC_Set_AlarmWakeup(struct tm ts_wake)
     alarma.AlarmTime.TimeFormat     = RTC_HOURFORMAT_24;
     alarma.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
     alarma.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
-    alarma.AlarmMask                = RTC_ALARMMASK_NONE;
+    alarma.AlarmMask                = RTC_ALARMMASK_DATEWEEKDAY;
     alarma.AlarmSubSecondMask       = RTC_ALARMSUBSECONDMASK_ALL;
     alarma.AlarmDateWeekDaySel      = RTC_ALARMDATEWEEKDAYSEL_DATE;
-    alarma.AlarmDateWeekDay         = ts_wake.tm_mday;
     alarma.Alarm                    = RTC_ALARM_A;
 
     HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_A);
@@ -134,7 +133,7 @@ void RTC_Set_AlarmWakeup(struct tm ts_wake)
 
 void RTC_Set_AlarmSleep(struct tm ts_sleep)
 {
-    RTC_AlarmTypeDef alarma;
+    RTC_AlarmTypeDef alarma = {0};
 
     alarma.AlarmTime.Hours          = ts_sleep.tm_hour;
     alarma.AlarmTime.Minutes        = ts_sleep.tm_min;
@@ -142,10 +141,9 @@ void RTC_Set_AlarmSleep(struct tm ts_sleep)
     alarma.AlarmTime.TimeFormat     = RTC_HOURFORMAT_24;
     alarma.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
     alarma.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
-    alarma.AlarmMask                = RTC_ALARMMASK_NONE;
+    alarma.AlarmMask                = RTC_ALARMMASK_DATEWEEKDAY;
     alarma.AlarmSubSecondMask       = RTC_ALARMSUBSECONDMASK_ALL;
     alarma.AlarmDateWeekDaySel      = RTC_ALARMDATEWEEKDAYSEL_DATE;
-    alarma.AlarmDateWeekDay         = ts_sleep.tm_mday;
     alarma.Alarm                    = RTC_ALARM_B;
 	
 	  HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_B);
