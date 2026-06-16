@@ -399,11 +399,6 @@
               <FilePath>.\main.c</FilePath>
             </File>
             <File>
-              <FileName>prueba_thcom.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\prueba_thcom.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f4xx_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\stm32f4xx_it.c</FilePath>
@@ -477,6 +472,31 @@
               <FileName>vcnl.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\vcnl.h</FilePath>
+            </File>
+            <File>
+              <FileName>leds.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\leds.c</FilePath>
+            </File>
+            <File>
+              <FileName>leds.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\leds.h</FilePath>
+            </File>
+            <File>
+              <FileName>pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\pwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>pwm.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\pwm.h</FilePath>
+            </File>
+            <File>
+              <FileName>principal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\principal.c</FilePath>
             </File>
           </Files>
         </Group>

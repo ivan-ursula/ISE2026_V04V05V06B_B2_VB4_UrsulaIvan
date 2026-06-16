@@ -1,7 +1,6 @@
 --cpu=Cortex-M4 --fpu=SoftVFP
 ".\objects\com.o"
 ".\objects\main.o"
-".\objects\prueba_thcom.o"
 ".\objects\stm32f4xx_it.o"
 ".\objects\nfc.o"
 ".\objects\rtc.o"
@@ -9,6 +8,9 @@
 ".\objects\th_adc.o"
 ".\objects\sleep.o"
 ".\objects\vcnl.o"
+".\objects\leds.o"
+".\objects\pwm.o"
+".\objects\principal.o"
 "..\..\..\..\..\..\..\..\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Library\ARM\RTX_CM3.lib"
 ".\objects\rtx_lib.o"
 ".\objects\rtx_config.o"

@@ -31,11 +31,13 @@ void thread_ADC (void *argument) {
 		
 		if(peticion==LECTURA_PESO){
 			//dato.valor1=(ADC_getData(&adc,CANAL_T1)*delta-0.270)/sensibilidad_taquilla;
-      dato.valor1=ADC_getData(&adc,CANAL_T1)*delta-0.3730;
+      dato.valor1=(ADC_getData(&adc,CANAL_T1)*delta)-0.272;
       dato.valor1=dato.valor1/sensibilidad_taquilla;
+			dato.valor1=dato.valor1-435;
 			//dato.valor2=(ADC_getData(&adc,CANAL_T2)*delta-0.270)/sensibilidad_taquilla;
-			dato.valor2=ADC_getData(&adc,CANAL_T2)*delta-0.51565;
+			dato.valor2=(ADC_getData(&adc,CANAL_T2)*delta)-0.558;
       dato.valor2=dato.valor2/sensibilidad_taquilla;
+			dato.valor2=dato.valor2+425;
 			dato.cmd=RESP_LECTURA_PESO;
 			
 			
@@ -49,9 +51,8 @@ void thread_ADC (void *argument) {
 			
 		}
 		if(peticion==LECTURA_CORRIENTE){
-			//dato.valor1=((ADC_getData(&adc,CANAL_CORRIENTE)*delta)/sensibilidad_corriente);
-			//dato.valor2=ADC_getData(&adc,CANAL_T2)*delta_taquilla;
-			dato.valor1=(ADC_getData(&adc,CANAL_CORRIENTE)*delta);
+			dato.valor1=(ADC_getData(&adc,CANAL_CORRIENTE)*delta)*1000;
+			dato.valor1=dato.valor1/sensibilidad_corriente;
 			dato.cmd=RESP_LECTURA_CORRIENTE;
 			
 			

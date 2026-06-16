@@ -41,4 +41,4 @@
   vcnl.h RTE\Device\STM32F429ZITx\RTE_Device.h \
   C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Driver\Include\Driver_I2C.h \
   C:\Users\ricar\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Driver\Include\Driver_Common.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h main.h
+  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h pwm.h main.h

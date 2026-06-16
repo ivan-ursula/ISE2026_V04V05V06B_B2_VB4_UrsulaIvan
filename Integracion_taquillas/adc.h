@@ -5,7 +5,7 @@
 #define delta 3.3f/4096
 #define sensibilidad_taquilla 0.00066f// [v]/[g]
 
-#define sensibilidad_corriente 4.199f // v/a
+#define sensibilidad_corriente 10.6f // [v]/[a]
 
 #define CANAL_T1 0
 #define CANAL_T2 4

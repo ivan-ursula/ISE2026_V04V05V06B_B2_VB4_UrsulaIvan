@@ -57,11 +57,11 @@ int Init_main (void) {
 
 void th_main (void *argument) {
   estado= ACTIVO;
+	
 	osTimerStart(tim_RTC,1000);
+	
 	Init_RTC();
-	msg_tx.cmd= HORA;
-	msg_tx.length=0;
-	osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+	
 	while (1) {
 		
 		switch(estado){
@@ -97,9 +97,8 @@ void estado_Activo(void)
 	status_q=osMessageQueueGet(qCom_Rx,&msg_rx,0,20);
 	if(status_q==osOK){
 		comp_cmd(msg_rx);
-	}			
-
-	//SI QUIERES PROBAR SIN NFC PUEDE QUE TE DE EROR RECUERDA DESACTIVAR EL HILO DEL NFC
+	}
+	
 	status_q=osMessageQueueGet(q_nfc,&uid,0,20);
 	if(status_q==osOK){
 		msg_tx.cmd= LECTURA_NFC; //cmd de uid 
@@ -123,34 +122,38 @@ void estado_Bajo_Consumo(void)
   osKernelResume(0);
   desinit_uart();
   init_uart();
+	
 	osThreadFlagsSet(thcom_Rx, 0x1);
   NFC_Deinit_SPI();
   NFC_init_SPI();
   ADC1_pins_F429ZI_config();
   Deinit_ADC(&adc);
   ADC_Init(&adc, ADC1);
-  
+  msg_tx.length = 0;
+	msg_tx.cmd = RESP_DESPERTAR;
+	osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
   osTimerStart(tim_RTC, 1000);
 	
 }
 void estado_Alarma(void) 
 {
 	msg_tx.cmd = ALARM; 
-	msg_tx.length = 0x00;
+	msg_tx.length = 0;
 	osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
 	osMessageQueueGet(qCom_Rx, &msg_rx, 0, osWaitForever);
 	
-	if(msg_rx.cmd == RESP_ALARMA && msg_tx.buff[1] == 1){
+	if(msg_rx.cmd == RESP_ALARMA && msg_rx.buff[0] == 1){
 		estado = ACTIVO;
 	}
-	else if(msg_rx.cmd == RESP_ALARMA && msg_tx.buff[1] == 0){
+	else if(msg_rx.cmd == RESP_ALARMA && msg_tx.buff[0] == 0){
 		estado = BAJO_CONSUMO; 
 	}
 }
+
 void comp_cmd(ComData_t com_data){
 	
-	struct tm ts_wake  = {0};
-	struct tm ts_sleep = {0};
+	struct tm ts_wake;
+	struct tm ts_sleep;
 	struct tm ts;
 	
 	switch(msg_rx.cmd){
@@ -163,19 +166,26 @@ void comp_cmd(ComData_t com_data){
 			RTC_CalendarShow(showtime, showdate); 
 
     break;
+		
 		case DORMIR:
 			
 		sscanf((char*)msg_rx.buff,
-           "%d:%d-%d:%d",
-           &ts_sleep.tm_hour,&ts_sleep.tm_min,
-           &ts_wake.tm_hour, &ts_wake.tm_min);
+           "%d:%d",
+           &ts_sleep.tm_hour,&ts_sleep.tm_min);
 		ts_sleep.tm_sec = 0;
-		ts_wake.tm_sec = 0;
 		
     RTC_Set_AlarmSleep(ts_sleep);        // Alarma B: cuándo dormirse
-    RTC_Set_AlarmWakeup(ts_wake);  // Alarma A: cuándo despertar
 
     break;
+		case DESPERTAR:
+			sscanf((char*)msg_rx.buff,
+           "%d:%d",
+           &ts_wake.tm_hour, &ts_wake.tm_min);
+		ts_wake.tm_sec = 0;
+		
+    RTC_Set_AlarmWakeup(ts_wake);  // Alarma A: cuándo despertar
+			
+		break;
 		
 		}
 		if(msg_rx.cmd==LECTURA_CORRIENTE||msg_rx.cmd==LECTURA_PESO||msg_rx.cmd==LECTURA_TENSION){
@@ -193,10 +203,16 @@ void comp_cmd(ComData_t com_data){
 						msg_tx.length=0;
 						osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
 					
-				}else{
+				}else if(data_adc.cmd==RESP_LECTURA_TENSION){
 					
 					msg_tx.length=sprintf((char*)msg_tx.buff,"%.2f",data_adc.valor1);
 					msg_tx.cmd = RESP_LECTURA_TENSION;
+					osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+					
+				} else if(data_adc.cmd==RESP_LECTURA_CORRIENTE) {
+					
+				  msg_tx.length=sprintf((char*)msg_tx.buff,"%.2f",data_adc.valor1);
+					msg_tx.cmd = RESP_LECTURA_CORRIENTE;
 					osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
 				}
 			}		
@@ -227,12 +243,14 @@ void RTC_Alarm_IRQHandler(void)
 }
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
-    HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_A);
-    estado = ACTIVO;        // Alarma A ? despertar
+	estado = ACTIVO;
+
 }
 
 void HAL_RTCEx_AlarmBEventCallback(RTC_HandleTypeDef *hrtc)
 {
-    HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_B);
-    estado = BAJO_CONSUMO;  // Alarma B ? dormir
+		msg_tx.length = 0;
+		msg_tx.cmd = RESP_DORMIR;
+		osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+    estado = BAJO_CONSUMO;
 }

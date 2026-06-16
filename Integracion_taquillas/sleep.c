@@ -138,7 +138,7 @@ void StopMode_Measure(void)
 	
 	
   init_thVCNL();
-	Init_Thread_PWM();
+	//Init_Thread_PWM();
   osDelay(1000);
 	
   /*## Configure the Wake up timer ###########################################*/
