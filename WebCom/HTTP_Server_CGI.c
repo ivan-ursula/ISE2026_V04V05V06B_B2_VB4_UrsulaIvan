@@ -65,7 +65,7 @@ static TRABAJADOR_t tabla_trabajadores[5];
 
 float peso_taq1 = 0;
 float peso_taq2 = 0;
-float tens = 4.2;
+float tens = 8.4;
 float intens = 0;
 float bat = 100;
 
@@ -184,25 +184,6 @@ void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
         }
         
         //Comparación para poner hora de alarma
-        else if (strncmp(var, "hora_dorm=", 10) == 0) {
-          hora_dorm = atoi(var + 10);
-        }
-        else if (strncmp(var, "min_dorm=", 9) == 0) {
-          min_dorm = atoi(var + 9);
-        }
-        else if (strncmp(var, "hora_desp=", 10) == 0) {
-          hora_desp = atoi(var + 10);
-        }
-        else if (strncmp(var, "min_desp=", 9) == 0) {
-          min_desp = atoi(var + 9);
-        }
-        else if (strncmp(var, "fecha_dorm=", 11) == 0) {
-					strncpy(fecha_dorm, var + 11, sizeof(fecha_dorm) - 1);
-        }
-        else if (strncmp(var, "fecha_desp=", 11) == 0) {
-          strncpy(fecha_desp, var + 11, sizeof(fecha_desp) - 1);
-        }
-				
 				else if (strncmp(var, "hora_dorm_per=", 14) == 0) {
           hora_dorm_per = atoi(var + 14);
         }
@@ -288,10 +269,10 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 			osMessageQueueGet(mid_Msg_Date, &fecha_rec, NULL, 0);
 			switch(env[2]){
 				case '1':
-						if (tens >= 4.2f) bat = 100;
-						if (tens <= 2.8f) bat = 0;
+						if (tens >= 8.4f) bat = 100;
+						if (tens <= 5.6f) bat = 0;
 				
-						bat = ((tens - 2.8)/(4.2-2.8))*100.0f;
+						bat = ((tens - 5.6)/(8.4-5.6))*100.0f;
 						sprintf(msg_web, "%.1f %%",bat);
 						len = (uint32_t)sprintf (buf, &env[4], msg_web);
 					break;
@@ -342,56 +323,6 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
           
       break;
 			
-		case 'g': //estado de consumo
-			if(modo_func == 0x01){
-				len = (uint32_t)sprintf (buf, &env[4], "<span style='color:green;'>ACTIVO</span>");
-			}else if(modo_func == 0x02){
-				osThreadFlagsSet(thweb_comTx, 0x03);
-				len = (uint32_t)sprintf (buf, &env[4], "<span style='color:red;'>STOP</span>");
-			}
-      break;
-		
-		case 'h': //cambio de estado de consumo checkboxes
-			switch(env[2]){
-				case '1':
-						len = (uint32_t)sprintf (buf, &env[4], (modo_func & 0x01) ? "checked" : "");
-					break;
-				case '2':
-						len = (uint32_t)sprintf (buf, &env[4], (modo_func & 0x02) ? "checked" : "");
-					break;
-			}
-      break;
-			
-		case 'i': //hora para alarma de despertar o dormir taquilla
-			switch(env[2]) {
-				case '1':
-						len = (uint32_t)sprintf(buf, &env[4], hora_dorm);
-					break;
-				case '2':
-						len = (uint32_t)sprintf(buf, &env[4], min_dorm);
-          break;
-        case '3':
-						len = (uint32_t)sprintf(buf, &env[4], fecha_rec.BufDate);
-          break;
-        case '4':
-						len = (uint32_t)sprintf(buf, &env[4], fecha_dorm);
-          break;
-				case '5':
-						len = (uint32_t)sprintf(buf, &env[4], hora_desp);
-          break;
-				case '6':
-						len = (uint32_t)sprintf(buf, &env[4], min_desp);
-          break;
-        case '7':
-						len = (uint32_t)sprintf(buf, &env[4], fecha_rec.BufDate);
-          break;
-        case '8':
-						if(modo_func != 0x02)	osThreadFlagsSet(thweb_comTx, 0x01);
-						len = (uint32_t)sprintf(buf, &env[4], fecha_desp);
-          break;
-			}
-    break;
-			
 		case 'j': //gestión de tarjetas
 			if (strcmp(&env[2], "row") == 0) {
         uint32_t i = *pcgi; 
@@ -431,12 +362,27 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
     break;
       
     case 'k': // Indicador de estado circular
-    // Si la variable modo_func (o la que decidas) es 0 -> verde, si es 1 -> rojo
-      if (alerta == 0) {
-        len = (uint32_t)sprintf(buf, &env[4], "background-color: #00FF00;"); // Verde
-      } else {
-        len = (uint32_t)sprintf(buf, &env[4], "background-color: #FF0000;"); // Rojo
-      }
+			switch(env[2]) {
+				case '1':
+					if (alerta == 0 && modo_func == 0x01) {
+						len = (uint32_t)sprintf(buf, &env[4], "background-color: #00FF00;"); // Verde
+					} else if (alerta == 0 && modo_func == 0x02){
+						len = (uint32_t)sprintf(buf, &env[4], "background-color: #FFFF00;"); // Amarillo
+					} else {
+						len = (uint32_t)sprintf(buf, &env[4], "background-color: #FF0000;"); // Rojo
+					}
+					break;
+					
+				case '2':
+					if (alerta == 0 && modo_func == 0x01) {
+						len = (uint32_t)sprintf (buf, &env[4], "<span style='color:green;'>ACTIVO</span>");
+					} else if (alerta == 0 && modo_func == 0x02){
+						len = (uint32_t)sprintf (buf, &env[4], "<span style='color:yellow;'>STOP</span>");
+					} else {
+						len = (uint32_t)sprintf (buf, &env[4], "<span style='color:red;'>ALERTA</span>");
+					}
+          break;
+			}
     break;
       
     case 'l': // Botones de gestión de alarma
@@ -464,13 +410,14 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 						len = (uint32_t)sprintf(buf, &env[4], hora_desp_per);
           break;
 				case '4':
+						if(modo_func != 0x02)	osThreadFlagsSet(thweb_comTx, 0x01);
 						len = (uint32_t)sprintf(buf, &env[4], min_desp_per);
           break;
 			}
     break;
 			
 		case 'n': // Gestión de nueva nfc
-			len = sprintf(buf, "%02X%02X%02X%02X", id_nfc_new[0], id_nfc_new[1], id_nfc_new[2], id_nfc_new[3]);
+			len = sprintf(buf, "%02X%02X%02X%02X", id_nfc_new[3], id_nfc_new[2], id_nfc_new[1], id_nfc_new[0]);
     break;
      
   }

@@ -40,12 +40,12 @@ t <div id="contenedor-dinamico">
 t <form action=hora.cgi method=post name=cgi>
 t
 t <div class="led-circle" style="
-c k 0 %s
-t "></div>
+c k 1 %s"></div>
+c k 2 <p>%s</p>
 t
-t     <div id="controles-alarma">
+t <div id="controles-alarma">
 c l 0 %s
-t     </div>
+t </div>
 t
 t <div id="datos">
 t

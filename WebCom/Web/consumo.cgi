@@ -53,86 +53,12 @@ t
 t <title>ESTADO Y MODO</title></head>
 t
 t <body text="white">
-t <div id="datos"><h2 align=center><br>ESTADO Y MODO</h2>
-t <p>Estado actual del sistema y opciones de consumo<br></p>
+t <div id="datos"><h2 align=center><br>CONFIGURACI&Oacute;N HORAS</h2>
+t <p>Configuraci&oacute;n de las horas para dormir y despertar<br></p>
 t
 t <form action=consumo.cgi method=post name=cgi>
 t
-c g 1 <p>El sistema se encuentra en modo: %s</p>
-t
-t <p>Elegir modo de consumo</p>
-t <table>
-t  <tr>
-t    <th>ACTIVO</th>
-t    <th>STOP</th>
-t  </tr>
-t  <tr>
-c h 1 <td><input type="radio" name="modo" value="1" OnClick="submit();" %s></td>
-c h 2 <td><input type="radio" name="modo" value="2" OnClick="submit();" %s></td>
-t  </tr></table>
-t
-t
-t
-t <p><br>Introducir fecha y hora para entrar al modo sleep</p>
-t
-t <div style="display:flex; justify-content:center; align-items:center; 
-t margin-top:20px; font-size:30px; gap:10px;">
-t
-t <td colspan="2">
-t <input type="number" name="hora_dorm" min="0" max="23"
-c i 1  value="%d" style="text-align:center; font-size:30px; background: transparent; 
-t outline: none; color: inherit; font: inherit; 
-t text-shadow: inherit;" placeholder="HH"> :
-t
-t <input type="number" name="min_dorm" min="0" max="59" 
-c i 2 value="%d" style="text-align:center; font-size:30px; background: transparent; 
-t outline: none; color: inherit; font: inherit; 
-t text-shadow: inherit;" placeholder="MM"></td>
-t
-t <input type="date" name="fecha_dorm"  
-c i 3 min="%s"
-c i 4 value="%s"
-t style="text-align:center; font-size:30px; background: transparent; 
-t outline: none; color: inherit; font: inherit; text-shadow: inherit;"></div>
-t
-t
-t
-t <p><br>Introducir fecha y hora para salir del modo sleep</p>
-t
-t <div style="display:flex; justify-content:center; align-items:center; 
-t margin-top:20px; font-size:30px; gap:10px;">
-t
-t <td colspan="2">
-t <input type="number" name="hora_desp" min="0" max="23"
-c i 5  value="%d" style="text-align:center; font-size:30px; background: transparent; 
-t outline: none; color: inherit; font: inherit; 
-t text-shadow: inherit;" placeholder="HH"> :
-t
-t <input type="number" name="min_desp" min="0" max="59" 
-c i 6 value="%d" style="text-align:center; font-size:30px; background: transparent; 
-t outline: none; color: inherit; font: inherit; 
-t text-shadow: inherit;" placeholder="MM"></td>
-t
-t <input type="date" name="fecha_desp" 
-c i 7 min="%s"
-c i 8 value="%s"
-t style="text-align:center; font-size:30px; background: transparent; 
-t outline: none; color: inherit; font: inherit; text-shadow: inherit;"></div>
-t
-t <div style="display:flex; justify-content:center; align-items:center; 
-t margin-top:20px; font-size:30px; gap:10px;">
-t
-t <tr>
-t   <td colspan="2">
-t     <input type="submit" value="Guardar" style="text-align:center; font-size:30px; background: transparent; 
-t     outline: none; color: inherit; font: inherit; 
-t     text-shadow: inherit;">
-t   </td>
-t </tr></div>
-t
-t
-t
-t <p><br>Introducir fecha y hora para entrar al modo periódico</p>
+t <p><br>Introducir hora para dormir</p>
 t
 t <div style="display:flex; justify-content:center; align-items:center; 
 t margin-top:20px; font-size:30px; gap:10px;">
@@ -148,9 +74,19 @@ c m 2 value="%d" style="text-align:center; font-size:30px; background: transpare
 t outline: none; color: inherit; font: inherit; 
 t text-shadow: inherit;" placeholder="MM"></td></div>
 t
+t <div style="display:flex; justify-content:center; align-items:center; 
+t margin-top:20px; font-size:30px; gap:10px;">
+t
+t <tr>
+t   <td colspan="2">
+t     <input type="submit" value="Guardar" style="text-align:center; font-size:30px; background: transparent; 
+t     outline: none; color: inherit; font: inherit; 
+t     text-shadow: inherit;">
+t   </td>
+t </tr></div>
 t
 t
-t <p><br>Introducir fecha y hora para salir del modo periódico</p>
+t <p><br>Introducir hora para despertar</p>
 t
 t <div style="display:flex; justify-content:center; align-items:center; 
 t margin-top:20px; font-size:30px; gap:10px;">
@@ -165,8 +101,6 @@ t <input type="number" name="min_desp_per" min="0" max="59"
 c m 4 value="%d" style="text-align:center; font-size:30px; background: transparent; 
 t outline: none; color: inherit; font: inherit; 
 t text-shadow: inherit;" placeholder="MM"></td></div>
-t
-t
 t
 t <div style="display:flex; justify-content:center; align-items:center; 
 t margin-top:20px; font-size:30px; gap:10px;">

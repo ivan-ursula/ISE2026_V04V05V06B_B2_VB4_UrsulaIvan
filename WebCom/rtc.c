@@ -191,7 +191,7 @@ int init_TimerRTC (void) {
 int init_TimerFlag (void) {
   exec1 = 1U;
   tim_idFlag = osTimerNew((osTimerFunc_t)&TimerFlag_Callback, osTimerPeriodic, &exec1, NULL);
-  osTimerStart(tim_idFlag, 1000U); 
+  osTimerStart(tim_idFlag, 5000U); 
   return NULL;
 }
 /*----------------------------------------------------------------------------

@@ -1,6 +1,9 @@
 t <html><head>
 t
 t <script>
+t
+t var editandoActiva = false;
+t
 t   function habilitarEdicion() {
 t     // Obtenemos todos los select e inputs del formulario
 t     var form = document.forms['cgi'];
@@ -11,7 +14,25 @@ t     }
 t     // Ocultamos el botón de editar y mostramos el de guardar
 t     document.getElementById('btnEditar').style.display = 'none';
 t     document.getElementById('btnGuardar').style.display = 'inline-block';
+t     editandoActiva = true;
 t   }
+t
+t function actualizarDatos() {
+t
+t    if (editandoActiva) {
+t      return; 
+t    }
+t
+t  fetch("gest_tarj.cgi?nocache=" + new Date().getTime())
+t     .then(response => response.text())
+t     .then(data => {
+t       var parser = new DOMParser();
+t       var doc = parser.parseFromString(data, 'text/html');
+t       document.getElementById("contenedor-dinamico").innerHTML = doc.getElementById("contenedor-dinamico").innerHTML;
+t     });
+t }
+t
+t setInterval(actualizarDatos, 1000);
 t </script>
 t
 t <style>
@@ -85,10 +106,10 @@ t  padding:10px 20px; display:none;"></div>
 t
 t
 t
-t <div style="text-align:center; margin-top:20px;">
+t <div id="contenedor-dinamico" style="text-align:center; margin-top:20px;">
 t
-t <p></br> Última tarjeta nueva introducida </p>
-c n 1 <td>%s</td>
+t <p><br> &Uacute;ltima tarjeta introducida </p>
+c n 1 <p>%s</p>
 t
 t </div>
 t
