@@ -11,7 +11,7 @@
 ".\objects\leds.o"
 ".\objects\pwm.o"
 ".\objects\principal.o"
-"..\..\..\..\..\..\..\..\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Library\ARM\RTX_CM3.lib"
+"C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Library\ARM\RTX_CM3.lib"
 ".\objects\rtx_lib.o"
 ".\objects\rtx_config.o"
 ".\objects\i2c_stm32f4xx.o"

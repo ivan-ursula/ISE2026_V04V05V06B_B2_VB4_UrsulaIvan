@@ -20,6 +20,7 @@ uint8_t showtime[10];
 uint8_t showdate[12];
 uint8_t elementos;
 volatile uint8_t flag_alarma_wakeup = 0;
+
 //VARIABLES DE COLAS DE MENSAJES
 msg_nfc uid;
 ComData_t msg_tx;
@@ -59,35 +60,35 @@ int Init_main (void) {
 
 void th_main (void *argument) {
   estado= ACTIVO;
-	
-	osTimerStart(tim_RTC,1000);
-	
-	Init_RTC();
-	
-	while (1) {
-		
-		switch(estado){
-			case ACTIVO:
-				
-			estado_Activo();
-			
-			break ;
-			
-			case BAJO_CONSUMO:
-				
-			estado_Bajo_Consumo();
-				
-			break;
-			
-			case ALARMA:
-				
-			estado_Alarma();
-			
-				break;			
-			
-		}
-		
-		
+  
+  osTimerStart(tim_RTC,1000);
+  
+  Init_RTC();
+  
+  while (1) {
+    
+    switch(estado){
+      case ACTIVO:
+        
+      estado_Activo();
+      
+      break ;
+      
+      case BAJO_CONSUMO:
+        
+      estado_Bajo_Consumo();
+        
+      break;
+      
+      case ALARMA:
+        
+      estado_Alarma();
+      
+        break;			
+      
+    }
+    
+    
     
                        
   }
@@ -95,43 +96,46 @@ void th_main (void *argument) {
 
 void estado_Activo(void)
 {
-	
-	status_q=osMessageQueueGet(qCom_Rx,&msg_rx,0,20);
-	if(status_q==osOK){
-		comp_cmd(msg_rx);
-	}
-	
-	status_q=osMessageQueueGet(q_nfc,&uid,0,20);
-	if(status_q==osOK){
-		msg_tx.cmd= LECTURA_NFC; //cmd de uid 
-		msg_tx.length=uid.length-1;
-		for(int i=0;i<uid.length-1;i++){
-			msg_tx.buff[i]=uid.buff[i];
-						
-		}		
-		osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
-	}
-	
+  
+  status_q=osMessageQueueGet(qCom_Rx,&msg_rx,0,20);
+  if(status_q==osOK){
+    comp_cmd(msg_rx);
+  }
+  
+  status_q=osMessageQueueGet(q_nfc,&uid,0,20);
+  if(status_q==osOK){
+    msg_tx.cmd= LECTURA_NFC; //cmd de uid 
+    msg_tx.length=uid.length-1;
+    for(int i=0;i<uid.length-1;i++){
+      msg_tx.buff[i]=uid.buff[i];
+            
+    }		
+    osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+  }
+  
 
-	
+  
 }
 
 void estado_Bajo_Consumo(void)
-{ 
-	osTimerStop(tim_RTC);
-	StopMode_Measure();
-	HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
+{
+  msg_tx.length = 0;
+  msg_tx.cmd = RESP_DORMIR;
+  osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+  
+  osTimerStop(tim_RTC);
+  StopMode_Measure();
 
-    osKernelResume(0);
-    desinit_uart();
-    init_uart();
-    osThreadFlagsSet(thcom_Rx, 0x1);
-    NFC_Deinit_SPI();
-    NFC_init_SPI();
-    ADC1_pins_F429ZI_config();
-    Deinit_ADC(&adc);
-    ADC_Init(&adc, ADC1);
-    osTimerStart(tim_RTC, 1000);
+  osKernelResume(0);
+  desinit_uart();
+  init_uart();
+  osThreadFlagsSet(thcom_Rx, 0x1);
+  NFC_Deinit_SPI();
+  NFC_init_SPI();
+  ADC1_pins_F429ZI_config();
+  Deinit_ADC(&adc);
+  ADC_Init(&adc, ADC1);
+  osTimerStart(tim_RTC, 1000);
 
     if (flag_alarma_wakeup) {
         flag_alarma_wakeup = 0;
@@ -142,123 +146,124 @@ void estado_Bajo_Consumo(void)
         osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
         estado = ACTIVO;
     }
-	
+  
 }
 void estado_Alarma(void) 
 {
-	msg_tx.cmd = ALARM; 
-	msg_tx.length = 0;
-	osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
-	osMessageQueueGet(qCom_Rx, &msg_rx, 0, osWaitForever);
-	
-	MSGQUEUE_OBJ_PWM msg;
-  msg.frecuencia = 0U;
+  MSGQUEUE_OBJ_PWM msg;
+  
+  msg.frecuencia = 1;
   osMessageQueuePut(mid_Msg_PWM, &msg, 0U, 0U);
-	
-	if(msg_rx.cmd == RESP_ALARMA && msg_rx.buff[0] == 1){
-		estado = ACTIVO;
-	}
-	else if(msg_rx.cmd == RESP_ALARMA && msg_rx.buff[0] == 0){
-		estado = BAJO_CONSUMO; 
-	}
+  
+  msg_tx.cmd = ALARM; 
+  msg_tx.length = 0;
+  osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
+  osMessageQueueGet(qCom_Rx, &msg_rx, 0, osWaitForever);
+  
+  
+  msg.frecuencia = 0;
+  osMessageQueuePut(mid_Msg_PWM, &msg, 0U, 0U);
+  
+  if(msg_rx.cmd == RESP_ALARMA && msg_rx.buff[0] == 1){
+    estado = ACTIVO;
+  }
+  else if(msg_rx.cmd == RESP_ALARMA && msg_rx.buff[0] == 0){
+    estado = BAJO_CONSUMO; 
+  }
 }
 
 void comp_cmd(ComData_t com_data){
-	
-	struct tm ts_wake;
-	struct tm ts_sleep;
-	struct tm ts;
-	
-	switch(msg_rx.cmd){
-		
-		case RESP_HORA:
-			sscanf((char*)msg_rx.buff, "%d:%d:%d %d/%d/%d",
-			&ts.tm_hour, &ts.tm_min,  &ts.tm_sec,
-			&ts.tm_mday, &ts.tm_mon,  &ts.tm_year);
-			RTC_CalendarConfig(ts);
-			RTC_CalendarShow(showtime, showdate); 
+  
+  struct tm ts_wake;
+  struct tm ts_sleep;
+  struct tm ts;
+  
+  switch(msg_rx.cmd){
+    
+    case RESP_HORA:
+      sscanf((char*)msg_rx.buff, "%d:%d:%d %d/%d/%d",
+      &ts.tm_hour, &ts.tm_min,  &ts.tm_sec,
+      &ts.tm_mday, &ts.tm_mon,  &ts.tm_year);
+      RTC_CalendarConfig(ts);
+      RTC_CalendarShow(showtime, showdate); 
 
     break;
-		
-		case DORMIR:
-			
-		sscanf((char*)msg_rx.buff,
+    
+    case DORMIR:
+      
+    sscanf((char*)msg_rx.buff,
            "%d:%d",
            &ts_sleep.tm_hour,&ts_sleep.tm_min);
-		ts_sleep.tm_sec = 0;
-		
+    ts_sleep.tm_sec = 0;
+    
     RTC_Set_AlarmSleep(ts_sleep);        // Alarma B: cuándo dormirse
 
     break;
-		
-		case DESPERTAR:
-		
-		sscanf((char*)msg_rx.buff,
+    
+    case DESPERTAR:
+    
+    sscanf((char*)msg_rx.buff,
            "%d:%d",
            &ts_wake.tm_hour, &ts_wake.tm_min);
-		ts_wake.tm_sec = 0;
-		
+    ts_wake.tm_sec = 0;
+    
     RTC_Set_AlarmWakeup(ts_wake);  // Alarma A: cuándo despertar
-			
-		break;
-		
-		}
-		if(msg_rx.cmd==LECTURA_CORRIENTE||msg_rx.cmd==LECTURA_PESO||msg_rx.cmd==LECTURA_TENSION){
-			osMessageQueuePut(q_adc_peticion,&msg_rx.cmd,0,5);
-			
-			status_q=osMessageQueueGet(q_adc_data,&data_adc  ,0,100);
-			elementos=osMessageQueueGetCount(q_adc_data);
-			if(status_q==osOK){
-				if(data_adc.cmd==RESP_LECTURA_PESO){
-					msg_tx.cmd = RESP_LECTURA_PESO;
-					msg_tx.length=sprintf((char*)msg_tx.buff ,"%.2f-%.2f",data_adc.valor1,data_adc.valor2);
-					osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
-					osDelay(1000);
-						msg_tx.cmd= HORA;
-						msg_tx.length=0;
-						osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
-					
-				}else if(data_adc.cmd==RESP_LECTURA_TENSION){
-					
-					msg_tx.length=sprintf((char*)msg_tx.buff,"%.2f",data_adc.valor1);
-					msg_tx.cmd = RESP_LECTURA_TENSION;
-					osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
-					
-				} else if(data_adc.cmd==RESP_LECTURA_CORRIENTE) {
-					
-				  msg_tx.length=sprintf((char*)msg_tx.buff,"%.2f",data_adc.valor1);
-					msg_tx.cmd = RESP_LECTURA_CORRIENTE;
-					osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
-				}
-			}		
-			
-		}
+      
+    break;
+    
+    }
+    if(msg_rx.cmd==LECTURA_CORRIENTE||msg_rx.cmd==LECTURA_PESO||msg_rx.cmd==LECTURA_TENSION){
+      osMessageQueuePut(q_adc_peticion,&msg_rx.cmd,0,5);
+      
+      status_q=osMessageQueueGet(q_adc_data,&data_adc  ,0,100);
+      elementos=osMessageQueueGetCount(q_adc_data);
+      if(status_q==osOK){
+        if(data_adc.cmd==RESP_LECTURA_PESO){
+          msg_tx.cmd = RESP_LECTURA_PESO;
+          msg_tx.length=sprintf((char*)msg_tx.buff ,"%.2f-%.2f",data_adc.valor1,data_adc.valor2);
+          osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+          osDelay(1000);
+            msg_tx.cmd= HORA;
+            msg_tx.length=0;
+            osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+          
+        }else if(data_adc.cmd==RESP_LECTURA_TENSION){
+          
+          msg_tx.length=sprintf((char*)msg_tx.buff,"%.2f",data_adc.valor1);
+          msg_tx.cmd = RESP_LECTURA_TENSION;
+          osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+          
+        } else if(data_adc.cmd==RESP_LECTURA_CORRIENTE) {
+          
+          msg_tx.length=sprintf((char*)msg_tx.buff,"%.2f",data_adc.valor1);
+          msg_tx.cmd = RESP_LECTURA_CORRIENTE;
+          osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+        }
+      }		
+      
+    }
 }
 
-void TimerRTC_Callback(void const *arg){
-	flag_tim_rtc=1;
-	
+void TimerRTC_Callback(void const *arg)
+{
+  flag_tim_rtc=1;
 }
 void EXTI15_10_IRQHandler(void)
 {
-	HAL_GPIO_EXTI_IRQHandler(INT_PIN);
+  HAL_GPIO_EXTI_IRQHandler(INT_PIN);
 }
 void HAL_GPIO_EXTI_Callback(uint16_t pin)
 {
-    if (pin == INT_PIN)
-    {
-        osThreadFlagsSet(th_id_VCNL, 0x02);
-        estado = ALARMA;
-
-        MSGQUEUE_OBJ_PWM msg;
-        msg.frecuencia = 1U;
-        osMessageQueuePut(mid_Msg_PWM, &msg, 0U, 0U);
-    }
+  if (pin == INT_PIN && estado == BAJO_CONSUMO)
+  {
+    osThreadFlagsSet(th_id_VCNL, 0x02);
+    estado = ALARMA;
+  }
 }
 void RTC_Alarm_IRQHandler(void)
 {
     HAL_RTC_AlarmIRQHandler(&RtcHandle);
-	
+  
 }
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
@@ -269,8 +274,5 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 
 void HAL_RTCEx_AlarmBEventCallback(RTC_HandleTypeDef *hrtc)
 {
-	msg_tx.length = 0;
-	msg_tx.cmd = RESP_DORMIR;
-	osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
-    estado = BAJO_CONSUMO;
+  estado = BAJO_CONSUMO;
 }

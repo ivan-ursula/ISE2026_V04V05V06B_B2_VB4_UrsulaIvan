@@ -137,19 +137,19 @@ void StopMode_Measure(void)
   - OutPutType = Open Drain */
 	
 	
-__HAL_RCC_GPIOB_CLK_ENABLE();
-GPIO_InitTypeDef vcnl_gpio = {0};
-vcnl_gpio.Pin   = INT_PIN;
-vcnl_gpio.Mode  = GPIO_MODE_IT_RISING_FALLING;
-vcnl_gpio.Pull  = GPIO_PULLUP;
-vcnl_gpio.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-HAL_GPIO_Init(GPIOB, &vcnl_gpio);
-HAL_NVIC_EnableIRQ(EXTI15_10_IRQn); 
-__HAL_RTC_ALARM_EXTI_ENABLE_IT();
-__HAL_RTC_ALARM_EXTI_ENABLE_RISING_EDGE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  GPIO_InitTypeDef vcnl_gpio = {0};
+  vcnl_gpio.Pin   = INT_PIN;
+  vcnl_gpio.Mode  = GPIO_MODE_IT_RISING_FALLING;
+  vcnl_gpio.Pull  = GPIO_PULLUP;
+  vcnl_gpio.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(GPIOB, &vcnl_gpio);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn); 
+  __HAL_RTC_ALARM_EXTI_ENABLE_IT();
+  __HAL_RTC_ALARM_EXTI_ENABLE_RISING_EDGE();
 
-osKernelSuspend();
-HAL_SuspendTick();
+  osKernelSuspend();
+  HAL_SuspendTick();
 	
   /*## Configure the Wake up timer ###########################################*/
   /*  RTC Wakeup Interrupt Generation:
@@ -166,7 +166,6 @@ HAL_SuspendTick();
 
   /* FLASH Deep Power Down Mode enabled */
   HAL_PWREx_EnableFlashPowerDown();
-	HAL_SuspendTick();
   /*## Enter Stop Mode #######################################################*/
   HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
 
