@@ -8,10 +8,6 @@
 #define PWM_PIN               GPIO_PIN_9
 #define MSGQUEUE_OBJECTS_PWM  1
 
-/* Rango útil para buzzer pasivo */
-#define PWM_FREQ_MIN_HZ       20U
-#define PWM_FREQ_MAX_HZ       20000U
-
 typedef struct {
     uint32_t frecuencia;   // 0 = buzzer apagado
 } MSGQUEUE_OBJ_PWM;

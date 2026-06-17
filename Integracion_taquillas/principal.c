@@ -3,7 +3,6 @@
 #include "prueba.h"
 #include "RTC.h"
 #include "pwm.h"
-#include "pwm.h"
 #include "vcnl.h"
 #include <time.h>
 
@@ -152,6 +151,10 @@ void estado_Alarma(void)
 	osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
 	osMessageQueueGet(qCom_Rx, &msg_rx, 0, osWaitForever);
 	
+	MSGQUEUE_OBJ_PWM msg;
+  msg.frecuencia = 0U;
+  osMessageQueuePut(mid_Msg_PWM, &msg, 0U, 0U);
+	
 	if(msg_rx.cmd == RESP_ALARMA && msg_rx.buff[0] == 1){
 		estado = ACTIVO;
 	}
@@ -187,8 +190,10 @@ void comp_cmd(ComData_t com_data){
     RTC_Set_AlarmSleep(ts_sleep);        // Alarma B: cuándo dormirse
 
     break;
+		
 		case DESPERTAR:
-			sscanf((char*)msg_rx.buff,
+		
+		sscanf((char*)msg_rx.buff,
            "%d:%d",
            &ts_wake.tm_hour, &ts_wake.tm_min);
 		ts_wake.tm_sec = 0;
@@ -246,7 +251,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t pin)
         estado = ALARMA;
 
         MSGQUEUE_OBJ_PWM msg;
-        msg.frecuencia = 2000U;
+        msg.frecuencia = 1U;
         osMessageQueuePut(mid_Msg_PWM, &msg, 0U, 0U);
     }
 }
