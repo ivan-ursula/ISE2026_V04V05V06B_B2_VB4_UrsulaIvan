@@ -54,8 +54,6 @@ static TRABAJADOR_t tabla_trabajadores[5];
 
 float peso_taq1 = 0;
 float peso_taq2 = 0;
-float peso_ini1 = 0;
-float peso_ini2 = 0;
 
 float tens = 4.20;
 float intens = 0;
@@ -373,8 +371,8 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
       if (alerta == 1) { // Si hay alarma activa
         len = (uint32_t)sprintf(buf, 
         "<div style='margin-top:20px;'>"
-        "<button type='submit' name='accion' value='alarm_ok' style='background-color:red; color:white; padding:10px;'>Alarma Total</button> "
-        "<button type='submit' name='accion' value='alarm_false' style='background-color:gray; color:white; padding:10px;'>Falsa Alarma</button>"
+        "<button type='submit' name='accion' value='alarm_ok' style='background-color:red; color:white; padding:10px;'>PASAR A ACTIVO</button> "
+        "<button type='submit' name='accion' value='alarm_false' style='background-color:gray; color:white; padding:10px;'>PASAR A STOP</button>"
         "</div>");
       } else {
       // Si no hay alarma, devolvemos una cadena vacía

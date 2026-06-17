@@ -60,8 +60,8 @@ void th_webcom_Rx (void *argument) {
           msg_rx.length = 1;
           msg_rx.buff[0] = 0x01;
         }else if(flag_alarm == 0x04){
-          msg_rx.length = 0;
-          msg_rx.buff[0] = 0x00;
+          msg_rx.length = 1;
+          msg_rx.buff[0] = 0x02;
         }
         osMessageQueuePut(qCom_Tx,&msg_rx,NULL,osWaitForever);
       break;
@@ -73,10 +73,10 @@ void th_webcom_Rx (void *argument) {
           // Alterna el bit 1 (valor decimal 1, binario 00000001)
           estado_taq ^= (1 << 0);
           if ((estado_taq & 0x01) == 0){
-						sprintf(mensaje, "Se ha CERRADO la taquilla 1: %s", msg_rx.buff);
+						sprintf(mensaje, "Se ha CERRADO la taquilla 1: %02X%02X%02X%02X", msg_rx.buff[3], msg_rx.buff[2], msg_rx.buff[1], msg_rx.buff[0]);
             alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
           }else{
-						sprintf(mensaje, "Se ha ABIERTO la taquilla 1: %s", msg_rx.buff);
+						sprintf(mensaje, "Se ha ABIERTO la taquilla 1: %02X%02X%02X%02X", msg_rx.buff[3], msg_rx.buff[2], msg_rx.buff[1], msg_rx.buff[0]);
             alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
           }
           
@@ -84,10 +84,10 @@ void th_webcom_Rx (void *argument) {
           // Alterna el bit 2 (valor decimal 2, binario 00000010)
           estado_taq ^= (1 << 1);
           if ((estado_taq & 0x02) == 0){
-						sprintf(mensaje, "Se ha CERRADO la taquilla 2: %s", msg_rx.buff);
+						sprintf(mensaje, "Se ha CERRADO la taquilla 2: %02X%02X%02X%02X", msg_rx.buff[3], msg_rx.buff[2], msg_rx.buff[1], msg_rx.buff[0]);
             alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
           }else{
-						 sprintf(mensaje, "Se ha ABIERTO la taquilla 2: %s", msg_rx.buff);
+						 sprintf(mensaje, "Se ha ABIERTO la taquilla 2: %02X%02X%02X%02X", msg_rx.buff[3], msg_rx.buff[2], msg_rx.buff[1], msg_rx.buff[0]);
              alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
            }
         }
@@ -111,12 +111,7 @@ void th_webcom_Rx (void *argument) {
       break;
       
       case RESP_LECTURA_PESO:
-        if (peso_ini1 == 0 && peso_ini2 == 0){
-          sscanf(msg_rx.buff, "%f-%f", &peso_ini2, &peso_ini1);
-        }else {
-          sscanf(msg_rx.buff, "%f-%f", &peso_taq1, &peso_taq2);
-        }
-          
+        sscanf(msg_rx.buff, "%f-%f", &peso_taq1, &peso_taq2);
       break;
       
       case RESP_LECTURA_TENSION:

@@ -40,7 +40,7 @@
 //     <s.15>IP Address
 //     <i>Static IPv4 Address in text representation
 //     <i>Default: "192.168.0.100"
-#define ETH0_IP4_ADDR           "10.48.20.112"
+#define ETH0_IP4_ADDR           "10.48.20.103"
 
 //     <s.15>Subnet mask
 //     <i>Local Subnet mask in text representation

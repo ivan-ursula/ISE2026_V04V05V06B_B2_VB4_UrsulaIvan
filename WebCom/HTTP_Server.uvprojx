@@ -459,14 +459,14 @@
               <FilePath>.\Web\xml_http.js</FilePath>
             </File>
             <File>
-              <FileName>palapico.png</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Web\palapico.png</FilePath>
-            </File>
-            <File>
               <FileName>inicio.cgi</FileName>
               <FileType>9</FileType>
               <FilePath>.\Web\inicio.cgi</FilePath>
+            </File>
+            <File>
+              <FileName>palapico.png</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Web\palapico.png</FilePath>
             </File>
             <File>
               <FileName>gest_tarj.cgi</FileName>
