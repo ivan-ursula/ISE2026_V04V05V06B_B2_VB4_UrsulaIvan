@@ -5,10 +5,10 @@
 <h2>Tool Versions:</h2>
 IDE-Version: µVision V5.34.0.0
 Copyright (C) 2021 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: Ricardo Daniel Socorro UPM Flex license: MDK Professional 5.34 (Flex) (mdk_pro) Operation stops: 24 Jan 2027
+License Information: Ricardo Daniel Socorro, UPM, LIC=----
  
 Tool Versions:
-Toolchain:       MDK Professional 5.34 (Flex)  Version: 5.34.0.0
+Toolchain:       MDK-Lite  Version: 5.34.0.0
 Toolchain Path:  C:\Keil_v5\ARM\ARMCLANG\Bin
 C Compiler:      ArmClang.exe V6.16
 Assembler:       Armasm.exe V6.16
@@ -22,25 +22,13 @@ Dialog DLL:      TCM.DLL V1.48.0.0
  
 <h2>Project:</h2>
 C:\Users\ricar\OneDrive\Universidad\Cuarto ano\ise\B2\repo\ISE2026_V04V05V06B_B2_VB4_UrsulaIvan\Modulos\modulo_pwm\b3_extra.uvprojx
-Project File Date:  06/04/2026
+Project File Date:  06/17/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V6.16', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'Target 1'
-pwm.c(159): warning: implicit declaration of function '__HAL_TIM_GENERATE_EVENT' is invalid in C99 [-Wimplicit-function-declaration]
-    __HAL_TIM_GENERATE_EVENT(&htim1, TIM_EVENTSOURCE_UPDATE);
-    ^
-pwm.c(166): warning: implicit declaration of function '__HAL_TIM_GENERATE_EVENT' is invalid in C99 [-Wimplicit-function-declaration]
-    __HAL_TIM_GENERATE_EVENT(&htim1, TIM_EVENTSOURCE_UPDATE);
-    ^
-2 warnings generated.
-compiling pwm.c...
-linking...
-.\Objects\b3_extra.axf: Error: L6218E: Undefined symbol __HAL_TIM_GENERATE_EVENT (referred from pwm.o).
-Not enough information to list image symbols.
-Not enough information to list load addresses in the image map.
-Finished: 2 information, 0 warning and 1 error messages.
-".\Objects\b3_extra.axf" - 1 Error(s), 2 Warning(s).
+Error #603: 'Keil.MDK-Plus::File System:CORE:LFN Debug:6.14.1': component requires valid MDK-ARM Plus or MDK-ARM Professional license
+Error #603: 'Keil.MDK-Plus::File System:Drive:Memory Card:6.14.1': component requires valid MDK-ARM Plus or MDK-ARM Professional license
 
 <h2>Software Packages used:</h2>
 
@@ -115,25 +103,25 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE:5.5.0
 
    * Component: ARM::CMSIS:RTOS2:Keil RTX5:Library:5.5.3
-      Source file:   CMSIS\RTOS2\RTX\Template\svc_user.c
-      Source file:   CMSIS\RTOS2\RTX\Template\MemPool.c
       Include file:  CMSIS\RTOS2\RTX\Include\rtx_os.h
-      Source file:   CMSIS\RTOS2\RTX\Template\main.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Events.c
       Include file:  CMSIS\RTOS2\RTX\Config\RTX_Config.h
-      Source file:   CMSIS\RTOS2\RTX\Template\Semaphore.c
-      Source file:   CMSIS\RTOS2\RTX\Template\MsgQueue.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Timer.c
-      Source file:   CMSIS\RTOS2\RTX\Config\RTX_Config.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Mutex.c
       Source file:   CMSIS\RTOS2\RTX\Template\Thread.c
+      Source file:   CMSIS\RTOS2\RTX\Template\MemPool.c
+      Source file:   CMSIS\RTOS2\RTX\Template\MsgQueue.c
+      Source file:   CMSIS\RTOS2\RTX\Template\main.c
       Source file:   CMSIS\RTOS2\RTX\Source\rtx_lib.c
+      Source file:   CMSIS\RTOS2\RTX\Config\RTX_Config.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Semaphore.c
+      Source file:   CMSIS\RTOS2\RTX\Template\svc_user.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Timer.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Events.c
       Library file:  CMSIS\RTOS2\RTX\Library\ARM\RTX_CM4F.lib
+      Source file:   CMSIS\RTOS2\RTX\Template\Mutex.c
 
    * Component: Keil.ARM Compiler::Compiler:Event Recorder:DAP:1.4.0
-      Include file:  Config\EventRecorderConf.h
-      Include file:  Include\EventRecorder.h
       Source file:   Source\EventRecorder.c
+      Include file:  Include\EventRecorder.h
+      Include file:  Config\EventRecorderConf.h
 
    * Component: Keil.ARM Compiler::Compiler:I/O:File:File System:1.2.0
       Source file:   Source\retarget_io.c
@@ -142,10 +130,10 @@ Package Vendor: Keil
       Source file:   Source\retarget_io.c
 
    * Component: Keil.MDK-Plus::File System:CORE:LFN Debug:6.14.1
-      Source file:   FileSystem\Config\FS_Config.c
       Source file:   FileSystem\Config\FS_Debug.c
-      Include file:  FileSystem\Include\rl_fs.h
       Library file:  FileSystem\Lib\ARM\FS_Dbg_LFN_CM3_L.lib
+      Source file:   FileSystem\Config\FS_Config.c
+      Include file:  FileSystem\Include\rl_fs.h
 
    * Component: Keil.MDK-Plus::File System:Drive:Memory Card:6.14.1
       Include file:  FileSystem\Config\FS_Config_MC.h
@@ -155,14 +143,14 @@ Package Vendor: Keil
 
    * Component: Keil::Device:STM32Cube Framework:Classic:1.7.9
       Include file:  CMSIS\Driver\Config\RTE_Device.h
+      Include file:  MDK\Templates\Inc\stm32f4xx_hal_conf.h
+      Source file:   MDK\Templates\Src\stm32f4xx_hal_msp.c
       Include file:  MDK\Templates\Inc\stm32f4xx_it.h
       Source file:   MDK\Templates\Src\stm32f4xx_it.c
-      Source file:   MDK\Templates\Src\main.c
-      Source file:   MDK\Templates\Src\stm32f4xx_hal_msp.c
-      Include file:  MDK\Templates\Inc\main.h
       Include file:  MDK\Templates_LL\Inc\main.h
+      Include file:  MDK\Templates\Inc\main.h
       Source file:   MDK\Templates_LL\Src\main.c
-      Include file:  MDK\Templates\Inc\stm32f4xx_hal_conf.h
+      Source file:   MDK\Templates\Src\main.c
 
    * Component: Keil::Device:STM32Cube HAL:ADC:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc.c
@@ -176,8 +164,8 @@ Package Vendor: Keil
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c
 
    * Component: Keil::Device:STM32Cube HAL:DMA:1.7.9
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma_ex.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma_ex.c
 
    * Component: Keil::Device:STM32Cube HAL:GPIO:1.7.9
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c
@@ -198,17 +186,17 @@ Package Vendor: Keil
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fmc.c
 
    * Component: Keil::Device:STM32Cube HAL:TIM:1.7.9
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c
 
    * Component: Keil::Device:Startup:2.6.3
-      Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
-      Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
       Source file:   MDK\Device\Source\ARM\STM32F42xxx_43xxx_OPT.s
+      Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
+      Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f429xx.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c
 Target not created.
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:00
 </pre>
 </body>
 </html>

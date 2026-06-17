@@ -2,6 +2,9 @@
 #include "stm32f4xx_hal.h"
 #include "prueba.h"
 #include "RTC.h"
+#include "pwm.h"
+#include "pwm.h"
+#include "vcnl.h"
 #include <time.h>
 
 //ID DE HILOS
@@ -17,7 +20,7 @@ extern ADC_HandleTypeDef adc;
 uint8_t showtime[10];
 uint8_t showdate[12];
 uint8_t elementos;
-
+volatile uint8_t flag_alarma_wakeup = 0;
 //VARIABLES DE COLAS DE MENSAJES
 msg_nfc uid;
 ComData_t msg_tx;
@@ -117,22 +120,29 @@ void estado_Activo(void)
 void estado_Bajo_Consumo(void)
 { 
 	osTimerStop(tim_RTC);
-  StopMode_Measure();
-  
-  osKernelResume(0);
-  desinit_uart();
-  init_uart();
-	
-	osThreadFlagsSet(thcom_Rx, 0x1);
-  NFC_Deinit_SPI();
-  NFC_init_SPI();
-  ADC1_pins_F429ZI_config();
-  Deinit_ADC(&adc);
-  ADC_Init(&adc, ADC1);
-  msg_tx.length = 0;
-	msg_tx.cmd = RESP_DESPERTAR;
-	osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
-  osTimerStart(tim_RTC, 1000);
+	StopMode_Measure();
+	HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
+
+    osKernelResume(0);
+    desinit_uart();
+    init_uart();
+    osThreadFlagsSet(thcom_Rx, 0x1);
+    NFC_Deinit_SPI();
+    NFC_init_SPI();
+    ADC1_pins_F429ZI_config();
+    Deinit_ADC(&adc);
+    ADC_Init(&adc, ADC1);
+    osTimerStart(tim_RTC, 1000);
+
+    if (flag_alarma_wakeup) {
+        flag_alarma_wakeup = 0;
+        estado = ALARMA;
+    } else {
+        msg_tx.length = 0;
+        msg_tx.cmd = RESP_DESPERTAR;
+        osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
+        estado = ACTIVO;
+    }
 	
 }
 void estado_Alarma(void) 
@@ -145,7 +155,7 @@ void estado_Alarma(void)
 	if(msg_rx.cmd == RESP_ALARMA && msg_rx.buff[0] == 1){
 		estado = ACTIVO;
 	}
-	else if(msg_rx.cmd == RESP_ALARMA && msg_tx.buff[0] == 0){
+	else if(msg_rx.cmd == RESP_ALARMA && msg_rx.buff[0] == 0){
 		estado = BAJO_CONSUMO; 
 	}
 }
@@ -232,8 +242,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t pin)
 {
     if (pin == INT_PIN)
     {
-		  osThreadFlagsSet(th_id_VCNL, 0x02);
-			estado = ALARMA;
+        osThreadFlagsSet(th_id_VCNL, 0x02);
+        estado = ALARMA;
+
+        MSGQUEUE_OBJ_PWM msg;
+        msg.frecuencia = 2000U;
+        osMessageQueuePut(mid_Msg_PWM, &msg, 0U, 0U);
     }
 }
 void RTC_Alarm_IRQHandler(void)
@@ -243,14 +257,15 @@ void RTC_Alarm_IRQHandler(void)
 }
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
-	estado = ACTIVO;
+    flag_alarma_wakeup = 1;
+    estado = ACTIVO;
 
 }
 
 void HAL_RTCEx_AlarmBEventCallback(RTC_HandleTypeDef *hrtc)
 {
-		msg_tx.length = 0;
-		msg_tx.cmd = RESP_DORMIR;
-		osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+	msg_tx.length = 0;
+	msg_tx.cmd = RESP_DORMIR;
+	osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
     estado = BAJO_CONSUMO;
 }

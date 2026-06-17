@@ -2,6 +2,7 @@
 #include "vcnl.h"
 #include "com.h"
 #include "NFC.h"
+#include "pwm.h"
 #include "prueba.h"
 
 #ifdef _RTE_
@@ -59,7 +60,8 @@ int main(void)
 	init_thcom();
 	init_thNFC();
 	Init_thADC();
-	//init_thVCNL();
+	init_thVCNL();
+	Init_Thread_PWM();
 	Init_main();
 
 
