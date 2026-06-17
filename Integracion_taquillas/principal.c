@@ -40,7 +40,6 @@ void estado_Alarma(void);
 estados_t estado;
 RTC_AlarmTypeDef alarma;
 uint32_t exec2;
-volatile uint8_t flag_tim_rtc=0;
 
 void th_main (void *argument);                   
  
@@ -48,7 +47,6 @@ int Init_main (void) {
   
   thmain = osThreadNew(th_main, NULL, NULL);
   exec2=0;
-	tim_RTC=osTimerNew((osTimerFunc_t)&TimerRTC_Callback, osTimerPeriodic, &exec2, NULL);
 	
 
   if (thmain == NULL) {
@@ -61,7 +59,6 @@ int Init_main (void) {
 void th_main (void *argument) {
   estado= ACTIVO;
   
-  osTimerStart(tim_RTC,1000);
   
   Init_RTC();
   
@@ -116,14 +113,16 @@ void estado_Activo(void)
 
   
 }
-
 void estado_Bajo_Consumo(void)
 {
+  osDelay(1000);
   msg_tx.length = 0;
   msg_tx.cmd = RESP_DORMIR;
   osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+  osDelay(1000);
+
+
   
-  osTimerStop(tim_RTC);
   StopMode_Measure();
 
   osKernelResume(0);
@@ -135,12 +134,9 @@ void estado_Bajo_Consumo(void)
   ADC1_pins_F429ZI_config();
   Deinit_ADC(&adc);
   ADC_Init(&adc, ADC1);
-  osTimerStart(tim_RTC, 1000);
+  Init_PWM();
 
     if (flag_alarma_wakeup) {
-        flag_alarma_wakeup = 0;
-        estado = ALARMA;
-    } else {
         msg_tx.length = 0;
         msg_tx.cmd = RESP_DESPERTAR;
         osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
@@ -159,15 +155,19 @@ void estado_Alarma(void)
   msg_tx.length = 0;
   osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
   osMessageQueueGet(qCom_Rx, &msg_rx, 0, osWaitForever);
+  osDelay(1000);
   
   
   msg.frecuencia = 0;
   osMessageQueuePut(mid_Msg_PWM, &msg, 0U, 0U);
   
   if(msg_rx.cmd == RESP_ALARMA && msg_rx.buff[0] == 1){
+    msg_tx.length = 0;
+    msg_tx.cmd = RESP_DESPERTAR;
+    osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
     estado = ACTIVO;
   }
-  else if(msg_rx.cmd == RESP_ALARMA && msg_rx.buff[0] == 0){
+  else if(msg_rx.cmd == RESP_ALARMA && msg_rx.buff[0] == 2){
     estado = BAJO_CONSUMO; 
   }
 }
@@ -243,21 +243,23 @@ void comp_cmd(ComData_t com_data){
       
     }
 }
-
-void TimerRTC_Callback(void const *arg)
-{
-  flag_tim_rtc=1;
-}
 void EXTI15_10_IRQHandler(void)
 {
   HAL_GPIO_EXTI_IRQHandler(INT_PIN);
 }
 void HAL_GPIO_EXTI_Callback(uint16_t pin)
 {
-  if (pin == INT_PIN && estado == BAJO_CONSUMO)
+  if (pin == INT_PIN )
   {
+    
     osThreadFlagsSet(th_id_VCNL, 0x02);
+    if( estado == BAJO_CONSUMO) 
+    {
     estado = ALARMA;
+    flag_alarma_wakeup = 0;
+    }
+
+
   }
 }
 void RTC_Alarm_IRQHandler(void)
@@ -267,9 +269,8 @@ void RTC_Alarm_IRQHandler(void)
 }
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
-    flag_alarma_wakeup = 1;
     estado = ACTIVO;
-
+    flag_alarma_wakeup = 1;
 }
 
 void HAL_RTCEx_AlarmBEventCallback(RTC_HandleTypeDef *hrtc)

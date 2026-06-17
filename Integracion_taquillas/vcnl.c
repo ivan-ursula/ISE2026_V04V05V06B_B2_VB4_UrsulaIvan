@@ -22,16 +22,14 @@ int init_thVCNL(void){
 void thread_VCNL(void *argument){
   VCNL_init_I2C();
 	VCNL_init();
-	
+  id_vcnl = VCNL_read_reg(PS_DATA);
   while(1){
-		
-		id_vcnl = VCNL_read_reg(PS_DATA);
+
     flag = osThreadFlagsWait(0x02, osFlagsWaitAny, osWaitForever);
 
     if (flag == 0x02) {
-				in_flag = VCNL_read_reg(INT_FLAG);
-
-			  //osDelay(1000);
+        id_vcnl = VCNL_read_reg(PS_DATA);
+        in_flag = VCNL_read_reg(INT_FLAG);
 
     }
 
@@ -54,7 +52,7 @@ void VCNL_init_I2C(void)
 void INT_init (void)
 {
 	GPIO_InitTypeDef gpio;
-	
+	__HAL_RCC_SYSCFG_CLK_ENABLE();
 	__HAL_RCC_GPIOB_CLK_ENABLE();
 	
 	gpio.Pin = INT_PIN;
@@ -72,7 +70,7 @@ void VCNL_init(void){
 	VCNL_write_reg(PS_THDL_L,0x000A);
 	VCNL_write_reg(PS_THDL_H,0x0020);
 	VCNL_write_reg(PS_CONF,0x03FE);//1=cerca 2=lejos        0x30 
-	osDelay(200);
+	osDelay(500);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn); // para evitar falsos positivos durante la configuracion
   
 }

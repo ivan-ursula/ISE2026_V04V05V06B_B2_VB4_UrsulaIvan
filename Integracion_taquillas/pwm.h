@@ -16,5 +16,5 @@ extern osMessageQueueId_t mid_Msg_PWM;
 
 int Init_Thread_PWM(void);
 void Thread_PWM(void *argument);
-
+void Init_PWM(void);
 #endif

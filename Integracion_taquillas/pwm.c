@@ -2,7 +2,7 @@
 
 TIM_HandleTypeDef htim1;
 
-static void Init_PWM(void);
+
 
 const osThreadAttr_t Thread_PWM_attr = {
     .stack_size = 1024
@@ -47,7 +47,7 @@ void Thread_PWM(void *argument)
     }
 }
 
-static void Init_PWM(void)
+void Init_PWM(void)
 {
     GPIO_InitTypeDef GPIO_InitStruct = {0};
     TIM_OC_InitTypeDef sConfigOC = {0};
@@ -65,7 +65,7 @@ static void Init_PWM(void)
     htim1.Instance               = TIM1;
     htim1.Init.Prescaler         = 179;       // 180 MHz / 180 = 1 MHz
     htim1.Init.CounterMode       = TIM_COUNTERMODE_UP;
-    htim1.Init.Period            = 499;       // 1 MHz / 500 = 2 kHz
+    htim1.Init.Period            = 1999;       // 1 MHz / 500 = 2 kHz
     htim1.Init.ClockDivision     = TIM_CLOCKDIVISION_DIV1;
     htim1.Init.RepetitionCounter = 0;
     htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
