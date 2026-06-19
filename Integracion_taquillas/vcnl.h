@@ -21,6 +21,9 @@
 
 #define INT_PIN GPIO_PIN_10
 
+#define VCNL_FLAG_PS_EVENT  0x02   /* lectura por interrupción/alarma */
+#define VCNL_FLAG_REINIT    0x04   /* reinicializar tras bajo consumo */
+
 #define ADDR            0x60
 extern osThreadId_t th_id_VCNL;
 int init_thVCNL(void);

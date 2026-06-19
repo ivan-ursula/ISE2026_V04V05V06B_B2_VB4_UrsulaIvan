@@ -31,13 +31,13 @@ void thread_ADC (void *argument) {
 		
 		if(peticion==LECTURA_PESO){
 			//dato.valor1=(ADC_getData(&adc,CANAL_T1)*delta-0.270)/sensibilidad_taquilla;
-      dato.valor1=(ADC_getData(&adc,CANAL_T1)*delta)-0.272;
+      dato.valor1=(ADC_getData(&adc,CANAL_T1)*delta)-0.558;
       dato.valor1=dato.valor1/sensibilidad_taquilla;
-			dato.valor1=dato.valor1-435;
+//			dato.valor1=dato.valor1-435;
 			//dato.valor2=(ADC_getData(&adc,CANAL_T2)*delta-0.270)/sensibilidad_taquilla;
-			dato.valor2=(ADC_getData(&adc,CANAL_T2)*delta)-0.558;
+			dato.valor2=(ADC_getData(&adc,CANAL_T2)*delta)-0.259;
       dato.valor2=dato.valor2/sensibilidad_taquilla;
-			dato.valor2=dato.valor2+425;
+//			dato.valor2=dato.valor2+425;
 			dato.cmd=RESP_LECTURA_PESO;
 			
 			

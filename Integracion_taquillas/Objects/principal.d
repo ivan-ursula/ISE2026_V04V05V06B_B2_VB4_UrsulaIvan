@@ -47,4 +47,4 @@
   C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.15.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_eth.h \
   vcnl.h \
   C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\Driver\Include\Driver_I2C.h \
-  pwm.h
+  pwm.h leds.h

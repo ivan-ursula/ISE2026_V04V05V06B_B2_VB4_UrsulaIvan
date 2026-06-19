@@ -9,6 +9,7 @@ void thread_VCNL(void *argument);
 
 uint16_t id_vcnl,in_flag;
 uint32_t flag;
+static uint32_t mask;
 
 int init_thVCNL(void){
   th_id_VCNL = osThreadNew(thread_VCNL,NULL,NULL);
@@ -25,9 +26,14 @@ void thread_VCNL(void *argument){
   id_vcnl = VCNL_read_reg(PS_DATA);
   while(1){
 
-    flag = osThreadFlagsWait(0x02, osFlagsWaitAny, osWaitForever);
+    flag = osThreadFlagsWait(VCNL_FLAG_PS_EVENT | VCNL_FLAG_REINIT, osFlagsWaitAny, osWaitForever);
 
-    if (flag == 0x02) {
+    
+    if (flag & VCNL_FLAG_REINIT) {
+      VCNL_init_I2C();
+      VCNL_init();
+    }
+    if (flag == VCNL_FLAG_PS_EVENT) {
         id_vcnl = VCNL_read_reg(PS_DATA);
         in_flag = VCNL_read_reg(INT_FLAG);
 
@@ -56,7 +62,7 @@ void INT_init (void)
 	__HAL_RCC_GPIOB_CLK_ENABLE();
 	
 	gpio.Pin = INT_PIN;
-	gpio.Mode = GPIO_MODE_IT_RISING_FALLING;
+	gpio.Mode = GPIO_MODE_IT_FALLING;
 	gpio.Pull = GPIO_PULLUP;
 	gpio.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
 	
@@ -71,6 +77,7 @@ void VCNL_init(void){
 	VCNL_write_reg(PS_THDL_H,0x0020);
 	VCNL_write_reg(PS_CONF,0x03FE);//1=cerca 2=lejos        0x30 
 	osDelay(500);
+  __HAL_GPIO_EXTI_CLEAR_IT(INT_PIN);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn); // para evitar falsos positivos durante la configuracion
   
 }
@@ -87,17 +94,16 @@ void VCNL_write_reg(uint8_t reg, uint16_t data){
 }
 uint16_t VCNL_read_reg(uint8_t reg){
   uint8_t data[2];
-  //uint16_t aux;
-  vcnl_i2c->MasterTransmit(ADDR,&reg,1,1);
-  osThreadFlagsWait(0x01,osFlagsWaitAny,osWaitForever);
-  vcnl_i2c->MasterReceive(ADDR,data,2,0);
-  osThreadFlagsWait(0x01,osFlagsWaitAny,osWaitForever);
+  vcnl_i2c->MasterTransmit(ADDR,&reg, 1, 1);
+  osThreadFlagsWait(0x01, osFlagsWaitAny, osWaitForever);
+  vcnl_i2c->MasterReceive(ADDR, data, 2, 0);
+  osThreadFlagsWait(0x01, osFlagsWaitAny, osWaitForever);
   
   return (uint16_t) ((data[1]<<8)|data[0]);
   
 }
 
-uint32_t mask;
+
 void I2C_callback(uint32_t event)
 {
   
@@ -111,7 +117,7 @@ void I2C_callback(uint32_t event)
  
   if (event & ARM_I2C_EVENT_TRANSFER_DONE) {
     /* Transfer or receive is finished */
-		osThreadFlagsSet(th_id_VCNL,0x1);
+		osThreadFlagsSet(th_id_VCNL,0x01);
   }
  
   if (event & ARM_I2C_EVENT_ADDRESS_NACK) {

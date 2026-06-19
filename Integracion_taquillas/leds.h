@@ -10,7 +10,7 @@
 
 /* Thread LED1 */
 int Init_Thread_LD1 (void);
-
+void Init_LDS(void);
 extern osThreadId_t tid_Thread_LD1;
 
 #endif

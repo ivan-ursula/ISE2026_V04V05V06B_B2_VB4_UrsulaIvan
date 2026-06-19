@@ -43,7 +43,7 @@
   C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\RTOS2\Include\cmsis_os2.h \
   com.h NFC.h \
   C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\Driver\Include\Driver_SPI.h \
-  pwm.h prueba.h C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h \
+  pwm.h leds.h prueba.h C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h RTC.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\time.h adc.h sleep.h \
   C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.15.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_eth.h

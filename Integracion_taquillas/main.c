@@ -3,6 +3,7 @@
 #include "com.h"
 #include "NFC.h"
 #include "pwm.h"
+#include "leds.h"
 #include "prueba.h"
 
 #ifdef _RTE_
@@ -61,6 +62,7 @@ int main(void)
 	init_thNFC();
 	Init_thADC();
 	init_thVCNL();
+  Init_Thread_LD1();
 	Init_Thread_PWM();
 	Init_main();
 

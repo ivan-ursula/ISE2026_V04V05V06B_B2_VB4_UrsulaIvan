@@ -4,6 +4,7 @@
 #include "RTC.h"
 #include "pwm.h"
 #include "vcnl.h"
+#include "leds.h"
 #include <time.h>
 
 //ID DE HILOS
@@ -36,11 +37,11 @@ void estado_Activo(void);
 void estado_Bajo_Consumo(void);
 void estado_Alarma(void);
 
-//VARIABLES GILO PRINCIPAL
+//VARIABLES HILO PRINCIPAL
 estados_t estado;
 RTC_AlarmTypeDef alarma;
 uint32_t exec2;
-
+uint16_t estado_led = 0;
 void th_main (void *argument);                   
  
 int Init_main (void) {
@@ -61,7 +62,7 @@ void th_main (void *argument) {
   
   
   Init_RTC();
-  
+
   while (1) {
     
     switch(estado){
@@ -106,7 +107,8 @@ void estado_Activo(void)
     for(int i=0;i<uid.length-1;i++){
       msg_tx.buff[i]=uid.buff[i];
             
-    }		
+    }
+    osDelay(50);
     osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
   }
   
@@ -135,22 +137,26 @@ void estado_Bajo_Consumo(void)
   Deinit_ADC(&adc);
   ADC_Init(&adc, ADC1);
   Init_PWM();
-
-    if (flag_alarma_wakeup) {
-        msg_tx.length = 0;
-        msg_tx.cmd = RESP_DESPERTAR;
-        osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
-        estado = ACTIVO;
+  Init_LDS();
+  osThreadFlagsSet(th_id_VCNL, 0x04);
+  
+  if (flag_alarma_wakeup) {
+    msg_tx.length = 0;
+    msg_tx.cmd = RESP_DESPERTAR;
+    osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
+    estado = ACTIVO;
     }
   
 }
 void estado_Alarma(void) 
 {
+  
   MSGQUEUE_OBJ_PWM msg;
   
   msg.frecuencia = 1;
   osMessageQueuePut(mid_Msg_PWM, &msg, 0U, 0U);
   
+  osDelay(1000);
   msg_tx.cmd = ALARM; 
   msg_tx.length = 0;
   osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
@@ -210,22 +216,27 @@ void comp_cmd(ComData_t com_data){
     RTC_Set_AlarmWakeup(ts_wake);  // Alarma A: cuándo despertar
       
     break;
+    case RESP_ESTADO_TAQUILLA:
+        osThreadFlagsSet(tid_Thread_LD1, msg_rx.buff[0]);
+
+    
+    break;
     
     }
     if(msg_rx.cmd==LECTURA_CORRIENTE||msg_rx.cmd==LECTURA_PESO||msg_rx.cmd==LECTURA_TENSION){
       osMessageQueuePut(q_adc_peticion,&msg_rx.cmd,0,5);
       
-      status_q=osMessageQueueGet(q_adc_data,&data_adc  ,0,100);
+      status_q=osMessageQueueGet(q_adc_data,&data_adc,0,100);
       elementos=osMessageQueueGetCount(q_adc_data);
       if(status_q==osOK){
         if(data_adc.cmd==RESP_LECTURA_PESO){
           msg_tx.cmd = RESP_LECTURA_PESO;
           msg_tx.length=sprintf((char*)msg_tx.buff ,"%.2f-%.2f",data_adc.valor1,data_adc.valor2);
           osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
-          osDelay(1000);
-            msg_tx.cmd= HORA;
-            msg_tx.length=0;
-            osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+//          osDelay(2000);
+          msg_tx.cmd= HORA;
+          msg_tx.length=0;
+          osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
           
         }else if(data_adc.cmd==RESP_LECTURA_TENSION){
           

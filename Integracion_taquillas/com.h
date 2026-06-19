@@ -39,7 +39,6 @@ extern osThreadId_t thcom_Rx;
 #define RESP_ESTADO_TAQUILLA 0x8F
 
 
-
 typedef struct{
 	uint8_t cmd;
 	uint8_t buff[50];
