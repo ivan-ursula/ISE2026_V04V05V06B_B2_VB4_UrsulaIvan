@@ -8,7 +8,8 @@
 #include <time.h>
 
 //ID DE HILOS
-osThreadId_t thmain;  
+osThreadId_t thmain;
+
 //ID DE COLAS DE MENSAJES
 extern osMessageQueueId_t q_nfc;
 extern osMessageQueueId_t qCom_Tx;
@@ -28,9 +29,11 @@ ComData_t msg_tx;
 ComData_t msg_rx;
 msg_adc_data data_adc;
 uint8_t status_q;
-
+struct tm ts;
 //TIMER HILO PRINCIPAL
 osTimerId_t tim_RTC;
+static uint32_t exec1;
+static int init_TimerRTC (void);
 
 //FUNCIONES DE LOS ESTADOS
 void estado_Activo(void);
@@ -38,7 +41,7 @@ void estado_Bajo_Consumo(void);
 void estado_Alarma(void);
 
 //VARIABLES HILO PRINCIPAL
-estados_t estado;
+volatile estados_t estado;
 RTC_AlarmTypeDef alarma;
 uint32_t exec2;
 uint16_t estado_led = 0;
@@ -60,9 +63,13 @@ int Init_main (void) {
 void th_main (void *argument) {
   estado= ACTIVO;
   
-  
+  tim_RTC = osTimerNew((osTimerFunc_t)&TimerRTC_Callback, osTimerPeriodic, &exec1, NULL);
+  osTimerStart(tim_RTC, 3000);
   Init_RTC();
-
+  osDelay(50);
+  msg_tx.cmd= HORA;
+  msg_tx.length=0;
+  osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
   while (1) {
     
     switch(estado){
@@ -117,15 +124,14 @@ void estado_Activo(void)
 }
 void estado_Bajo_Consumo(void)
 {
-  osDelay(1000);
+  osTimerStop(tim_RTC);
+  osDelay(50);
   msg_tx.length = 0;
   msg_tx.cmd = RESP_DORMIR;
   osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
-  osDelay(1000);
-
-
-  
-  StopMode_Measure();
+  osDelay(50);
+ 
+ StopMode_Measure();
 
   osKernelResume(0);
   desinit_uart();
@@ -138,7 +144,12 @@ void estado_Bajo_Consumo(void)
   ADC_Init(&adc, ADC1);
   Init_PWM();
   Init_LDS();
-  osThreadFlagsSet(th_id_VCNL, 0x04);
+  osThreadFlagsSet(th_id_VCNL, VCNL_FLAG_REINIT);
+  osTimerStart(tim_RTC, 3000);
+  
+      vcnl_i2c->Uninitialize();
+      VCNL_init_I2C();
+  
   
   if (flag_alarma_wakeup) {
     msg_tx.length = 0;
@@ -150,53 +161,61 @@ void estado_Bajo_Consumo(void)
 }
 void estado_Alarma(void) 
 {
-  
   MSGQUEUE_OBJ_PWM msg;
   
   msg.frecuencia = 1;
   osMessageQueuePut(mid_Msg_PWM, &msg, 0U, 0U);
   
-  osDelay(1000);
+  osDelay(50);
   msg_tx.cmd = ALARM; 
   msg_tx.length = 0;
   osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
-  osMessageQueueGet(qCom_Rx, &msg_rx, 0, osWaitForever);
-  osDelay(1000);
+  osDelay(50);
+  osMessageQueueGet(qCom_Rx, &msg_rx, 0, 150);
   
   
-  msg.frecuencia = 0;
-  osMessageQueuePut(mid_Msg_PWM, &msg, 0U, 0U);
   
   if(msg_rx.cmd == RESP_ALARMA && msg_rx.buff[0] == 1){
     msg_tx.length = 0;
     msg_tx.cmd = RESP_DESPERTAR;
     osMessageQueuePut(qCom_Tx, &msg_tx, 0, 0);
     estado = ACTIVO;
+    msg.frecuencia = 0;
+    osMessageQueuePut(mid_Msg_PWM, &msg, 0U, 0U);
   }
   else if(msg_rx.cmd == RESP_ALARMA && msg_rx.buff[0] == 2){
-    estado = BAJO_CONSUMO; 
+    estado = BAJO_CONSUMO;
+    msg.frecuencia = 0;
+    osMessageQueuePut(mid_Msg_PWM, &msg, 0U, 0U);
   }
 }
+
 
 void comp_cmd(ComData_t com_data){
   
   struct tm ts_wake;
   struct tm ts_sleep;
-  struct tm ts;
+
   
   switch(msg_rx.cmd){
     
     case RESP_HORA:
-      sscanf((char*)msg_rx.buff, "%d:%d:%d %d/%d/%d",
-      &ts.tm_hour, &ts.tm_min,  &ts.tm_sec,
+      sscanf((char*)msg_rx.buff, "%d:%d:%d",
+      &ts.tm_hour, &ts.tm_min,  &ts.tm_sec);
+      osDelay(50);
+      msg_tx.cmd= FECHA;
+      msg_tx.length=0;
+  osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+      osDelay(50);
+    break;
+    case RESP_FECHA: 
+      sscanf((char*)msg_rx.buff, "%d/%d/%d",
       &ts.tm_mday, &ts.tm_mon,  &ts.tm_year);
       RTC_CalendarConfig(ts);
       RTC_CalendarShow(showtime, showdate); 
-
-    break;
-    
+      break;
     case DORMIR:
-      
+      osTimerStop(tim_RTC);
     sscanf((char*)msg_rx.buff,
            "%d:%d",
            &ts_sleep.tm_hour,&ts_sleep.tm_min);
@@ -229,14 +248,12 @@ void comp_cmd(ComData_t com_data){
       status_q=osMessageQueueGet(q_adc_data,&data_adc,0,100);
       elementos=osMessageQueueGetCount(q_adc_data);
       if(status_q==osOK){
+        osDelay(50);
         if(data_adc.cmd==RESP_LECTURA_PESO){
           msg_tx.cmd = RESP_LECTURA_PESO;
           msg_tx.length=sprintf((char*)msg_tx.buff ,"%.2f-%.2f",data_adc.valor1,data_adc.valor2);
           osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
-//          osDelay(2000);
-          msg_tx.cmd= HORA;
-          msg_tx.length=0;
-          osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+
           
         }else if(data_adc.cmd==RESP_LECTURA_TENSION){
           
@@ -266,6 +283,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t pin)
     osThreadFlagsSet(th_id_VCNL, 0x02);
     if( estado == BAJO_CONSUMO) 
     {
+        HAL_GPIO_WritePin(GPIOB, LD1_Pin, 0);    
     estado = ALARMA;
     flag_alarma_wakeup = 0;
     }
@@ -287,4 +305,12 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 void HAL_RTCEx_AlarmBEventCallback(RTC_HandleTypeDef *hrtc)
 {
   estado = BAJO_CONSUMO;
+}
+void TimerRTC_Callback (void const *arg) 
+{
+  osDelay(50);
+  msg_tx.cmd= HORA;
+  msg_tx.length=0;
+  osMessageQueuePut(qCom_Tx,&msg_tx,0,0);
+  
 }

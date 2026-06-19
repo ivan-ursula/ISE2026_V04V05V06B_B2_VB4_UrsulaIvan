@@ -26,6 +26,7 @@
 
 #define ADDR            0x60
 extern osThreadId_t th_id_VCNL;
+extern ARM_DRIVER_I2C *vcnl_i2c;
 int init_thVCNL(void);
 void VCNL_init(void);
 void VCNL_init_I2C(void);

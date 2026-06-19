@@ -144,6 +144,7 @@ void StopMode_Measure(void)
   vcnl_gpio.Pull  = GPIO_PULLUP;
   vcnl_gpio.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOB, &vcnl_gpio);
+
   HAL_NVIC_EnableIRQ(EXTI15_10_IRQn); 
   
   __HAL_RTC_ALARM_EXTI_ENABLE_IT();

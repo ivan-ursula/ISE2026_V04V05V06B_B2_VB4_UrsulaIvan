@@ -1,4 +1,5 @@
 #include "vcnl.h"
+#include "leds.h"
 #include <stdio.h>
 
 extern ARM_DRIVER_I2C Driver_I2C1;
@@ -26,12 +27,19 @@ void thread_VCNL(void *argument){
   id_vcnl = VCNL_read_reg(PS_DATA);
   while(1){
 
-    flag = osThreadFlagsWait(VCNL_FLAG_PS_EVENT | VCNL_FLAG_REINIT, osFlagsWaitAny, osWaitForever);
+    flag = osThreadFlagsWait( VCNL_FLAG_PS_EVENT | VCNL_FLAG_REINIT | 0x01, osFlagsWaitAny, osWaitForever);
 
     
     if (flag & VCNL_FLAG_REINIT) {
-      VCNL_init_I2C();
-      VCNL_init();
+//      vcnl_i2c->Uninitialize();
+//      VCNL_init_I2C();
+//     
+//      VCNL_init();
+      
+      id_vcnl = VCNL_read_reg(PS_DATA);
+      osDelay(500);
+      in_flag = VCNL_read_reg(INT_FLAG);
+      osDelay(500);
     }
     if (flag == VCNL_FLAG_PS_EVENT) {
         id_vcnl = VCNL_read_reg(PS_DATA);
@@ -77,7 +85,6 @@ void VCNL_init(void){
 	VCNL_write_reg(PS_THDL_H,0x0020);
 	VCNL_write_reg(PS_CONF,0x03FE);//1=cerca 2=lejos        0x30 
 	osDelay(500);
-  __HAL_GPIO_EXTI_CLEAR_IT(INT_PIN);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn); // para evitar falsos positivos durante la configuracion
   
 }
