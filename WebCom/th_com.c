@@ -22,13 +22,13 @@ static char mensaje[75];
 osTimerId_t tim_idCom;
 static uint32_t execCom;
 static int init_TimerCom (void);
-static uint8_t ncf_lect = 0;
+static uint8_t rebound = 0;
 
 void th_webcom_Tx(void *argument);                   
 void th_webcom_Rx(void *argument);
 
 static void TimerCom_Callback (void const *arg) {
-  ncf_lect = 0;
+  rebound = 0;
 }
 
 //Create and Start timers
@@ -61,32 +61,42 @@ void th_webcom_Rx (void *argument) {
       case HORA:
         osDelay(50);
         msg_rx.cmd = RESP_HORA;
-        msg_rx.length = sprintf(msg_rx.buff, "%s %s", fecha_rec_taq.BufHour, fecha_rec_taq.BufDate);
+        msg_rx.length = sprintf(msg_rx.buff, "%s", fecha_rec_taq.BufHour);
         osMessageQueuePut(qCom_Tx,&msg_rx,NULL,osWaitForever);
+      break;
       
+      case FECHA:
+        osDelay(50);
+        msg_rx.cmd = RESP_FECHA;
+        msg_rx.length = sprintf(msg_rx.buff, "%s", fecha_rec_taq.BufDate);
+        osMessageQueuePut(qCom_Tx,&msg_rx,NULL,osWaitForever);
       break;
             
       case ALARM_COM:
-        alerta = 1;
-        modo_func = 0x02;
-        alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, "Se ha detectado una presencia en horas no activas");
-        flag_alarm = osThreadFlagsWait(0x06, osFlagsWaitAny, osWaitForever);
-        
-        msg_rx.cmd = RESP_ALARM_COM;
-        if(flag_alarm == 0x02){
-          msg_rx.length = 1;
-          msg_rx.buff[0] = 0x01;
-        }else if(flag_alarm == 0x04){
-          msg_rx.length = 1;
-          msg_rx.buff[0] = 0x02;
+        if (rebound == 0){
+          alerta = 1;
+          modo_func = 0x02;
+          alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, "Se ha detectado una presencia en horas no activas");
+          flag_alarm = osThreadFlagsWait(0x06, osFlagsWaitAny, osWaitForever);
+          
+          msg_rx.cmd = RESP_ALARM_COM;
+          if(flag_alarm == 0x02){
+            msg_rx.length = 1;
+            msg_rx.buff[0] = 0x01;
+          }else if(flag_alarm == 0x04){
+            msg_rx.length = 1;
+            msg_rx.buff[0] = 0x02;
+          }
+          osDelay(50);
+          osMessageQueuePut(qCom_Tx,&msg_rx,NULL,osWaitForever);
+          rebound = 1;
+          osTimerStart(tim_idCom, 2000U); 
         }
-        osDelay(50);
-        osMessageQueuePut(qCom_Tx,&msg_rx,NULL,osWaitForever);
       break;
       
       case LECTURA_NFC:
         
-      if (ncf_lect == 0){
+      if (rebound == 0){
         msg_rx.cmd = RESP_ESTADO_TAQUILLA;
         for (int i = 0; i<4; i++){
           id_nfc_new[i] = msg_rx.buff[i];
@@ -124,20 +134,20 @@ void th_webcom_Rx (void *argument) {
             osMessageQueuePut(qCom_Tx,&msg_rx,NULL,osWaitForever);
           }
 
-          ncf_lect = 1;
+          rebound = 1;
           osTimerStart(tim_idCom, 2000U); 
         }
       break;
       
       case RESP_DORMIR:
         modo_func = 0x02;
-        sprintf(mensaje, "Se ha dormido: %02d:%02d",hora_dorm_per, min_dorm_per);
+        sprintf(mensaje, "Se ha dormido");
         alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
       break;
       
       case RESP_DESPERTAR:
         modo_func = 0x01;
-        sprintf(mensaje, "Se ha despertado: %02d:%02d",hora_desp_per, min_desp_per);
+        sprintf(mensaje, "Se ha despertado");
         alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
       break;
       
@@ -174,7 +184,6 @@ void th_webcom_Tx(void *argument){
         osDelay(50);
 				msg_tx.cmd = DORMIR;
 				msg_tx.length = sprintf(msg_tx.buff, "%02d:%02d",hora_dorm_per, min_dorm_per);
-				sprintf(mensaje, "Se dormirá: %02d:%02d",hora_dorm_per, min_dorm_per);
 				alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
 				osMessageQueuePut(qCom_Tx,&msg_tx,NULL,osWaitForever);
 				
@@ -182,7 +191,6 @@ void th_webcom_Tx(void *argument){
         osDelay(50);
 				msg_tx.cmd = DESPERTAR;
 				msg_tx.length = sprintf(msg_tx.buff, "%02d:%02d", hora_desp_per, min_desp_per);
-				sprintf(mensaje, "Se despertará: %02d:%02d ", hora_desp_per, min_desp_per);
 				alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
 				osMessageQueuePut(qCom_Tx,&msg_tx,NULL,osWaitForever);
         

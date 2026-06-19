@@ -19,6 +19,7 @@ int init_thcomweb (void);
 #define MIN_L 0x04
 
 //CMD
+#define FECHA 0X19 //
 #define HORA 0X20 //
 #define DORMIR 0x21 //
 #define DESPERTAR 0x22 //
@@ -30,6 +31,7 @@ int init_thcomweb (void);
 
 
 //respuestas
+#define RESP_FECHA 0XE6 //
 #define RESP_HORA 0XDF //
 #define RESP_DORMIR 0xDE //
 #define RESP_DESPERTAR 0xDD //
