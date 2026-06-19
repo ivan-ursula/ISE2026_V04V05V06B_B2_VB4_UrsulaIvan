@@ -10,7 +10,7 @@
       <TargetName>Debug</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060960::V5.06 update 7 (build 960)::ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -424,14 +424,14 @@
               <FilePath>.\sd\sd.c</FilePath>
             </File>
             <File>
-              <FileName>com.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\com\com.c</FilePath>
-            </File>
-            <File>
               <FileName>sd.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\sd\sd.h</FilePath>
+            </File>
+            <File>
+              <FileName>com.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\com\com.c</FilePath>
             </File>
             <File>
               <FileName>com.h</FileName>

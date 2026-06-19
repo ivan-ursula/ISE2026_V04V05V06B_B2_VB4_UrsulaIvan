@@ -51,9 +51,13 @@ uint8_t hora_desp_per = 0;
 uint8_t min_desp_per = 0;
 
 static TRABAJADOR_t tabla_trabajadores[5];
+static uint8_t carga_trabajadores = 0;
 
 float peso_taq1 = 0;
 float peso_taq2 = 0;
+
+float in_peso_taq1 = 0;
+float in_peso_taq2 = 0;
 
 float tens = 4.20;
 float intens = 0;
@@ -143,7 +147,7 @@ void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
     return;
   }
 
-	estado_taq = 0;
+  estado_taq = 0;
   
   if (len > 0 && data != NULL) {
     // No data or all items (radio, checkbox) are off
@@ -172,7 +176,7 @@ void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
         }
         
         //Comparación para poner hora de alarma
-				else if (strncmp(var, "hora_dorm_per=", 14) == 0) {
+        else if (strncmp(var, "hora_dorm_per=", 14) == 0) {
           hora_dorm_per = atoi(var + 14);
         }
         else if (strncmp(var, "min_dorm_per=", 13) == 0) {
@@ -186,30 +190,30 @@ void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
           min_desp_per = atoi(var + 13);
           if(modo_func != 0x02)	osThreadFlagsSet(thweb_comTx, 0x02);
         }
-				
-				//Comparación para gestión de tarjetas
+        
+        //Comparación para gestión de tarjetas
         else if (strncmp(var, "id_tarj", 7) == 0) {
           int idx = atoi(&var[7]) - 1;
           char *val = strchr(var, '=');
           if (val && idx >= 0 && idx < 5) {
-						strncpy(tabla_trabajadores[idx].id_tarjeta, val + 1, sizeof(tabla_trabajadores[idx].id_tarjeta) - 1);
-					}
+            strncpy(tabla_trabajadores[idx].id_tarjeta, val + 1, sizeof(tabla_trabajadores[idx].id_tarjeta) - 1);
+          }
         }
-				else if (strncmp(var, "taq_card", 8) == 0) {
+        else if (strncmp(var, "taq_card", 8) == 0) {
           int idx = atoi(&var[8]) - 1;
           char *val = strchr(var, '=');
           if (val && idx >= 0 && idx < 5) {
-						tabla_trabajadores[idx].taquilla = atoi(val + 1);
-					}
+            tabla_trabajadores[idx].taquilla = atoi(val + 1);
+          }
         }
         else if (strncmp(var, "nom_trab", 8) == 0) {
           int idx = atoi(&var[8]) - 1;
           char *val = strchr(var, '=');
           if (val && idx >= 0 && idx < 5) {
             strncpy(tabla_trabajadores[idx].nombre_trabajador, val + 1, sizeof(tabla_trabajadores[idx].nombre_trabajador) - 1);
-						if(idx == 4)  user_add(tabla_trabajadores);
-					}
-				}
+            if(idx == 4)  user_add(tabla_trabajadores);
+          }
+        }
         
         //Comparación para botones de alerta
         else if (strncmp(var, "accion=alarm_ok", 15) == 0) {
@@ -232,139 +236,139 @@ void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
 // Generate dynamic web data from a script line.
 uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *pcgi) {
   uint32_t len = 0U;
-	uint8_t index = 0;
-	
-	if (*pcgi == 0 && env[0] == 'a' && actualizar_cache) {
+  uint8_t index = 0;
+  
+  if (*pcgi == 0 && env[0] == 'a' && actualizar_cache) {
     num_alertas = alarm_read_page(pag, buff_alertas);
-		actualizar_cache = false;
+    actualizar_cache = false;
   }
-	
+  
   switch (env[0]) {
 
     case 'a' : //id de la alerta
-			index = atoi(&env[2]) - 1;
-			if (index < 15 && num_alertas > index) {
-				len = sprintf(buf, &env[4], buff_alertas[index]);
-			}else{
-				len = sprintf(buf, &env[4], "---");
-			}
+      index = atoi(&env[2]) - 1;
+      if (index < 15 && num_alertas > index) {
+        len = sprintf(buf, &env[4], buff_alertas[index]);
+      }else{
+        len = sprintf(buf, &env[4], "---");
+      }
       break;
-			
+      
     case 'c': //número de la página de alertas
-			actualizar_cache = true;
-			len = (uint32_t)sprintf (buf, &env[4], pag);
+      actualizar_cache = true;
+      len = (uint32_t)sprintf (buf, &env[4], pag);
       break;
     
-		case 'd': //fecha del sistema y batería
-			osMessageQueueGet(mid_Msg_Date, &fecha_rec, NULL, 0);
-			switch(env[2]){
-				case '1':
+    case 'd': //fecha del sistema y batería
+      osMessageQueueGet(mid_Msg_Date, &fecha_rec, NULL, 0);
+      switch(env[2]){
+        case '1':
             len = (uint32_t)sprintf(buf, &env[4], fecha_rec.BufHour);
-					break;
-				case '2':
-						len = (uint32_t)sprintf(buf, &env[4], fecha_rec.BufDate);
-					break;
-			}
+          break;
+        case '2':
+            len = (uint32_t)sprintf(buf, &env[4], fecha_rec.BufDate);
+          break;
+      }
       break;
 
     case 'e': //Checkbox para abrir y cerrar taquillas
-			switch(env[2]){
-				case '1':
-						len = (uint32_t)sprintf (buf, &env[4], (estado_taq & 0x01) ? "checked" : "");
-					break;
-				case '2':
-						len = (uint32_t)sprintf (buf, &env[4], (estado_taq & 0x02) ? "checked" : "");
-					break;
-			}
+      switch(env[2]){
+        case '1':
+            len = (uint32_t)sprintf (buf, &env[4], (estado_taq & 0x01) ? "checked" : "");
+          break;
+        case '2':
+            len = (uint32_t)sprintf (buf, &env[4], (estado_taq & 0x02) ? "checked" : "");
+          break;
+      }
       break;
-			
-		case 'f': //peso de las taquillas
-			switch(env[2]){
-				case '1':
+      
+    case 'f': //peso de las taquillas
+      switch(env[2]){
+        case '1':
             sprintf(msg_web, "%.1f g",peso_taq1);
-						len = (uint32_t)sprintf (buf, &env[4], msg_web);
-					break;
-				case '2':
+            len = (uint32_t)sprintf (buf, &env[4], msg_web);
+          break;
+        case '2':
             sprintf(msg_web, "%.1f g",peso_taq2);
-						len = (uint32_t)sprintf (buf, &env[4], msg_web);
-					break;
-			}
+            len = (uint32_t)sprintf (buf, &env[4], msg_web);
+          break;
+      }
       break;
       
     case 'b':
       switch(env[2]){
-				case '1':
-            sprintf(msg_web, "%.2f V",tens);
-            len = (uint32_t)sprintf (buf, &env[4], msg_web);
-					break;
-				case '2':
+        case '1':
             sprintf(msg_web, "%.2f mA",intens);
-						len = (uint32_t)sprintf (buf, &env[4], msg_web);
-					break;
-			}
+            len = (uint32_t)sprintf (buf, &env[4], msg_web);
+          break;
+      }
           
       break;
-			
-		case 'j': //gestión de tarjetas
-			if (strcmp(&env[2], "row") == 0) {
+      
+    case 'j': //gestión de tarjetas
+      if (strcmp(&env[2], "row") == 0) {
         uint32_t i = *pcgi; 
-				
-				if (i < 5) {
-					TRABAJADOR_t *t = &tabla_trabajadores[i];
-					
-					len = sprintf(buf, 
-						"<tr>"
-						"<td>%d</td>" //Número index
-          	"<td><input type='text' name='id_tarj%d' value='%s' disabled></td>" //ID Tarjeta
-						"<td><select name='taq_card%d' disabled>"//Nombre selecionado
-						"<option value='0' %s>Ninguna</option>"  //Estado "selected"
-						"<option value='1' %s>Taquilla 1</option>"//Estado "selected"
-						"<option value='2' %s>Taquilla 2</option>"//Estado "selected"
-						"</select></td>"
-						"<td><input type='text' name='nom_trab%d' value='%s' disabled></td>"
-						"</tr>\r\n",          
-						(i + 1),
-            (i + 1), t->id_tarjeta,
-						(i + 1), (t->taquilla == 0) ? "selected" : "", // Si val es 0, marca "selected"
-						(t->taquilla == 1) ? "selected" : "", // Si val es 1, marca "selected"
-						(t->taquilla == 2) ? "selected" : "", // Si val es 2, marca "selected"
-						(i + 1), t->nombre_trabajador        // Para el nombre del input Nombre
-					);
-					
-					i++;
-          *pcgi = i;
-          // El bit 31 de len indica que el servidor debe volver a llamar a 
-          // esta función para la misma línea del script (repetir fila)
-          len |= (1U << 31); 
-        } else {
-          // Ya no hay más filas, ponemos pcgi a 0 para la siguiente carga de página
-          *pcgi = 0;
-        }
-      }
+        if (carga_trabajadores){
+					if (i < 5) {
+						TRABAJADOR_t *t = &tabla_trabajadores[i];
+						
+						len = sprintf(buf, 
+							"<tr>"
+							"<td>%d</td>" //Número index
+							"<td><input type='text' name='id_tarj%d' value='%s' disabled></td>" //ID Tarjeta
+							"<td><select name='taq_card%d' disabled>"//Nombre selecionado
+							"<option value='0' %s>Ninguna</option>"  //Estado "selected"
+							"<option value='1' %s>Taquilla 1</option>"//Estado "selected"
+							"<option value='2' %s>Taquilla 2</option>"//Estado "selected"
+							"</select></td>"
+							"<td><input type='text' name='nom_trab%d' value='%s' disabled></td>"
+							"</tr>\r\n",          
+							(i + 1),
+							(i + 1), t->id_tarjeta,
+							(i + 1), (t->taquilla == 0) ? "selected" : "", // Si val es 0, marca "selected"
+							(t->taquilla == 1) ? "selected" : "", // Si val es 1, marca "selected"
+							(t->taquilla == 2) ? "selected" : "", // Si val es 2, marca "selected"
+							(i + 1), t->nombre_trabajador        // Para el nombre del input Nombre
+						);
+						
+						i++;
+						*pcgi = i;
+						// El bit 31 de len indica que el servidor debe volver a llamar a 
+						// esta función para la misma línea del script (repetir fila)
+						len |= (1U << 31); 
+					} else {
+						// Ya no hay más filas, ponemos pcgi a 0 para la siguiente carga de página
+						*pcgi = 0;
+					}
+				} else {
+					user_read(tabla_trabajadores);
+					carga_trabajadores = 1;
+				}
+			}
     break;
       
     case 'k': // Indicador de estado circular
-			switch(env[2]) {
-				case '1':
-					if (alerta == 0 && modo_func == 0x01) {
-						len = (uint32_t)sprintf(buf, &env[4], "background-color: #00FF00;"); // Verde
-					} else if (alerta == 0 && modo_func == 0x02){
-						len = (uint32_t)sprintf(buf, &env[4], "background-color: #FFFF00;"); // Amarillo
-					} else {
-						len = (uint32_t)sprintf(buf, &env[4], "background-color: #FF0000;"); // Rojo
-					}
-					break;
-					
-				case '2':
-					if (alerta == 0 && modo_func == 0x01) {
-						len = (uint32_t)sprintf (buf, &env[4], "<span style='color:green;'>ACTIVO</span>");
-					} else if (alerta == 0 && modo_func == 0x02){
-						len = (uint32_t)sprintf (buf, &env[4], "<span style='color:yellow;'>STOP</span>");
-					} else {
-						len = (uint32_t)sprintf (buf, &env[4], "<span style='color:red;'>ALERTA</span>");
-					}
+      switch(env[2]) {
+        case '1':
+          if (alerta == 0 && modo_func == 0x01) {
+            len = (uint32_t)sprintf(buf, &env[4], "background-color: #00FF00;"); // Verde
+          } else if (alerta == 0 && modo_func == 0x02){
+            len = (uint32_t)sprintf(buf, &env[4], "background-color: #FFFF00;"); // Amarillo
+          } else {
+            len = (uint32_t)sprintf(buf, &env[4], "background-color: #FF0000;"); // Rojo
+          }
           break;
-			}
+          
+        case '2':
+          if (alerta == 0 && modo_func == 0x01) {
+            len = (uint32_t)sprintf (buf, &env[4], "<span style='color:green;'>ACTIVO</span>");
+          } else if (alerta == 0 && modo_func == 0x02){
+            len = (uint32_t)sprintf (buf, &env[4], "<span style='color:yellow;'>STOP</span>");
+          } else {
+            len = (uint32_t)sprintf (buf, &env[4], "<span style='color:red;'>ALERTA</span>");
+          }
+          break;
+      }
     break;
       
     case 'l': // Botones de gestión de alarma
@@ -379,26 +383,26 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
         len = (uint32_t)sprintf(buf, "");
       }
     break;
-			
-		case 'm': // Gestión de hora de dormir
-			switch(env[2]) {
-				case '1':
-						len = (uint32_t)sprintf(buf, &env[4], hora_dorm_per);
-					break;
-				case '2':
-						len = (uint32_t)sprintf(buf, &env[4], min_dorm_per);
+      
+    case 'm': // Gestión de hora de dormir
+      switch(env[2]) {
+        case '1':
+            len = (uint32_t)sprintf(buf, &env[4], hora_dorm_per);
           break;
-				case '3':
-						len = (uint32_t)sprintf(buf, &env[4], hora_desp_per);
+        case '2':
+            len = (uint32_t)sprintf(buf, &env[4], min_dorm_per);
           break;
-				case '4':
-						len = (uint32_t)sprintf(buf, &env[4], min_desp_per);
+        case '3':
+            len = (uint32_t)sprintf(buf, &env[4], hora_desp_per);
           break;
-			}
+        case '4':
+            len = (uint32_t)sprintf(buf, &env[4], min_desp_per);
+          break;
+      }
     break;
-			
-		case 'n': // Gestión de nueva nfc
-			len = sprintf(buf, "%02X%02X%02X%02X", id_nfc_new[3], id_nfc_new[2], id_nfc_new[1], id_nfc_new[0]);
+      
+    case 'n': // Gestión de nueva nfc
+      len = sprintf(buf, "%02X%02X%02X%02X", id_nfc_new[3], id_nfc_new[2], id_nfc_new[1], id_nfc_new[0]);
     break;
      
   }

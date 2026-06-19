@@ -76,6 +76,34 @@ int user_add(TRABAJADOR_t trabajador[])
     return 0;
 }
 
+int user_read(TRABAJADOR_t trabajador[])
+{
+	FILE *f;
+	int i = 0;
+	char line[128];
+	int taquilla_temp = 0;
+
+	f = fopen("usuario.txt", "r");
+	if (f == NULL) {
+			return -1;
+	}
+
+	while (fgets(line, sizeof(line), f) != NULL && i < 5) {
+			// Buscamos el ID en el archivo (que está escrito como texto hex)
+			if (sscanf(line, "%8s - %d - %s\n",
+								 trabajador[i].id_tarjeta,
+								 &taquilla_temp,
+								 trabajador[i].nombre_trabajador) >= 2) {
+					trabajador[i].taquilla = (uint8_t)taquilla_temp;
+					i++;
+			}
+	}
+	
+	fclose(f);
+
+	return 0;
+}
+
 int nfc_search(const char *nfc_id_target)
 {
     FILE *f;
@@ -116,6 +144,7 @@ int nfc_search(const char *nfc_id_target)
             }
         }
     }
+    
 		
     fclose(f);
     return found;
