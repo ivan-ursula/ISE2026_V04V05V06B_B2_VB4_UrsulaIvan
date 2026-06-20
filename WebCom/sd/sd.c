@@ -5,10 +5,10 @@
 #include "rl_fs.h"
 
 /*Variables*/
-char id_nfc_new [9]; //Registra última tarjeta introducida
+char id_nfc_new [9]; //Registra Ãºltima tarjeta introducida
 
 /*----------------------------------------------------------------------------
-*      Inicialización de la SD
+*      InicializaciÃ³n de la SD
  *---------------------------------------------------------------------------*/
 int sd_init(void){
     fsStatus stat;
@@ -23,7 +23,7 @@ int sd_init(void){
 /*----------------------------------------------------------------------------
 *      Funciones de la SD
  *---------------------------------------------------------------------------*/
- /*Añade la información de las tarjetas NFC a la SD*/
+ /*AÃ±ade la informaciÃ³n de las tarjetas NFC a la SD*/
 int user_add(TRABAJADOR_t trabajador[]){
     FILE *f;
     uint8_t i = 0;
@@ -43,7 +43,7 @@ int user_add(TRABAJADOR_t trabajador[]){
     return 0;
 }
 
-/*Lee la información en la SD sobre las tarjetas NFC */
+/*Lee la informaciÃ³n en la SD sobre las tarjetas NFC */
 int user_read(TRABAJADOR_t trabajador[]){
 	FILE *f;
 	int i = 0;
@@ -54,7 +54,7 @@ int user_read(TRABAJADOR_t trabajador[]){
 	if (f == NULL) return -1;
 
 	while (fgets(line, sizeof(line), f) != NULL && i < 5){
-			// Buscamos el ID en el archivo (que está escrito como texto hex)
+			// Buscamos el ID en el archivo (que estÃ¡ escrito como texto hex)
 			if (sscanf(line, "%8s - %d - %s\n",
 					trabajador[i].id_tarjeta,
 					&taquilla_temp,
@@ -78,16 +78,8 @@ int nfc_search(const char *nfc_id_target){
     int locker_num;
     int found = 0;
 
-    // 1. CONVERSIÓN ROBUSTA
-    // Usamos unsigned char para evitar problemas de signo con valores altos como 0xAE
     const uint8_t *b = (const uint8_t *)nfc_id_target;
 
-    // INTENTO A: Orden normal (Big Endian) -> 0x08AE3A5D
-    // id_target_numeric = ((unsigned int)b[0] << 24) | ((unsigned int)b[1] << 16) | ((unsigned int)b[2] << 8) | (unsigned int)b[3];
-
-    // INTENTO B: Orden inverso (Little Endian) -> Muy común en lectores NFC
-    // Si el numeric te daba 08AE0000, es probable que los datos útiles estén al principio
-    // Probemos esta estructura que es la más estándar para IDs de 4 bytes:
     id_target_numeric = (unsigned int)b[0] | 
                         ((unsigned int)b[1] << 8) | 
                         ((unsigned int)b[2] << 16) | 
@@ -97,7 +89,7 @@ int nfc_search(const char *nfc_id_target){
     if (f == NULL) return -1;
 
     while (fgets(line, sizeof(line), f) != NULL) {
-        // Buscamos el ID en el archivo (que está escrito como texto hex)
+        // Buscamos el ID en el archivo (que estÃ¡ escrito como texto hex)
         if (sscanf(line, "%x - %d - %63s", &id_hex_file, &locker_num, user) >= 2) {
             if (id_hex_file == id_target_numeric) {
                 found = locker_num;
@@ -125,7 +117,7 @@ void alarm_write(char *date, char *time, char *texto){
   }
 }
 
- /*Lectura de las alarmas del sistema. Se realiza de más nuevas a más viejas.*/
+ /*Lectura de las alarmas del sistema. Se realiza de mÃ¡s nuevas a mÃ¡s viejas.*/
 int alarm_read_page(uint16_t pag_actual, char buffer_dest[10][90]){
     FILE *f;
     char line[128];
@@ -143,17 +135,17 @@ int alarm_read_page(uint16_t pag_actual, char buffer_dest[10][90]){
     f = fopen("alarma.txt", "r");
     if (f == NULL) return 0;
 
-    //Cuenta del número de alertas
+    //Cuenta del nÃºmero de alertas
     while (fgets(line, sizeof(line), f) != NULL){
         total_lineas++;
     }
 
     if (total_lineas == 0) { fclose(f); return 0; }
 
-    //Cálculo para la linea a leer
+    //CÃ¡lculo para la linea a leer
     start_line = total_lineas - ((pag_actual - 1) * 10);
     end_line = start_line - 10;
-    if (end_line < 0) end_line = 0; // Evita índices negativos
+    if (end_line < 0) end_line = 0; // Evita Ã­ndices negativos
 
     //Lectura de las alertas
     rewind(f);
@@ -161,7 +153,7 @@ int alarm_read_page(uint16_t pag_actual, char buffer_dest[10][90]){
     while (fgets(line, sizeof(line), f) != NULL){
         line_idx++;
         if (line_idx <= start_line && line_idx > end_line) {
-            // La posición 0 será la más cercana al final del archivo (más nueva)
+            // La posiciÃ³n 0 serÃ¡ la mÃ¡s cercana al final del archivo (mÃ¡s nueva)
             int pos_buffer = start_line - line_idx; 
             
             if (pos_buffer >= 0 && pos_buffer < 10) {
