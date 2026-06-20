@@ -15,7 +15,7 @@ int init_Thread_RTC (void);
 
 void RTC_CalendarConfig(struct tm ts);
 
-/*Msg queue for date-hour*/
+/*Variable para los mensajes de hora y fecha*/
 typedef struct {
   char BufHour[50];
   char BufDate[50];

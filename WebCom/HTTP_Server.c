@@ -46,7 +46,7 @@ void netDHCP_Notify (uint32_t if_num, uint8_t option, const uint8_t *val, uint32
 __NO_RETURN void app_main (void *arg) {
   (void)arg;
 
-  Init_th_SD ();
+  sd_init ();
   init_thcom ();
   init_thcomweb ();
   

@@ -3,41 +3,50 @@
 #include "rtc.h"
 #include <cstdlib>
 
+/*Hilos del COM WEB*/
 osThreadId_t thweb_comTx;
 osThreadId_t thweb_comRx;
-
-extern osMessageQueueId_t qCom_Tx;
-extern osMessageQueueId_t qCom_Rx;
-
-extern osMessageQueueId_t mid_Msg_Taq;
-MSGQUEUE_OBJ_DATE fecha_rec_taq;
-
-static uint8_t flag = 0x01;
-static uint8_t flag_alarm = 0x02;
-
-static uint8_t int_taq = 0;
-static char mensaje[75];
-
-/* Timer IDs */
-osTimerId_t tim_idCom;
-static uint32_t execCom;
-static int init_TimerCom (void);
-static uint8_t rebound = 0;
-
 void th_webcom_Tx(void *argument);                   
 void th_webcom_Rx(void *argument);
 
+/*Cola de mensajes COM*/
+extern osMessageQueueId_t qCom_Tx;
+extern osMessageQueueId_t qCom_Rx;
+
+/*Fecha y hora para enviar en COM*/
+extern osMessageQueueId_t mid_Msg_Taq;
+MSGQUEUE_OBJ_DATE fecha_rec_taq;
+
+/*Flags de gestión de mensajes*/
+static uint8_t flag = 0x01;
+static uint8_t flag_alarm = 0x02;
+
+/*Variables locales*/
+static uint8_t int_taq = 0; //Número de taquilla
+static char mensaje[75]; //Mensaje a escribir en la SD
+
+/*Timer IDs*/
+osTimerId_t tim_idCom;
+static uint32_t execCom;
+static int init_TimerCom (void);
+static uint8_t rebound = 0; //Elimina posibles rebotes en la comunicación
+
+/*----------------------------------------------------------------------------
+ *      Timers del COM WEB
+ *---------------------------------------------------------------------------*/
 static void TimerCom_Callback (void const *arg) {
   rebound = 0;
 }
 
-//Create and Start timers
 static int init_TimerCom (void) {
   execCom = 1U;
   tim_idCom = osTimerNew((osTimerFunc_t)&TimerCom_Callback, osTimerOnce, &execCom, NULL);
   return NULL;
 }
 
+/*----------------------------------------------------------------------------
+ *      Inicialización Thread COM WEB
+ *---------------------------------------------------------------------------*/
 int init_thcomweb (void) {
   init_TimerCom();
   thweb_comTx = osThreadNew(th_webcom_Tx, NULL, NULL);
@@ -50,6 +59,9 @@ int init_thcomweb (void) {
   return(0);
 }
  
+/*----------------------------------------------------------------------------
+ *      Hilo de recepción
+ *---------------------------------------------------------------------------*/
 void th_webcom_Rx (void *argument) {
  ComData_t msg_rx;
  
@@ -58,21 +70,21 @@ void th_webcom_Rx (void *argument) {
 		osMessageQueueGet(mid_Msg_Taq, &fecha_rec_taq, NULL, 0);
     
     switch(msg_rx.cmd){
-      case HORA:
+      case HORA: //Llega una pedida de sincronización de hora, se envía la hora de vuelta
         osDelay(50);
         msg_rx.cmd = RESP_HORA;
         msg_rx.length = sprintf(msg_rx.buff, "%s", fecha_rec_taq.BufHour);
         osMessageQueuePut(qCom_Tx,&msg_rx,NULL,osWaitForever);
       break;
       
-      case FECHA:
+      case FECHA: //Llega una pedida de sincronización de fecha, se envía la fecha de vuelta
         osDelay(50);
         msg_rx.cmd = RESP_FECHA;
         msg_rx.length = sprintf(msg_rx.buff, "%s", fecha_rec_taq.BufDate);
         osMessageQueuePut(qCom_Tx,&msg_rx,NULL,osWaitForever);
       break;
             
-      case ALARM_COM:
+      case ALARM_COM: //Llega una alarma del sensor de presencia, se gestiona mediante la web
         if (rebound == 0){
           alerta = 1;
           modo_func = 0x02;
@@ -94,64 +106,64 @@ void th_webcom_Rx (void *argument) {
         }
       break;
       
-      case LECTURA_NFC:
-        
-      if (rebound == 0){
-        msg_rx.cmd = RESP_ESTADO_TAQUILLA;
-        for (int i = 0; i<4; i++){
-          id_nfc_new[i] = msg_rx.buff[i];
-        }
-          int_taq = nfc_search(msg_rx.buff);
-        
-          if (int_taq == 1){
-            // Alterna el bit 1 (valor decimal 1, binario 00000001)
-            estado_taq ^= (1 << 0);
-            if ((estado_taq & 0x01) == 0){
-              sprintf(mensaje, "Se ha CERRADO la taquilla 1: %02X%02X%02X%02X", msg_rx.buff[3], msg_rx.buff[2], msg_rx.buff[1], msg_rx.buff[0]);
-              alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
-            }else{
-              sprintf(mensaje, "Se ha ABIERTO la taquilla 1: %02X%02X%02X%02X", msg_rx.buff[3], msg_rx.buff[2], msg_rx.buff[1], msg_rx.buff[0]);
-              alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
-            }
-            msg_rx.buff[0] = 0x01;
-            msg_rx.length = 1;
-            osDelay(50);
-            osMessageQueuePut(qCom_Tx,&msg_rx,NULL,osWaitForever);
-            
-          }else if (int_taq == 2){
-            // Alterna el bit 2 (valor decimal 2, binario 00000010)
-            estado_taq ^= (1 << 1);
-            if ((estado_taq & 0x02) == 0){
-              sprintf(mensaje, "Se ha CERRADO la taquilla 2: %02X%02X%02X%02X", msg_rx.buff[3], msg_rx.buff[2], msg_rx.buff[1], msg_rx.buff[0]);
-              alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
-            }else{
-               sprintf(mensaje, "Se ha ABIERTO la taquilla 2: %02X%02X%02X%02X", msg_rx.buff[3], msg_rx.buff[2], msg_rx.buff[1], msg_rx.buff[0]);
-               alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
-             }
-            msg_rx.buff[0] = 0x02;
-            msg_rx.length = 1;
-             osDelay(50);
-            osMessageQueuePut(qCom_Tx,&msg_rx,NULL,osWaitForever);
-          }
+      case LECTURA_NFC: //Llega una nueva ID de una tarjeta NFC
+				if (rebound == 0){
+					msg_rx.cmd = RESP_ESTADO_TAQUILLA;
+					for (int i = 0; i<4; i++){
+						id_nfc_new[i] = msg_rx.buff[i];
+					}
+					
+					int_taq = nfc_search(msg_rx.buff);
+					if (int_taq == 1){
+						// Alterna el bit 1
+						estado_taq ^= (1 << 0);
+						
+						if ((estado_taq & 0x01) == 0){
+							sprintf(mensaje, "Se ha CERRADO la taquilla 1: %02X%02X%02X%02X", msg_rx.buff[3], msg_rx.buff[2], msg_rx.buff[1], msg_rx.buff[0]);
+							alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
+						}else{
+							sprintf(mensaje, "Se ha ABIERTO la taquilla 1: %02X%02X%02X%02X", msg_rx.buff[3], msg_rx.buff[2], msg_rx.buff[1], msg_rx.buff[0]);
+							alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
+						}
+						msg_rx.buff[0] = 0x01;
+						msg_rx.length = 1;
+						osDelay(50);
+						osMessageQueuePut(qCom_Tx,&msg_rx,NULL,osWaitForever);
+							
+					}else if (int_taq == 2){
+						// Alterna el bit 2
+						estado_taq ^= (1 << 1);
+						if ((estado_taq & 0x02) == 0){
+							sprintf(mensaje, "Se ha CERRADO la taquilla 2: %02X%02X%02X%02X", msg_rx.buff[3], msg_rx.buff[2], msg_rx.buff[1], msg_rx.buff[0]);
+							alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
+						}else{
+							sprintf(mensaje, "Se ha ABIERTO la taquilla 2: %02X%02X%02X%02X", msg_rx.buff[3], msg_rx.buff[2], msg_rx.buff[1], msg_rx.buff[0]);
+							alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
+						}
+						msg_rx.buff[0] = 0x02;
+						msg_rx.length = 1;
+						osDelay(50);
+						osMessageQueuePut(qCom_Tx,&msg_rx,NULL,osWaitForever);
+					}
 
-          rebound = 1;
-          osTimerStart(tim_idCom, 2000U); 
-        }
+					rebound = 1;
+					osTimerStart(tim_idCom, 2000U); 
+				}
       break;
       
-      case RESP_DORMIR:
+      case RESP_DORMIR: //Registra en la SD que se ha dormido el sistema
         modo_func = 0x02;
         sprintf(mensaje, "Se ha dormido");
         alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
       break;
       
-      case RESP_DESPERTAR:
+      case RESP_DESPERTAR: //Registra en la SD que se ha despertado el sistema
         modo_func = 0x01;
         sprintf(mensaje, "Se ha despertado");
         alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
       break;
       
-      case RESP_LECTURA_PESO:
+      case RESP_LECTURA_PESO:  //Llega la medida del peso de las taquillas
           sscanf(msg_rx.buff, "%f-%f", &peso_taq1, &peso_taq2);
           peso_taq1 = peso_taq1 - in_peso_taq1;
           peso_taq2 = peso_taq2 - in_peso_taq2;
@@ -163,38 +175,36 @@ void th_webcom_Rx (void *argument) {
           }
       break;
       
-      case RESP_LECTURA_CORRIENTE:
+      case RESP_LECTURA_CORRIENTE: //Llega la medida de la intensidad del sistema
         intens = (float)atof(msg_rx.buff);
       break;
-      
-      
     }
-
     osThreadYield();
   }
 }
 
+/*----------------------------------------------------------------------------
+ *      Hilo de transmisión
+ *---------------------------------------------------------------------------*/
 void th_webcom_Tx(void *argument){
   ComData_t msg_tx;
   
   while(1){
     flag = osThreadFlagsWait(0x0F, osFlagsWaitAny, osWaitForever);
     if(modo_func == 1){
-			if (flag == 0x01){ //Se guarda la hora y se envía directamente
+			if (flag == 0x01){ //Se envía la hora para dormir
         osDelay(50);
 				msg_tx.cmd = DORMIR;
 				msg_tx.length = sprintf(msg_tx.buff, "%02d:%02d",hora_dorm_per, min_dorm_per);
-				alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
 				osMessageQueuePut(qCom_Tx,&msg_tx,NULL,osWaitForever);
 				
-			}else if (flag == 0x02){ 
+			}else if (flag == 0x02){ //Se envía la hora para despertar
         osDelay(50);
 				msg_tx.cmd = DESPERTAR;
 				msg_tx.length = sprintf(msg_tx.buff, "%02d:%02d", hora_desp_per, min_desp_per);
-				alarm_write(fecha_rec.BufDate, fecha_rec.BufHour, mensaje);
 				osMessageQueuePut(qCom_Tx,&msg_tx,NULL,osWaitForever);
         
-      } else {
+      } else { //Se hace la pedida de medidas de peso y corriente
         osDelay(50);
 				msg_tx.cmd = LECTURA_PESO;
 				msg_tx.length = 0;
@@ -209,7 +219,6 @@ void th_webcom_Tx(void *argument){
 			}
 		}
 		flag = 0;
-    
     osThreadYield();
   }
 }

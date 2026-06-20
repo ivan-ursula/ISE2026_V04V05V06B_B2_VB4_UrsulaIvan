@@ -6,13 +6,8 @@
 #include "stm32f4xx_hal.h"
 #include "Driver_USART.h"
 
-void init_uart(void);
-void desinit_uart(void);
-
-int init_thcom (void);
-int init_thcomweb (void);
-
 #define baudrate 9600
+
 //principio y fin de trrama
 #define SOH 0X01
 #define EOT 0XFE
@@ -29,7 +24,6 @@ int init_thcomweb (void);
 #define LECTURA_TENSION 0x81 //
 #define LECTURA_CORRIENTE 0x82 //
 
-
 //respuestas
 #define RESP_FECHA 0XE6 //
 #define RESP_HORA 0XDF //
@@ -41,14 +35,17 @@ int init_thcomweb (void);
 #define RESP_LECTURA_CORRIENTE 0x7D //
 #define RESP_ESTADO_TAQUILLA 0x8F //
 
+/*Funciones de inicialización*/
+void init_uart(void);
+int init_thcom (void);
+int init_thcomweb (void);
 
+/*Estructura del mensaje COM*/
 typedef struct{
 	uint8_t cmd;
 	char buff[50];
 	uint8_t length;
-	
 } ComData_t;
-
 
 #endif
 

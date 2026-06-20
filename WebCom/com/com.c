@@ -1,23 +1,27 @@
 #include "com.h"
 
+/*Hilos del COM*/
 osThreadId_t thcom_Tx;
 osThreadId_t thcom_Rx;
+void th_com_Tx(void *argument);                   
+void th_com_Rx(void *argument);
 
+/*Cola de mensajes COM*/
 osMessageQueueId_t qCom_Tx;
 osMessageQueueId_t qCom_Rx;
 
+/*Variables UART*/
 extern ARM_DRIVER_USART Driver_USART3;
 ARM_DRIVER_USART * uart=&Driver_USART3;
 
-void th_com_Tx(void *argument);                   
-void th_com_Rx(void *argument);
-// uart funciones
-void uart_send_trama(ComData_t * msg);
+/*Funciones UART*/
 void uart_callback(uint32_t event);
 void procesar_trama(uint8_t* b,uint32_t length);
 
-int init_thcom (void) {
- 
+/*----------------------------------------------------------------------------
+*      Inicialización del COM y UART
+ *---------------------------------------------------------------------------*/
+int init_thcom (void){
   thcom_Tx = osThreadNew(th_com_Tx, NULL, NULL);
 	thcom_Rx = osThreadNew(th_com_Rx, NULL, NULL);
 	
@@ -28,40 +32,49 @@ int init_thcom (void) {
   if (thcom_Tx == NULL || thcom_Rx == NULL) {
     return(-1);
   }
- 
   return(0);
 }
- 
-void th_com_Tx (void *argument) {
- ComData_t msg;
- 
-  uint8_t buff[50];
-	//mirar si con el bufer creandolo asi funciona
-  while (1) {
 
-		
+void init_uart(void){
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+	uart->Initialize(uart_callback);
+	uart->PowerControl(ARM_POWER_FULL);
+	uart->Control(ARM_USART_MODE_ASYNCHRONOUS |
+                ARM_USART_DATA_BITS_8 			|
+                ARM_USART_PARITY_NONE 			|
+                ARM_USART_STOP_BITS_1 			|
+                ARM_USART_FLOW_CONTROL_NONE, baudrate);
+	uart->Control(ARM_USART_CONTROL_TX,1);
+	uart->Control(ARM_USART_CONTROL_RX,1);
+}
+
+/*----------------------------------------------------------------------------
+*      Hilo de transmisión
+ *---------------------------------------------------------------------------*/
+void th_com_Tx (void *argument){
+  ComData_t msg;
+  uint8_t buff[50];
+	
+  while (1) {
 		osMessageQueueGet(qCom_Tx,&msg,NULL,osWaitForever);
-		
-		//uint8_t* buff=(uint8_t*)malloc(msg.length+4);
 		buff[0]=SOH;
 		buff[1]=msg.cmd;
 		buff[2]=msg.length+4;
 		
 		for(int i=0 ; i < msg.length; i++){
 			buff[i+3] = msg.buff[i];
-			
 		}
 		
 		buff[msg.length+3]=EOT;
-		
 		uart->Send(buff,buff[2]);
 		osThreadFlagsWait(0x1,osFlagsWaitAll,osWaitForever);
-		
-		//free(buff);
     osThreadYield();
   }
 }
 
+/*----------------------------------------------------------------------------
+*      Hilo de recepción
+ *---------------------------------------------------------------------------*/
 void th_com_Rx(void *argument){
 	uint8_t data;
 	uint8_t data_buff[50];
@@ -72,30 +85,25 @@ void th_com_Rx(void *argument){
 		uart->Receive(&data,1);
 		osThreadFlagsWait(0x1,osFlagsWaitAll,osWaitForever);
 		
-		
 		if(!flag_recibe){
 			if(data & SOH){
 				flag_recibe=1;
 				data_buff[count_buff]=SOH;
 				count_buff++;
-				
 			}	
 		}else{
 			if(data != EOT){
 				data_buff[count_buff]=data;
 				count_buff++;
-				
 			}else{
 				data_buff[count_buff]=data;
 				count_buff++;
 				flag_recibe=0;
-				
 				if(count_buff/data_buff[2]!=1){
 					for(int i=0 ; i<count_buff; i++){
 						data_buff[i]=0;					
 					}
 					count_buff=0;
-					
 				}else{
 					procesar_trama(data_buff,count_buff);
 					count_buff=0;
@@ -103,31 +111,15 @@ void th_com_Rx(void *argument){
 			}
 		}			
 		osThreadYield();
-		
 	}	
 }
 
-void init_uart(void){
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-	
-	uart->Initialize(uart_callback);
-    
-	uart->PowerControl(ARM_POWER_FULL);
-	uart->Control(ARM_USART_MODE_ASYNCHRONOUS |
-                ARM_USART_DATA_BITS_8 			|
-                ARM_USART_PARITY_NONE 			|
-                ARM_USART_STOP_BITS_1 			|
-                ARM_USART_FLOW_CONTROL_NONE, baudrate);
-	
-	uart->Control(ARM_USART_CONTROL_TX,1);
-	uart->Control(ARM_USART_CONTROL_RX,1);
-}
-
-
+/*----------------------------------------------------------------------------
+*      Funciones UART
+ *---------------------------------------------------------------------------*/
 void uart_callback(uint32_t event){
 	uint32_t mask;
-  mask = 
-         ARM_USART_EVENT_TRANSFER_COMPLETE |
+  mask = ARM_USART_EVENT_TRANSFER_COMPLETE |
          ARM_USART_EVENT_SEND_COMPLETE     |
          ARM_USART_EVENT_TX_COMPLETE       ;
 	
@@ -141,16 +133,13 @@ void uart_callback(uint32_t event){
 
 void procesar_trama(uint8_t* b,uint32_t length){
 	ComData_t aux;
-	
 	aux.cmd=b[1];
 	aux.length= length-4;
 	
 	for(int i=0;i<aux.length;i++){
 		aux.buff[i]=b[i+3];
-		
 	}
 	
 	osMessageQueuePut(qCom_Rx,&aux,0,0);
-		
 }
 

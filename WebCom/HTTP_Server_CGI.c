@@ -21,7 +21,7 @@
 /*Al entrar una alarma del sensor de movimiento hacer un popup o un bloqueante
 que no permita otra cosa que gestionar la alarma que acaba de llegar*/
 
-extern osMessageQueueId_t mid_Msg_Date;
+
 
 #if      defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
 #pragma  clang diagnostic push
@@ -35,41 +35,41 @@ extern osMessageQueueId_t mid_Msg_Date;
 extern osThreadId_t thweb_comRx;
 extern osThreadId_t thweb_comTx;
 
-// Local variables.
+/*Variables locales*/
 static uint8_t ip_addr[NET_ADDR_IP6_LEN];
+char msg_web[50];  //Mensaje string que se envía a la web
 
-static uint16_t pag = 1; //Página de visualización de alertas
+/*Variable para la visión de alertas*/
+static uint16_t pag = 1;
+static char buff_alertas [10][90];
+static uint8_t num_alertas = 0;
+static bool actualizar_cache = true; //Permite que solo cargue los datos de la SD al cambiar de página
 
+/*Variables sobre la información de las taquillas*/
 uint8_t estado_taq = 0;
-uint8_t modo_func = 1;  //Indica en que modo de funcionamiento está el sistema
+float peso_taq1 = 0; //Peso actual 1
+float peso_taq2 = 0; //Peso actual 2
+float in_peso_taq1 = 0; //Peso inicial para calibración 1
+float in_peso_taq2 = 0; //Peso inicial para calibración 2
 
+/*Variables para los modos de funcionamiento del sistema*/
+uint8_t modo_func = 1;
 uint8_t alerta = 0;
+float intens = 0;
 
+/*Variables sobre la configuración del modo stop*/
 uint8_t hora_dorm_per = 0;
 uint8_t min_dorm_per = 0;
 uint8_t hora_desp_per = 0;
 uint8_t min_desp_per = 0;
 
+/*Gestión de las horas del RTC*/
+extern osMessageQueueId_t mid_Msg_Date;
+MSGQUEUE_OBJ_DATE fecha_rec; //Fecha y hora recibida del RTC
+
+/*Gestión para los datos de asignación NFC*/
 static TRABAJADOR_t tabla_trabajadores[5];
-static uint8_t carga_trabajadores = 0;
-
-float peso_taq1 = 0;
-float peso_taq2 = 0;
-
-float in_peso_taq1 = 0;
-float in_peso_taq2 = 0;
-
-float tens = 4.20;
-float intens = 0;
-float bat = 100;
-
-char msg_web[50];
-
-MSGQUEUE_OBJ_DATE fecha_rec; //Fecha recibida del RTC
-
-static char buff_alertas [10][90];
-static uint8_t num_alertas = 0;
-static bool actualizar_cache = true;
+static uint8_t carga_trabajadores = 0; //Permite la carga de datos de las NFC la primera vez
 
 // My structure of CGI status variable.
 typedef struct {
@@ -236,7 +236,7 @@ void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
 // Generate dynamic web data from a script line.
 uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *pcgi) {
   uint32_t len = 0U;
-  uint8_t index = 0;
+  uint8_t index = 0; //Variable para comprobar el número de alertas disponibles para mostrar
   
   if (*pcgi == 0 && env[0] == 'a' && actualizar_cache) {
     num_alertas = alarm_read_page(pag, buff_alertas);
@@ -245,7 +245,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
   
   switch (env[0]) {
 
-    case 'a' : //id de la alerta
+    case 'a' : //escritura en página web de las alertas
       index = atoi(&env[2]) - 1;
       if (index < 15 && num_alertas > index) {
         len = sprintf(buf, &env[4], buff_alertas[index]);
@@ -259,7 +259,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
       len = (uint32_t)sprintf (buf, &env[4], pag);
       break;
     
-    case 'd': //fecha del sistema y batería
+    case 'd': //escribir fecha y hora del sistema en la página web
       osMessageQueueGet(mid_Msg_Date, &fecha_rec, NULL, 0);
       switch(env[2]){
         case '1':
@@ -271,7 +271,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
       }
       break;
 
-    case 'e': //Checkbox para abrir y cerrar taquillas
+    case 'e': //Checkbox que muestra estado de las taquillas
       switch(env[2]){
         case '1':
             len = (uint32_t)sprintf (buf, &env[4], (estado_taq & 0x01) ? "checked" : "");
@@ -282,7 +282,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
       }
       break;
       
-    case 'f': //peso de las taquillas
+    case 'f': //escribir peso de las taquillas en la página web
       switch(env[2]){
         case '1':
             sprintf(msg_web, "%.1f g",peso_taq1);
@@ -295,14 +295,13 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
       }
       break;
       
-    case 'b':
+    case 'b': //escribir intensidad del sistema en la página web
       switch(env[2]){
         case '1':
             sprintf(msg_web, "%.2f mA",intens);
             len = (uint32_t)sprintf (buf, &env[4], msg_web);
           break;
       }
-          
       break;
       
     case 'j': //gestión de tarjetas
@@ -316,19 +315,19 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 							"<tr>"
 							"<td>%d</td>" //Número index
 							"<td><input type='text' name='id_tarj%d' value='%s' disabled></td>" //ID Tarjeta
-							"<td><select name='taq_card%d' disabled>"//Nombre selecionado
-							"<option value='0' %s>Ninguna</option>"  //Estado "selected"
-							"<option value='1' %s>Taquilla 1</option>"//Estado "selected"
-							"<option value='2' %s>Taquilla 2</option>"//Estado "selected"
+							"<td><select name='taq_card%d' disabled>"//Selección de la taquilla que abre
+							"<option value='0' %s>Ninguna</option>"  //Estado "ninguna"
+							"<option value='1' %s>Taquilla 1</option>"//Estado "taquilla 1"
+							"<option value='2' %s>Taquilla 2</option>"//Estado "taquilla 2"
 							"</select></td>"
-							"<td><input type='text' name='nom_trab%d' value='%s' disabled></td>"
+							"<td><input type='text' name='nom_trab%d' value='%s' disabled></td>" //Nombre del empleado asignado
 							"</tr>\r\n",          
 							(i + 1),
 							(i + 1), t->id_tarjeta,
-							(i + 1), (t->taquilla == 0) ? "selected" : "", // Si val es 0, marca "selected"
-							(t->taquilla == 1) ? "selected" : "", // Si val es 1, marca "selected"
-							(t->taquilla == 2) ? "selected" : "", // Si val es 2, marca "selected"
-							(i + 1), t->nombre_trabajador        // Para el nombre del input Nombre
+							(i + 1), (t->taquilla == 0) ? "selected" : "", // Si val es 0, marca "ninguna"
+							(t->taquilla == 1) ? "selected" : "", // Si val es 1, marca "taquilla 1"
+							(t->taquilla == 2) ? "selected" : "", // Si val es 2, marca "taquilla 2"
+							(i + 1), t->nombre_trabajador        // Para el nombre del empleado
 						);
 						
 						i++;
@@ -341,13 +340,13 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
 						*pcgi = 0;
 					}
 				} else {
-					user_read(tabla_trabajadores);
+					user_read(tabla_trabajadores); //Carga los trabajadores desde la SD
 					carga_trabajadores = 1;
 				}
 			}
     break;
       
-    case 'k': // Indicador de estado circular
+    case 'k': // Indicador circular de estado del sistema
       switch(env[2]) {
         case '1':
           if (alerta == 0 && modo_func == 0x01) {

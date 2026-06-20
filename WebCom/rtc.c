@@ -33,14 +33,13 @@ MSGQUEUE_OBJ_DATE msg_env_web;
 MSGQUEUE_OBJ_DATE msg_env_taq;
 osMessageQueueId_t mid_Msg_Date;
 osMessageQueueId_t mid_Msg_Taq;
-
 int Init_MsgQueue_Date (void);
 
 /* Stack */
 const osThreadAttr_t Thread_RTC_attr = {.stack_size = 1024};
 
 /*----------------------------------------------------------------------------
- *      Message Queue creation & usage
+ *      Cola de mensajes
  *---------------------------------------------------------------------------*/
 int Init_MsgQueue_Date (void) {
 
@@ -170,22 +169,23 @@ static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
  }
 
  /*----------------------------------------------------------------------------
- *      Timer RTC: este timer sincroniza la hora cada 3 minutos
+ *      Timers RTC
  *---------------------------------------------------------------------------*/
+ /*Sincronización con servidor cada 5 minutos*/
 static void TimerRTC_Callback (void const *arg) {
   netSNTPc_GetTime ((NET_ADDR *)&ntp_server, time_callback);
 }
 
-static void TimerFlag_Callback (void const *arg) {
-  osThreadFlagsSet(thweb_comTx, 0x05);
-}
-
-//Create and Start timers
 int init_TimerRTC (void) {
   exec1 = 1U;
   tim_idRTC = osTimerNew((osTimerFunc_t)&TimerRTC_Callback, osTimerPeriodic, &exec1, NULL);
   osTimerStart(tim_idRTC, 180000U); 
   return NULL;
+}
+
+ /*Envío periódico de mensajes a la taquilla para pedir medidas cada 3 segundos*/
+static void TimerFlag_Callback (void const *arg) {
+  osThreadFlagsSet(thweb_comTx, 0x05);
 }
 
 int init_TimerFlag (void) {
@@ -194,6 +194,7 @@ int init_TimerFlag (void) {
   osTimerStart(tim_idFlag, 3000U); 
   return NULL;
 }
+
 /*----------------------------------------------------------------------------
 *      Thread_RTC
  *---------------------------------------------------------------------------*/
@@ -212,10 +213,14 @@ void Thread_RTC (void *argument) {
 	//Inicialización del RTC
   Init_RTC();
   HAL_RTC_MspInit(&RtcHandle);
+	
 	//Cola de mensajes
   Init_MsgQueue_Date();
+	
 	//Sincronización con el servidor
   netSNTPc_GetTime((NET_ADDR *)&ntp_server, time_callback);
+	
+	//Inicialización de los timers del sistema
   init_TimerRTC(); //Timer para sincronización cada 3 minutos
 	init_TimerFlag(); //Timer cada segundo para pedir medidas
   
